@@ -1,0 +1,111 @@
+.choices {
+    @apply mb-0;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 1 4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.75rem top 15px;
+    background-repeat: no-repeat;
+    background-size: 0.65em 0.65em;
+}
+.choices[data-type*=select-one]::after {
+    display: none;
+}
+.choices__inner:has(.is-invalid) {
+    @apply border-danger;
+}
+
+.is-open .choices__inner {
+    @apply rounded-md;
+}
+.is-open.is-flipped .choices__inner {
+    @apply rounded-md;
+}
+.is-open.is-flipped .choices__list--dropdown,.is-open.is-flipped .choices__list[aria-expanded] {
+    @apply mb-2;
+}
+.choices__inner {
+    @apply rounded-md border border-border bg-transparent px-3 min-h-[38px];
+}
+
+.choices[data-type*=select-multiple] .choices__inner {
+    @apply min-h-[38px];
+}
+.choices__input.choices__input--cloned {
+    @apply placeholder:text-muted-foreground;
+}
+.choices__placeholder {
+    @apply text-muted-foreground opacity-100;
+}
+.choices__list--single  {
+    @apply p-0;
+}
+
+.choices__list--dropdown .choices__item, .choices__list[aria-expanded] .choices__item {
+    @apply px-1.5 py-2;
+}
+
+.choices__list--dropdown, .choices__list[aria-expanded] {
+    @apply border-primary mt-2
+}
+.is-open .choices__list--dropdown, .is-open .choices__list[aria-expanded] {
+    @apply border-border dark:bg-dark-950 rounded-md;
+}
+.choices__list--dropdown .choices__item--selectable.is-highlighted,.choices__item--selectable.is- {
+    @apply bg-white dark:bg-dark-950;
+}
+
+.choices__item--selectable {
+    @apply mt-0 rounded-md ;
+}
+
+.choices.is-focused {
+    overflow: unset;
+}
+
+.choices[data-type*=select-one] .choices__inner {
+    @apply pb-0;
+}
+
+.is-focused .choices__inner, .is-open .choices__inner {
+    @apply border-border ring-2 ring-primary ring-offset-white placeholder:text-muted-foreground dark:ring-offset-dark-900 ring-offset-2 ;
+}
+
+.is-focused .choices__inner:has(.is-invalid) {
+    @apply ring-danger/60 border-danger;
+}
+
+.choices__list--multiple .choices__item, .choices__list.choices__list--multiple > .choices__item.is-highlighted {
+    @apply px-2 py-0.5 bg-primary border-none cursor-default mr-1 rounded-md;
+}
+.choices[data-type*=select-multiple] .choices__button, .choices[data-type*=text] .choices__button {
+    @apply border-l-white
+}
+
+.choices__input {
+    @apply mb-0 bg-transparent text-sm p-0;
+}
+
+.choices[data-type*=select-one] .choices__input {
+    @apply bg-white dark:bg-dark-950 dark:border-b-dark-800;
+}
+
+.choices__item.is-highlighted {
+    @apply dark:bg-dark-800 bg-dark-100;
+}
+.choices__item.choices__item--choice.choices__item--selectable.is-highlighted {
+    @apply dark:bg-dark-800 bg-dark-100;
+
+}
+.choices__item--choice {
+    @apply mx-1.5 px-0;
+}
+
+.choices__item.choices__item--choice:nth-child(1) {
+    @apply mt-1;
+}
+.choices__item.choices__item--choice:nth-last-child(1) {
+    @apply mb-1;
+}
+.dark .choices[data-type*=select-one] .choices__button {
+    filter: invert(1) grayscale(100%) brightness(100%);
+    background-size: 10px;
+    margin-right: 27px;
+}

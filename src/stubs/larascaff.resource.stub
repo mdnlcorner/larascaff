@@ -1,0 +1,67 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ dataTableNamespace }};
+use {{ modelNamespace }};
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class {{ class }} extends Controller
+{
+
+    protected $model = {{ model }}::class;
+    protected string $viewShow = '{{ view }}-form';
+    protected string $viewAction = '{{ view }}-form';
+
+    public function validationRules()
+    {
+        return [];
+    }
+
+    public function validationMessages()
+    {
+        return [];
+    }
+
+    public function table()
+    {
+        // 
+    }
+
+    protected function beforeShow()
+    {
+        //
+    }
+
+    public function beforeEdit()
+    {
+        //
+    }
+
+    public function beforeCreate()
+    {
+        //
+    }
+
+    public function beforeStore()
+    {
+        //
+    }
+
+    public function afterStore()
+    {
+        //
+    }
+
+    public function beforeUpdate()
+    {
+        //
+    }
+
+    public function afterUpdate()
+    {
+        //
+    }
+}

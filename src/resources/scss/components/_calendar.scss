@@ -1,0 +1,172 @@
+.fc .fc-toolbar {
+    @apply flex-wrap gap-4 md:gap-0;
+    & > .fc-toolbar-chunk {
+        &:nth-child(1) {
+            @apply order-2 md:order-1;
+        }
+
+        &:nth-child(2) {
+            @apply order-1 w-full md:order-2 md:w-auto;
+        }
+
+        &:nth-child(3) {
+            @apply order-3;
+        }
+    }
+}
+
+.fc .fc-daygrid-week-number {
+    @apply text-foreground text-xs dark:bg-dark-800 p-1;
+}
+
+.fc .fc-h-event {
+    @apply bg-primary border-primary border;
+}
+
+.fc .fc-daygrid-event-dot {
+    @apply border-primary;
+}
+
+.fc .fc-toolbar-title {
+    @apply text-center text-lg md:text-xl;
+}
+
+.fc .fc-button {
+    @apply p-2 text-sm capitalize focus:shadow-none md:px-4 md:py-2;
+}
+
+.fc .fc-button-primary {
+    @apply border-dark-100 bg-dark-100 text-dark-500 dark:border-dark-700 dark:bg-dark-700 dark:text-dark-400;
+
+    &:hover {
+        @apply border-dark-100 bg-dark-100 text-dark-700 dark:border-dark-700 dark:bg-dark-700 dark:text-dark-200;
+    }
+
+    &:disabled {
+        @apply border-dark-100 bg-dark-100 text-dark-500 dark:border-dark-700 dark:bg-dark-700 dark:text-dark-400;
+    }
+
+    &:focus {
+        @apply shadow-none;
+    }
+
+    &:not(:disabled).fc-button-active,
+    &:not(:disabled):active {
+        @apply border-dark-200 bg-dark-200 text-dark-700 dark:border-dark-800 dark:bg-dark-800 dark:text-dark-200;
+    }
+
+    &:not(:disabled).fc-button-active:focus,
+    &:not(:disabled):active:focus {
+        @apply shadow-none;
+    }
+}
+
+.fc .fc-col-header-cell-cushion {
+    @apply text-sm font-medium text-dark-700 dark:text-dark-300;
+}
+
+.fc .fc-daygrid-day-number {
+    @apply text-sm font-medium text-dark-500 dark:text-dark-400;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+    @apply border border-dark-200 dark:border-dark-800;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+    @apply border border-dark-200 dark:border-dark-800;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+    @apply bg-primary-100 dark:bg-primary-900/30;
+}
+
+.fc .fc-timegrid-axis-cushion {
+    @apply max-w-[4rem] font-medium;
+}
+
+.fc .fc-timegrid-axis-cushion,
+.fc .fc-timegrid-slot-label-cushion {
+    @apply text-sm capitalize text-dark-500 dark:text-dark-400;
+}
+
+.fc .fc-timegrid-divider {
+    @apply hidden;
+}
+
+.fc .fc-timegrid-col.fc-day-today {
+    @apply bg-primary-100 dark:bg-primary-900/30;
+}
+
+.fc-daygrid-dot-event {
+    @apply bg-dark-100 hover:bg-dark-200 dark:bg-dark-600 dark:hover:bg-dark-700;
+}
+
+.fc-daygrid-dot-event .fc-event-title {
+    @apply font-semibold;
+}
+
+.fc-daygrid-block-event .fc-event-title {
+    @apply text-sm font-normal;
+}
+
+.fc .fc-daygrid-more-link {
+    @apply text-sm font-normal hover:bg-dark-200 dark:hover:bg-dark-700;
+}
+
+.fc-theme-standard .fc-popover {
+    @apply rounded-sm border border-dark-300 bg-white shadow dark:border-dark-700 dark:bg-dark-800;
+}
+
+.fc-theme-standard .fc-popover-header {
+    @apply bg-dark-200 p-2 dark:bg-dark-700;
+}
+
+.fc .fc-popover-title {
+    @apply text-sm font-medium;
+}
+
+// .fc-timegrid-event .fc-event-main {
+//   @apply p-1;
+// }
+
+.fc-timegrid-event .fc-event-time {
+    @apply text-xs;
+}
+
+.fc-v-event .fc-event-title {
+    @apply text-sm;
+}
+
+.fc-timegrid-event-harness-inset .fc-timegrid-event,
+.fc-timegrid-event.fc-event-mirror,
+.fc-timegrid-more-link {
+    @apply shadow-none;
+}
+
+.fc-theme-standard .fc-list {
+    @apply border border-dark-200 dark:border-dark-800;
+}
+
+.fc .fc-list-sticky .fc-list-day > * {
+    @apply bg-dark-100 text-sm font-medium text-dark-600 dark:bg-dark-800 dark:text-dark-300;
+}
+
+.fc .fc-list-table td {
+    @apply text-sm text-dark-500 dark:text-dark-400;
+}
+
+.fc .fc-list-event:hover td {
+    @apply bg-dark-100 dark:bg-dark-700;
+}
+
+.fc-v-event .fc-event-main {
+    @apply bg-primary
+}
+.fc-v-event {
+    @apply border-primary;
+}
+.fc .fc-list-event-dot {
+    @apply border-primary;
+}

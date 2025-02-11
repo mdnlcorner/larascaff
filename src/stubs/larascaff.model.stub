@@ -1,0 +1,19 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;{{ useNotificationTrait }}
+
+class {{ class }} extends Model
+{
+    use HasFactory{{ notificationTrait }};
+    
+    protected $table = '{{ table }}';
+    protected $guarded = ['id'];
+
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
+}

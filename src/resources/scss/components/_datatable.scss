@@ -1,0 +1,239 @@
+.dataTable {
+    width: 100% !important;
+    @apply text-sm;
+
+    thead {
+        @apply dark:bg-dark-800 #{!important};
+        @apply px-3 py-2;
+        @apply bg-dark-100 #{!important};
+    }
+
+    tbody tr {
+        @apply border-b dark:border-dark-800 border-dark-100 hover:bg-dark-50 dark:hover:bg-dark-800/30;
+    }
+}
+
+.dt-layout-row {
+    @apply md:table block w-full;
+}
+
+.dt-layout-cell {
+    @apply text-sm relative md:table-cell align-middle py-1;
+}
+
+.dt-processing {
+    @apply absolute inset-x-0 w-full h-full bg-dark/20 z-10 m-auto;
+
+    div {
+        @apply flex items-center mt-6 gap-1 justify-center;
+
+        div:nth-child(1) {
+            @apply w-3 h-3 bg-primary rounded-full animate-pulse;
+        }
+
+        div:nth-child(2) {
+            @apply w-3 h-3 bg-primary delay-75 rounded-full animate-pulse;
+        }
+
+        div:nth-child(3) {
+            @apply w-3 h-3 bg-primary delay-100 rounded-full animate-pulse;
+        }
+
+        div:nth-child(4) {
+            @apply w-3 h-3 bg-primary delay-75 rounded-full animate-pulse;
+        }
+    }
+
+}
+
+.dt-info {
+    @apply text-muted-foreground text-center md:text-start;
+}
+
+.dt-search input,
+.dt-length select {
+    @apply border border-border bg-transparent focus:outline-none appearance-none rounded-md px-2 py-1.5 focus:ring-2 focus:ring-primary focus:ring-offset-1 dark:focus:ring-offset-dark-800;
+}
+
+.dt-search label {
+    @apply text-muted-foreground;
+}
+
+.dt-length {
+    @apply text-center md:text-start;
+
+    select {
+        @apply w-14;
+    }
+
+    label {
+        @apply text-muted-foreground;
+    }
+}
+
+.dt-end {
+    @apply text-center md:text-end;
+}
+
+.dt-paging {
+    @apply inline-flex rounded-full items-center gap-1 justify-end bg-dark-100 dark:bg-dark-800;
+
+    button {
+        @apply text-xs p-1 min-w-8 min-h-8 dark:bg-dark-800 text-muted-foreground rounded-full;
+
+        &:hover:not(.current) {
+            @apply dark:bg-dark-700 bg-dark-200;
+        }
+
+        &.current {
+            @apply bg-primary-500 text-white border-2 border-primary-300 dark:border-dark-700;
+        }
+    }
+}
+
+.dataTable thead {
+    th {
+        @apply relative
+    }
+}
+
+.dataTable .sorting {
+    @apply after:text-[10px] pr-6 cursor-pointer after:content-["\2193"] after:absolute after:right-1 before:content-["\2191"] before:text-[10px] before:absolute before:right-3 before:top-1;
+}
+
+.dataTable .sorting.sorting_desc {
+    @apply before:dark:text-dark-700 before:text-dark-400;
+}
+
+.dataTable .sorting.sorting_asc {
+    @apply after:dark:text-dark-700 after:text-dark-400;
+}
+
+.dt-orderable-asc {
+    &.dt-ordering-asc {
+        .dt-column-order {
+            @apply after:dark:text-dark-700 after:text-dark-400;
+        }
+    }
+
+    &.dt-ordering-desc {
+        .dt-column-order {
+            @apply before:dark:text-dark-700 before:text-dark-400;
+        }
+    }
+
+    .dt-column-order {
+        @apply w-full after:text-[10px] after:content-["\2193"] after:absolute after:right-1 before:content-["\2191"] before:text-[10px] before:absolute before:right-3 before:top-1;
+    }
+}
+
+// responsive datatable ovveride
+table.dataTable.dtr-inline.collapsed>tbody>tr>td.dtr-control:before,
+table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
+    content: '+';
+    @apply bg-primary rounded-full text-white w-4 h-4 inline-flex border-none items-center justify-center;
+}
+
+table.dataTable.dtr-inline.collapsed>tbody>tr.dtr-expanded>td.dtr-control:before,
+table.dataTable.dtr-inline.collapsed>tbody>tr.dtr-expanded>th.dtr-control:before {
+    content: '-';
+    @apply bg-danger rounded-full text-white w-4 h-4 inline-flex border-none items-center justify-center;
+}
+
+table.dataTable.dtr-inline.collapsed>tbody>tr.child ul.dtr-details>li {
+    @apply border-b-dark-100 dark:border-b-dark-800
+}
+
+// datatable v1.13.11 & responsive v2.5.1
+.dataTables_wrapper {
+    @apply relative;
+}
+
+.dataTables_wrapper::after {
+    content: '';
+    @apply invisible block h-0 clear-both;
+}
+
+table.dataTable.dtr-inline.collapsed>tbody>tr.parent>td.dtr-control:before,
+table.dataTable.dtr-inline.collapsed>tbody>tr.parent>th.dtr-control:before {
+    content: '-';
+    @apply bg-danger rounded-full text-white w-4 h-4 inline-flex border-none items-center justify-center;
+}
+
+.dataTables_length,
+.dataTables_filter {
+    label {
+        @apply text-sm;
+    }
+
+    select,
+    input {
+        @apply min-w-16 ml-1 border border-border bg-transparent focus:outline-none appearance-none rounded-md px-2 py-1.5 focus:ring-2 focus:ring-primary focus:ring-offset-1 dark:focus:ring-offset-dark-800;
+    }
+    @apply mb-3;
+}
+
+.dataTables_length,
+.dataTables_info {
+    @apply float-none md:float-left md:ml-4 mt-4 mb-3 text-center md:text-left;
+}
+
+.dataTables_filter,
+.dataTables_paginate {
+    @apply float-none md:float-right md:mr-4 my-4 text-center md:text-left;
+}
+
+.dataTables_info {
+    @apply text-sm md:mt-5 mt-4 mb-12 md:mb-0;
+}
+
+.dataTables_paginate {
+    @apply inline-flex self-center rounded-full ml-[50%] -translate-x-1/2 md:ml-0 md:translate-x-0 md:mt-4 -mt-10 absolute md:relative overflow-hidden items-center gap-1 justify-center bg-dark-100 dark:bg-dark-800;
+
+    span {
+        @apply flex flex-row items-center gap-1;
+    }
+
+    .paginate_button {
+
+        &.previous,
+        &.next {
+            @apply px-2;
+        }
+
+        @apply text-sm p-1 flex items-center justify-center cursor-pointer min-w-8 min-h-8 dark:bg-dark-800 text-muted-foreground rounded-full;
+
+        &:hover:not(.current) {
+            @apply dark:bg-dark-700 bg-dark-200;
+        }
+
+        &.current {
+            @apply bg-primary-500 text-white border-2 border-primary-300 dark:border-dark-700;
+        }
+    }
+}
+
+.dataTables_processing {
+    @apply absolute inset-x-0 w-full z-10 m-auto;
+
+    div {
+        @apply flex items-center mt-6 gap-1 justify-center;
+
+        div:nth-child(1) {
+            @apply w-3 h-3 bg-primary rounded-full animate-pulse;
+        }
+
+        div:nth-child(2) {
+            @apply w-3 h-3 bg-primary delay-75 rounded-full animate-pulse;
+        }
+
+        div:nth-child(3) {
+            @apply w-3 h-3 bg-primary delay-100 rounded-full animate-pulse;
+        }
+
+        div:nth-child(4) {
+            @apply w-3 h-3 bg-primary delay-75 rounded-full animate-pulse;
+        }
+    }
+
+}

@@ -1,0 +1,1 @@
+<span>Copyright © {{ date('Y') }}</span> <a target="_blank" class="text-primary" href="https://mulaidarinull.com">Mulai dari Null</a>

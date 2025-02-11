@@ -1,0 +1,36 @@
+@layer utilities {
+  .container-fluid {
+    @apply w-full px-4 sm:px-6;
+  }
+
+  [type='checkbox']:checked {
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  }
+  [type='radio']:checked {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 16 16' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='8' cy='8' r='3'/%3E%3C/svg%3E");
+  }
+  select {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 1 4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right .75rem center;
+    background-repeat: no-repeat;
+    background-size: .75em .75em;
+    padding-right: 2.5rem;
+    option {
+      @apply dark:bg-dark-900 dark:text-slate-200 text-sm dark:border-slate-700;
+    }
+  }
+
+  .zero-sr-only {
+    // Set the width, height and margin to `0` to prevent extra scrollbar appearing in chrome browser.
+    @apply sr-only m-0 h-0 w-0;
+  }
+
+  // /* Chrome, Safari and Opera */
+  // #chats::-webkit-scrollbar {
+  //   display: none;
+  // }
+  // #chats {
+  //   -ms-overflow-style: none; /* IE and Edge */
+  //   scrollbar-width: none; /* Firefox */
+  // }
+}

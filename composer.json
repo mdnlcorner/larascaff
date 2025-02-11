@@ -1,0 +1,50 @@
+{
+    "name": "mulaidarinull/larascaff",
+    "type": "library",
+    "description": "Admin dashboard scaffolding with role and permission",
+    "keywords": [
+        "laravel",
+        "scaffolding",
+        "admin",
+        "dashboard"
+    ],
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/abdulisabdul/larascaff/issues",
+        "source": "https://github.com/abdulisabdul/larascaff"
+    },
+    "authors": [
+        {
+            "name": "Muhamad Abdullah",
+            "email": "abdul.240515@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "spatie/laravel-permission": "^6.9",
+        "yajra/laravel-datatables": "^11.0",
+        "mavinoo/laravel-batch": "^2.4",
+        "gehrisandro/tailwind-merge-laravel": "^1.2",
+        "secondnetwork/blade-tabler-icons": "^3.28"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mulaidarinull\\Larascaff\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Mulaidarinull\\Larascaff\\LarascaffServiceProvider"
+            ],
+            "aliases": {
+                "Larascaff": "Mulaidarinull\\Larascaff\\Facades\\Larascaff"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

@@ -1,0 +1,12 @@
+.swal2-popup {
+    @apply dark:bg-dark-900;
+}
+.swal2-html-container {
+    @apply dark:text-foreground;
+}
+.swal2-confirm {
+    @apply bg-primary #{!important};
+}
+.swal2-cancel {
+    @apply bg-danger #{!important};
+}

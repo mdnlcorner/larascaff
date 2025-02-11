@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+use Mulaidarinull\Larascaff\BasePage;
+
+class {{ class }} extends BasePage
+{
+    protected string $view = '{{ view }}';
+    
+    public function viewData(): array
+    {
+        return [];
+    }
+}

@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use Mulaidarinull\Larascaff\Components\Layouts\Component;
+
+class {{ class }} extends Component
+{
+    public function view()
+    {
+        return view('{{ view }}');
+    }
+}

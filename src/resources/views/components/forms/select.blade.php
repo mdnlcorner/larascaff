@@ -1,0 +1,70 @@
+@props([
+    'error' => null,
+    'size' => 'md',
+    'name' => 'name' . rand(),
+    'label' => null,
+    'multiple' => false,
+    'id' => 'id' . rand(),
+    'searchable' => false,
+    'options' => [],
+    'placeholder' => null,
+    'value' => null,
+    'serverSide' => false,
+    'config' => [],
+    'depend' => false,
+    'dependValue' => null,
+    'dependColumn' => null,
+    'columnValue' => null,
+    'columnLabel' => null,
+    'modifyQuery' => null,
+    'columnSpan' => '1',
+    'limit'
+])
+@if ($searchable)
+    <div x-ignore x-load x-load-src="{{ asset('larascaff/components/choices.js') }}"
+        x-load-css="['{{ asset('larascaff/components/choices.css') }}']" x-data="initSelect({
+            options: @js($options),
+            value: @js($value),
+            serverSide: @js($serverSide),
+            depend: @js($depend),
+            dependValue: @js($dependValue),
+            dependColumn: @js($dependColumn),
+            placeholder: @js($placeholder),
+            columnLabel: @js($columnLabel),
+            columnValue: @js($columnValue),
+            modifyQuery: @js($modifyQuery),
+            limit: @js($limit),
+        })"
+        @class(["w-full form-wrapper", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])>
+        <label for="{{ $id }}" class="inline-block mb-1 text-sm">{{ $label }}</label>
+        <select id="{{ $id }}" x-ref="input" {{ $attributes->merge() }} data-placeholder="{{ $placeholder }}"
+            name="{{ $multiple ? $name. '[]' : $name }}" {{ $multiple ? 'multiple' : '' }}></select>
+    </div>
+@else
+    <div class="w-full form-wrapper">
+        @if ($label)
+            <label for="{{ $id }}"
+                class="inline-block mb-1 {{ $size == 'sm' ? 'text-xs' : 'text-sm' }}">{{ $label }}</label>
+        @endif
+        <select id="{{ $id }}" name="{{ $multiple ? $name. '[]' : $name }}" {{ $multiple ? 'multiple' : '' }}
+            {{ $attributes->twMerge([
+                'relative w-full [&.is-invalid]:border-danger [&.is-invalid]:focus-visible:ring-danger/60 text-sm bg-transparent border rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-white dark:focus:ring-offset-dark-800 border-border',
+                // size
+                $size == 'sm' ? 'py-1.5 px-2.5 text-xs' : null,
+                $size == 'md' ? 'px-3 py-2 text-sm' : null,
+                $size == 'lg' ? 'px-3.5 py-3 text-default' : null,
+                $error ? 'border-danger focus-visible:ring-danger/60' : null,
+            ]) }}>
+            @if ($placeholder)
+                <option value="">{{ $placeholder }}</option>
+            @endif
+            @foreach ($options as $key => $item)
+                <option value="{{ $item }}" @selected((is_null($value) ? getRecord($name) : $value) == $item)>{{ $key }}</option>
+            @endforeach
+            {{ $slot }}
+        </select>
+        @if ($error)
+            <div class="mt-1 text-xs text-danger">{{ $error }}</div>
+        @endif
+    </div>
+@endif

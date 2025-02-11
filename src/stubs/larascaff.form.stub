@@ -1,0 +1,3 @@
+<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <x-larascaff::forms.input name="name" label="Name" />
+</div>

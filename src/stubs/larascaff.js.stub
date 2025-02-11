@@ -1,0 +1,3 @@
+document.querySelector('#modalAction')?.addEventListener('shownModal', function (e) {
+    //
+})

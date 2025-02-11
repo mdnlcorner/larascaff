@@ -1,0 +1,136 @@
+<?php
+
+namespace Mulaidarinull\Larascaff\Datatable;
+
+use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Model;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\Services\DataTable;
+
+class BaseDatatable extends DataTable
+{
+    public QueryBuilder|Model|null $query = null;
+    public EloquentDataTable|null $eloquentTable = null;
+
+    function __construct(protected Model $model, protected string $url, protected array $tableActions)
+    {
+        $this->model = $this->query = $model;
+        $this->url = $url;
+        $this->tableActions = $tableActions;
+    }
+
+    public function dataTable(): EloquentDataTable
+    {
+        $this->generateTable();
+        return $this->eloquentTable;
+    }
+
+    public function filterTable($filter = [])
+    {
+        $this->filterTable = $filter;
+        $this->query = $this->query->newQuery();
+        foreach($filter as $item) {
+            if (request()->filled($item['name'])) {
+                if ($item['type'] == 'nullable') {
+                    if (request($item['name']) === '0') {
+                        $this->query->whereNull($item['name']);
+                    } else if (request($item['name']) === '1') {
+                        $this->query->whereNotNull($item['name']);
+                    }
+                } else {
+                    $this->query->where($item['name'], request($item['name']));
+                }
+            }
+        }
+        return $this;
+    }
+
+    protected function generateTable()
+    {
+        if (!$this->eloquentTable) {
+            $this->eloquentTable = (new EloquentDataTable($this->query))->addIndexColumn()
+                ->addColumn('action', function (Model $model) {
+                    $actions = [];
+                    foreach ($this->tableActions as $key => $action) {
+                        if ($action['show']($model)) {
+                            $action['action'] = str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['action']);
+                            $actions[$key] = $action;
+                        }
+                    }
+
+                    return view('larascaff::action', ['actions' => $actions]);
+                });
+        }
+    }
+
+    public function customizeColumn(callable $cb)
+    {
+        $this->generateTable();
+        $cb($this->eloquentTable);
+        return $this;
+    }
+
+    public function customQuery($cb)
+    {
+        if (is_callable($cb)) {
+            $this->query = $this->query->newQuery();
+            $cb($this->query);
+        } else {
+            $this->query = $cb;
+        }
+        return $this;
+    }
+
+    /**
+     * Get the query source of dataTable.
+     */
+    public function query(): QueryBuilder
+    {
+        return $this->query->newQuery();
+    }
+
+    private function generateHtmlBuilder()
+    {
+        return app(HtmlBuilder::class)
+            ->parameters([
+                'searchDelay' => 1000,
+                'responsive' => [
+                    'details' => [
+                        'display' => '$.fn.dataTable.Responsive.display.childRowImmediate'
+                    ]
+                ],
+
+            ])
+            ->language(['paginate' => [
+                'next' => '→',
+                'previous' => '←',
+            ]])
+            ->minifiedAjax()
+            ->selectStyleSingle()
+            ->orderBy(1, 'desc');
+    }
+
+    public function columns($cb)
+    {
+        $model = explode('Models\\', get_class($this->model));
+        $this->htmlBuilder = $this->generateHtmlBuilder()->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
+        $cb($this->htmlBuilder);
+        return $this;
+    }
+
+    /**
+     * Optional method if you want to use the html builder.
+     */
+    public function html(): HtmlBuilder
+    {
+        return $this->htmlBuilder;
+    }
+
+    /**
+     * Get the filename for export.
+     */
+    protected function filename(): string
+    {
+        return '_' . date('YmdHis');
+    }
+}

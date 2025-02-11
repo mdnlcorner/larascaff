@@ -1,0 +1,32 @@
+body {
+  .wrapper {
+    @apply flex flex-1 flex-col transition-margin duration-300 ease-in-out lg:ml-72;
+
+    &.expanded {
+      @apply lg:ml-20;
+    }
+  }
+
+  .row {
+    @apply flex -mx-3 flex-wrap;
+  }
+
+  .card {
+    @apply md:px-6 md:py-5 py-4 px-4 mb-6 rounded-md shadow bg-card;
+  }
+  .card-title {
+    @apply mb-4;
+  }
+
+  .col {
+    @apply px-3 mb-3;
+  }
+
+  .row.same-height > .col {
+    @apply flex flex-col;
+  }
+
+  .row.same-height > .col .card {
+    @apply flex flex-col h-full;
+  }
+}
