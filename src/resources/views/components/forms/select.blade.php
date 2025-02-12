@@ -18,7 +18,7 @@
     'columnLabel' => null,
     'modifyQuery' => null,
     'columnSpan' => '1',
-    'limit'
+    'limit' => 20,
 ])
 @if ($searchable)
     <div x-ignore x-load x-load-src="{{ asset('larascaff/components/choices.js') }}"

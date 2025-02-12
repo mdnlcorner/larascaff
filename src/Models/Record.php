@@ -4,7 +4,8 @@ namespace Mulaidarinull\Larascaff\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Record extends Model{
+class Record extends Model
+{
     protected Model | null $record = null;
 
     public function setRecord(Model $record)
@@ -19,16 +20,16 @@ class Record extends Model{
         }
         if ($key) {
             if (str_contains($key, '.')) {
-                $relations = explode('.',$key);
+                $relations = explode('.', $key);
                 $name = array_pop($relations);
                 $this->record->loadMissing(implode('.', $relations));
                 $withRelation = $this->record;
-                foreach($relations as $relation) {
+                foreach ($relations as $relation) {
                     $withRelation = $withRelation->{$relation};
                 }
-                if ($withRelation instanceof \Illuminate\Database\Eloquent\Collection){
+                if ($withRelation instanceof \Illuminate\Database\Eloquent\Collection) {
                     $arrayValue = [];
-                    foreach($withRelation as $relation) {
+                    foreach ($withRelation as $relation) {
                         $arrayValue[] = $relation->{$name};
                     }
                     return $arrayValue;
