@@ -6,8 +6,6 @@ use Mulaidarinull\Larascaff\Modules\BaseUserModule;
 
 class UserModule extends BaseUserModule
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected string $menuIcon = 'tabler-users-group';
+    protected string $menuCategory = 'CONFIGURATION';
 }

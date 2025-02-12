@@ -15,10 +15,11 @@ use Mulaidarinull\Larascaff\Components\Info\Info;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 use Illuminate\Support\Str;
+use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 
 abstract class BaseModule extends Controller
 {
-    use HasPermission;
+    use HasPermission, HasMenuPermission;
     /**
      * @var Model $model
      */
@@ -37,21 +38,22 @@ abstract class BaseModule extends Controller
 
     public function __construct()
     {
+        is_string($this->model) && $this->model = new $this->model;
+        if ($this->modalTitle == '') {
+            if ($this->model){
+                $this->modalTitle = 'Form ' . ucwords(str_replace('_', ' ', $this->model->getTable()));
+            }
+        }
+
+        $this->resolveUrl();
         if ($this->pageTitle == '') {
-            $segments = request()->segments();
+            $segments = explode('/', $this->url);
             if (count($segments)) {
-                $this->pageTitle = ucwords(str_replace('-', ' ', $segments[count($segments) - 1]));
+                $this->pageTitle = ucwords(str_replace('-', ' ', array_pop($segments)));
             } else {
                 $this->pageTitle = '';
             }
         }
-
-        is_string($this->model) && $this->model = new $this->model;
-        if ($this->modalTitle == '') {
-            $this->modalTitle = 'Form ' . ucwords(str_replace('_', ' ', $this->model->getTable()));
-        }
-
-        $this->resolveUrl();
 
         if (!count($this->actions)) {
             $this->actions['create'] = [
@@ -73,6 +75,12 @@ abstract class BaseModule extends Controller
         $this->tableActions(permission: 'delete', action: url($this->url . '/' . '{{id}}'), label: 'Delete', method: 'DELETE', icon: 'tabler-trash', color: 'danger');
     }
 
+    public static function makeMenu()
+    {
+        $static = new static;
+        $static->handleMakeMenu();
+    }
+
     public function getModel(): Model
     {
         return $this->model;
@@ -90,6 +98,7 @@ abstract class BaseModule extends Controller
 
     public function actions($permission, $action, $label = null, $method = 'GET', Closure | null $show = null, bool $ajax = true, bool $targetBlank = false, string | null $icon = null)
     {
+        $this->permissions[$permission] = true;
         if (user()?->can($permission . ' ' . $this->url)) {
             $this->actions[$permission] = [
                 'action' => $action,
@@ -105,6 +114,7 @@ abstract class BaseModule extends Controller
 
     public function tableActions(string $permission, string $action, string $label = null, string $method = 'GET', Closure | null $show = null, bool $ajax = true, bool $targetBlank = false, string | null $icon = null, string | null $color = null)
     {
+        $this->permissions[$permission] = true;
         if (user()?->can($permission . ' ' . $this->url)) {
             $this->tableActions[$permission] = [
                 'action' => $action,
@@ -602,7 +612,7 @@ abstract class BaseModule extends Controller
         if ($this->url == '') {
             $prefix = getPrefix();
             if ($prefix) $prefix = $prefix .= '/';
-            if (!is_null($this->model->url)) {
+            if (!is_null($this->model?->url)) {
                 $this->url = $this->model->url;
             } else {
                 $url = explode('App\\Larascaff\\Modules\\', get_class($this));

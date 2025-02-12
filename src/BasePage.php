@@ -5,11 +5,12 @@ namespace Mulaidarinull\Larascaff;
 use App\Http\Controllers\Controller;
 use Illuminate\Container\Container;
 use Illuminate\Support\Reflector;
+use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 
 abstract class BasePage extends Controller
 {
-    use HasPermission;
+    use HasPermission, HasMenuPermission;
     protected string $view = '';
     protected string $url = '';
     protected string $pageTitle = '';
@@ -19,6 +20,12 @@ abstract class BasePage extends Controller
         $this->resolvePageTitle();
         $this->resolveUrl();
         $this->resolveView();
+    }
+
+    public static function makeMenu()
+    {
+        $static = new static;
+        $static->handleMakeMenu();
     }
 
     protected function resolvePageTitle()
