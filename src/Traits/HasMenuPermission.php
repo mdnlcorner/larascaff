@@ -13,23 +13,25 @@ trait HasMenuPermission
 
     public function handleMakeMenu()
     {
+        $prefix = getPrefix();
+
         $menus = explode('/', $this->url);
-        if (count($menus) > 2) {
-            $subMenus = array_pop($menus);
-        }
-        $mainMenu = implode('/', $menus);
-
-        $mm = Menu::firstOrCreate(['url' => $mainMenu], ['name' => ucwords(str_replace('-', ' ', $menus[count($menus) - 1])), 'category' => $this->menuCategory, 'icon' => $this->menuIcon]);
-        $this->attachMenupermission($mm, ['read'], ['ADMINISTRATOR']);
-
-        if (isset($subMenus)) {
-            $explodeSub = explode('/', $subMenus);
-            if (count($explodeSub) > 1) {
-                $mm = $mm->subMenus()->firstOrCreate(['url' => $mm->url . '/' . $explodeSub[0]],['name' => ucwords(str_replace('-', ' ', $explodeSub[0])), 'url' => $mm->url . '/' . $explodeSub[0], 'category' => $mm->category]);
-                $this->attachMenupermission($mm, ['read'], ['ADMINISTRATOR']);
+        $subMenus = [];
+        
+        foreach ($menus as $key => $value) {
+            if ($key < ($prefix ? 2 : 1)) {
+                $mainMenu[] = $value;
+            } else {
+                $subMenus[] = $value;
             }
-            $sm = $mm->subMenus()->firstOrCreate(['url' => $mm->url . '/' . (isset($explodeSub[0]) ? $explodeSub[0] : $subMenus)],['name' => $this->pageTitle, 'url' => $mm->url . '/' . (isset($explodeSub[0]) ? $explodeSub[0] : $subMenus), 'category' => $mm->category]);
-            $this->attachMenupermission($sm, $this->getPermissions(), ['ADMINISTRATOR']);
+        }
+
+        $mm = Menu::firstOrCreate(['url' => implode('/', $mainMenu)], ['name' => ucwords(str_replace('-', ' ', array_pop($mainMenu))), 'category' => $this->menuCategory, 'icon' => $this->menuIcon]);
+        $this->attachMenupermission($mm, count($subMenus) ? ['read'] : $this->getPermissions(), ['ADMINISTRATOR']);
+
+        foreach ($subMenus as $key => $sub) {
+            $mm = $mm->subMenus()->firstOrCreate(['url' => $mm->url . '/' . $sub], ['name' => ucwords(str_replace('-', ' ', $sub)), 'url' => $mm->url . '/' . $sub, 'category' => $mm->category]);
+            $this->attachMenupermission($mm, (count($subMenus) > 1 && $key == 0) ? ['read'] : $this->getPermissions(), ['ADMINISTRATOR']);
         }
     }
 
