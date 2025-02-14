@@ -10,11 +10,6 @@ class Form
 {
     use HasColumnSpan, HasComponent, HasModule;
 
-    public static function make()
-    {
-        return new self;
-    }
-
     public function render()
     {
         $view = '';
