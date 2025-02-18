@@ -1,5 +1,18 @@
 <x-larascaff-guest-layout title="Forgot password">
-    <a href="/" class="py-6 text-center">LOGO</a>
+    @php
+        $config = app(\Mulaidarinull\Larascaff\LarascaffConfig::class);
+    @endphp
+    <a href="{{ url(getPrefix()) }}" class="mb-6 text-center">
+        @if (is_callable($config->renderBrand()))
+            {{ $config->renderBrand()() }}
+        @else
+            @if ($config->getBrandName())
+                {{ $config->getBrandName() }}
+            @else
+                <img style="height: {{ $config->getBrandHeight() }}" src="{{ $config->renderBrand() }}" class="w-full" alt="brand-logo">
+            @endif
+        @endif
+    </a>
     <div class="text-2xl font-semibold">Forgot your password?</div>
     <p class="pb-4 text-sm text-muted-foreground">Enter your email and we'll send you instructions to reset your
         password</p>

@@ -1,5 +1,18 @@
 <x-larascaff-guest-layout>
-    <a href="/" class="py-6 text-center">LOGO</a>
+    @php
+        $config = app(\Mulaidarinull\Larascaff\LarascaffConfig::class);
+    @endphp
+    <a href="{{ url(getPrefix()) }}" class="mb-6 text-center">
+        @if (is_callable($config->renderBrand()))
+            {{ $config->renderBrand()() }}
+        @else
+            @if ($config->getBrandName())
+                {{ $config->getBrandName() }}
+            @else
+                <img style="height: {{ $config->getBrandHeight() }}" src="{{ $config->renderBrand() }}" class="w-full" alt="brand-logo">
+            @endif
+        @endif
+    </a>
     <div class="text-2xl font-semibold">Welcome Back</div>
     <p class="text-sm text-muted-foreground">Please sign-in to your account and start the adventure</p>
     <div class="py-4">
@@ -12,14 +25,17 @@
                     label="Enter your password" />
                 <div class="flex justify-between">
                     <x-larascaff::forms.checkbox name="remember" label="Remember me" />
-                    <a href="{{ route('password.request') }}" class="flex justify-end w-full text-sm">Forget password</a>
+                    <a href="{{ route('password.request') }}" class="flex justify-end w-full text-sm">Forget
+                        password</a>
                 </div>
             </div>
             <x-larascaff::button onclick="setTimeout(() => {
             this.disabled = true
-            }, 0)" type="submit" class="w-full mt-4">Login</x-larascaff::button>
+            }, 0)"
+                type="submit" class="w-full mt-4">Login</x-larascaff::button>
             <div class="mt-6 text-sm text-center">
-                <span>Don't have account? </span> <a href="{{ route('register') }}" class="underline text-primary">Create account</a>
+                <span>Don't have account? </span> <a href="{{ route('register') }}"
+                    class="underline text-primary">Create account</a>
             </div>
         </form>
     </div>
