@@ -4,6 +4,8 @@ namespace Mulaidarinull\Larascaff;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Container\Container;
+use Illuminate\Http\Request;
+use Illuminate\Support\Pluralizer;
 use Illuminate\Support\Reflector;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
@@ -17,8 +19,8 @@ abstract class BasePage extends Controller
 
     public function __construct()
     {
-        $this->resolvePageTitle();
         $this->resolveUrl();
+        $this->resolvePageTitle();
         $this->resolveView();
     }
 
@@ -31,9 +33,9 @@ abstract class BasePage extends Controller
     protected function resolvePageTitle()
     {
         if ($this->pageTitle == '') {
-            $segments = request()->segments();
+            $segments = explode('/', $this->url);
             if (count($segments)) {
-                $this->pageTitle = ucfirst($segments[count($segments) - 1]);
+                $this->pageTitle = ucwords(str_replace('-', ' ', array_pop($segments)));
             } else {
                 $this->pageTitle = '';
             }
@@ -42,18 +44,23 @@ abstract class BasePage extends Controller
 
     protected function resolveUrl()
     {
+        $prefix = getPrefix();
+        if ($prefix) $prefix = $prefix .= '/';
+        
         if ($this->url == '') {
-            $prefix = getPrefix();
-            if ($prefix) $prefix = $prefix .= '/';
-
             $class = get_class($this);
             $pages = explode('App\\Larascaff\\Pages\\', $class);
             array_shift($pages);
-            $pages[count($pages) - 1] = substr($pages[count($pages) - 1], 0, strlen($pages[count($pages) - 1]) - 4);
-            $pages = strtolower(str_replace('\\', '/',implode('-', $pages)));
-            
-            $this->url = $prefix . $pages;
+
+            $this->url = substr($pages[0], 0, strlen($pages[0]) - 4);
+
+            $this->url = implode('/', array_map(function ($item) {
+                return \Illuminate\Support\Str::kebab($item);
+            }, explode('\\', $this->url)));
+
+            $this->url = Pluralizer::plural($this->url);
         }
+        $this->url = $prefix . $this->url;
     }
 
     protected function resolveView()
@@ -71,7 +78,7 @@ abstract class BasePage extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $data = [
             'pageTitle' => $this->pageTitle,
@@ -80,7 +87,7 @@ abstract class BasePage extends Controller
 
         $viewData = [];
         if (method_exists($this, $method = 'viewData')) {
-            $parameters = $this->resolveParameters($method, []);
+            $parameters = $this->resolveParameters($method, [$request]);
             $viewData = call_user_func_array([$this, $method], $parameters);
         }
         $data['view'] = view($this->view, $viewData);

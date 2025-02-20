@@ -15,7 +15,7 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
 
     public static function make($name): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $static = app(static::class);
         $static->name($name);
 
         return $static;
@@ -27,23 +27,15 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
         return $this;
     }
 
+    public function value($value)
+    {
+        $this->value = $value;
+        return $this;
+    }
+
     public function format($format)
     {
         $this->format = $format;
-        $record = getRecord();
-        $map = ['yyyy' => 'Y', 'yy' => 'y', 'm' => 'n', 'D' => 'D', 'DD' => 'l', 'MM' => 'F', 'M' => 'M', 'mm' => 'm', 'dd' => 'd', 'd' => 'j'];
-        foreach (['-', '/'] as $separator) {
-            if (str_contains($format, $separator)) {
-                $expFormat = explode($separator, $format);
-                $formatPhp = '';
-                foreach ($expFormat as $i) {
-                    $formatPhp .= ($formatPhp ? $separator . $map[$i] : $map[$i]);
-                }
-                $this->formatPhp = $formatPhp;
-            }
-        }
-
-        $this->value = [convertDate($record->{$this->name[0]}, $this->formatPhp), convertDate($record->{$this->name[1]}, $this->formatPhp)];
         return $this;
     }
 
@@ -67,6 +59,31 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
 
     public function view()
     {
+        // ====== FORMATING VALUE ======
+        $record = getRecord();
+        if ($this->value) {
+            $record = (object) [
+                $this->name[0] => $this->value[0],
+                $this->name[1] => $this->value[1]
+            ];
+        }
+
+        $map = ['yyyy' => 'Y', 'yy' => 'y', 'm' => 'n', 'D' => 'D', 'DD' => 'l', 'MM' => 'F', 'M' => 'M', 'mm' => 'm', 'dd' => 'd', 'd' => 'j'];
+        foreach (['-', '/'] as $separator) {
+            if (str_contains($this->format, $separator)) {
+                $expFormat = explode($separator, $this->format);
+                $formatPhp = '';
+                foreach ($expFormat as $i) {
+                    $formatPhp .= ($formatPhp ? $separator . $map[$i] : $map[$i]);
+                }
+                $this->formatPhp = $formatPhp;
+            }
+        }
+
+        $this->value = [convertDate($record->{$this->name[0]}, $this->formatPhp), convertDate($record->{$this->name[1]}, $this->formatPhp)];
+
+        // ====== END FORMATING VALUE ======
+
         $this->config['format'] = $this->format;
         return Blade::render(
             <<<'HTML'

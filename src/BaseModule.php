@@ -40,7 +40,7 @@ abstract class BaseModule extends Controller
     {
         is_string($this->model) && $this->model = new $this->model;
         if ($this->modalTitle == '') {
-            if ($this->model){
+            if ($this->model) {
                 $this->modalTitle = 'Form ' . ucwords(str_replace('_', ' ', $this->model->getTable()));
             }
         }
@@ -96,10 +96,11 @@ abstract class BaseModule extends Controller
         return $this->tableActions;
     }
 
-    public function actions($permission, $action, $label = null, $method = 'GET', Closure | null $show = null, bool $ajax = true, bool $targetBlank = false, string | null $icon = null)
+    public function actions($permission, $action, $label = null, $method = 'GET', Closure | null | bool $show = null, bool $ajax = true, bool $targetBlank = false, string | null $icon = null)
     {
         $this->permissions[$permission] = true;
         if (user()?->can($permission . ' ' . $this->url)) {
+            if (is_bool($show)) $show = fn() => $show;
             $this->actions[$permission] = [
                 'action' => $action,
                 'label' => $label ?? ucfirst($permission),
@@ -112,10 +113,11 @@ abstract class BaseModule extends Controller
         }
     }
 
-    public function tableActions(string $permission, string $action, string $label = null, string $method = 'GET', Closure | null $show = null, bool $ajax = true, bool $targetBlank = false, string | null $icon = null, string | null $color = null)
+    public function tableActions(string $permission, string $action, string $label = null, string $method = 'GET', Closure | null | bool $show = null, bool $ajax = true, bool $targetBlank = false, string | null $icon = null, string | null $color = null)
     {
         $this->permissions[$permission] = true;
         if (user()?->can($permission . ' ' . $this->url)) {
+            if (is_bool($show)) $show = fn() => $show;
             $this->tableActions[$permission] = [
                 'action' => $action,
                 'label' => $label ?? ucfirst($permission),
@@ -609,9 +611,10 @@ abstract class BaseModule extends Controller
 
     private function resolveUrl()
     {
+        $prefix = getPrefix();
+        if ($prefix) $prefix = $prefix .= '/';
+
         if ($this->url == '') {
-            $prefix = getPrefix();
-            if ($prefix) $prefix = $prefix .= '/';
             if (!is_null($this->model?->url)) {
                 $this->url = $this->model->url;
             } else {
@@ -623,8 +626,8 @@ abstract class BaseModule extends Controller
                 }, explode('\\', $this->url)));
                 $this->url = Pluralizer::plural($this->url);
             }
-            $this->url = $prefix . $this->url;
         }
+        $this->url = $prefix . $this->url;
     }
 
     protected function addDataToview(array $data)

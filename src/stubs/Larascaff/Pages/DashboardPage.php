@@ -8,6 +8,7 @@ class DashboardPage extends BasePage
 {
     protected string $view = 'larascaff::pages.dashboard';
     protected string $menuIcon = 'tabler-home';
+    protected string $url = 'dashboard';
 
     public function __construct() {
         parent::__construct();
