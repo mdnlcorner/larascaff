@@ -43,7 +43,7 @@
 }
 
 .choices__list--dropdown, .choices__list[aria-expanded] {
-    @apply border-primary mt-2
+    @apply border-primary mt-2 z-50;
 }
 .is-open .choices__list--dropdown, .is-open .choices__list[aria-expanded] {
     @apply border-border dark:bg-dark-950 rounded-md;
