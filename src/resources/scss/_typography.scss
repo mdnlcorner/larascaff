@@ -1,4 +1,4 @@
-@layer base {
+
   h1,
   h2,
   h3,
@@ -58,9 +58,9 @@
   code:not(.prose code) {
     @apply rounded bg-slate-100 p-1 text-xs tracking-wide text-slate-500 dark:bg-slate-600 dark:text-slate-300;
   }
-}
 
-@layer components {
+
+
   .display-1,
   .display-2,
   .display-3,
@@ -139,4 +139,4 @@
       @apply text-slate-500 opacity-80 dark:text-slate-500;
     }
   }
-}
+

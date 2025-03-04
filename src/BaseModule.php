@@ -59,6 +59,7 @@ abstract class BaseModule extends Controller
             $this->actions['create'] = [
                 'label' => 'Create',
                 'action' => url($this->url . '/create'),
+                'show' => fn() => true,
                 'icon' => 'ti ti-copy-plus',
                 'method' => 'get',
             ];

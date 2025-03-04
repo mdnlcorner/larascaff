@@ -1,1 +1,0 @@
-import '../../vendor/mulaidarinull/larascaff/src/resources/js/bootstrap'

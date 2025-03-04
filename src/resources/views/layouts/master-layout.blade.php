@@ -40,7 +40,16 @@
             })
         </script>
         <script type="module" src="{{ asset('larascaff/vendor/alpine.js') }}"></script>
-        @vite(['resources/scss/app.scss', 'resources/js/app.ts'])
+        
+        @larascaffStyles
+        
+        @vite(['resources/css/app.css', 'resources/js/app.ts'])
+        
+        <script type="module" src="{{ asset('larascaff/js/bootstrap.js') }}" ></script>
+        
+        
+        <link rel="stylesheet" href="{{ asset('larascaff/css/app.css') }}">
+        <link rel="stylesheet" href="{{ asset('larascaff/js/bootstrap.css') }}">
         @stack('jsModule')
         @stack('css')
     </head>

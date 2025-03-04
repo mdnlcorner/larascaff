@@ -21,8 +21,11 @@
     'limit' => 20,
 ])
 @if ($searchable)
-    <div x-ignore x-load x-load-src="{{ asset('larascaff/components/choices.js') }}"
-        x-load-css="['{{ asset('larascaff/components/choices.css') }}']" x-data="initSelect({
+    <div 
+        x-ignore 
+        x-load 
+        x-load-src="{{ asset('larascaff/components/choices.js' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
+        x-load-css="['{{ asset('larascaff/components/choices.css' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" x-data="initSelect({
             options: @js($options),
             value: @js($value),
             serverSide: @js($serverSide),
@@ -35,7 +38,8 @@
             modifyQuery: @js($modifyQuery),
             limit: @js($limit),
         })"
-        @class(["w-full form-wrapper", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])>
+        @class(["w-full form-wrapper", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])
+    >
         <label for="{{ $id }}" class="inline-block mb-1 text-sm">{{ $label }}</label>
         <select id="{{ $id }}" x-ref="input" {{ $attributes->merge() }} data-placeholder="{{ $placeholder }}"
             name="{{ $multiple ? $name. '[]' : $name }}" {{ $multiple ? 'multiple' : '' }}></select>

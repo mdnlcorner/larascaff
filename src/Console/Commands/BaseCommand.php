@@ -5,6 +5,7 @@ namespace Mulaidarinull\Larascaff\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Illuminate\Support\Str;
@@ -43,7 +44,8 @@ class BaseCommand extends Command
                     $this->attachMenupermission($mainMenu, ['read'], ['ADMINISTRATOR']);
                 }
 
-                $urlSubmenu = $url . '/' . Str::kebab($this->pathList[$i + 1] ?? $name);
+                $urlSubmenu = $url . '/' . Pluralizer::plural(Str::kebab($this->pathList[$i + 1] ?? $name));
+
                 $isExist = $mainMenu->subMenus()->where('url', $urlSubmenu)->first();
                 if (!$isExist) {
                     $sm = $mainMenu->subMenus()->create([

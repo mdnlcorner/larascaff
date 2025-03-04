@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Mulaidarinull\Larascaff\Notifications\NotificationRoute;
 
-class Larascaff
+class LarascaffHandler
 {
     public function content(array $data = [], array $mergeData = [])
     {

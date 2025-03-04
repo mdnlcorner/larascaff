@@ -25,7 +25,8 @@
         "yajra/laravel-datatables": "^11.0",
         "mavinoo/laravel-batch": "^2.4",
         "gehrisandro/tailwind-merge-laravel": "^1.2",
-        "secondnetwork/blade-tabler-icons": "^3.28"
+        "secondnetwork/blade-tabler-icons": "^3.28",
+        "spatie/color": "^1.8"
     },
     "autoload": {
         "psr-4": {

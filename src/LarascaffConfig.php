@@ -3,6 +3,7 @@
 namespace Mulaidarinull\Larascaff;
 
 use Closure;
+use Mulaidarinull\Larascaff\Facades\LarascaffColor;
 
 class LarascaffConfig
 {
@@ -97,5 +98,11 @@ class LarascaffConfig
     public function getFavicon()
     {
         return $this->favicon;
+    }
+
+    public function colors(array $colors)
+    {
+        LarascaffColor::register($colors);
+        return $this;
     }
 }

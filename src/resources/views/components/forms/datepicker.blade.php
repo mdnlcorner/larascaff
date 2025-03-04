@@ -9,12 +9,16 @@
     'value' => null,
     'columnSpan' => '1'
 ])
-<div x-ignore x-load x-load-src="{{ asset('larascaff/components/datepicker.js') }}"
-    x-load-css="['{{ asset('larascaff/components/datepicker.css') }}']" 
+<div 
+    x-ignore 
+    x-load 
+    x-load-src="{{ asset('larascaff/components/datepicker.js' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
+    x-load-css="['{{ asset('larascaff/components/datepicker.css' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
     x-data="initDatepicker({
         ...@js($config)
     })"
-    @class(["w-full form-wrapper", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])>
+    @class(["w-full form-wrapper", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])
+>
     @if ($label)
         <label for="{{ $id }}" class="inline-block mb-1 {{ $size == 'sm' ? 'text-xs' : 'text-sm' }}">{{ $label }}</label>
     @endif

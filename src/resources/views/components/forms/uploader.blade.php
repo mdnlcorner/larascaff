@@ -31,17 +31,23 @@
         }
     }
 @endphp
-<div x-ignore x-load x-load-src="{{ asset('larascaff/components/uploader.js') }}" x-load-css="['{{ asset('larascaff/components/uploader.css') }}']" x-data="initUploader({
-    tempUploadUrl: '{{ url()->temporarySignedRoute('temp-upload', now()->addMinutes(180)) }}',
-    files: @js($files),
-    path: @js($disk == 'local' ? 'storage/' . $path : $path),
-    cropperOptions: @js($cropperOptions),
-    ...@js($config)
-})" 
-@class([
-    'w-full form-wrapper',
-    $columnSpan != '1' ? 'md:col-span-' . $columnSpan : '',
-])>
+<div 
+    x-ignore 
+    x-load 
+    x-load-src="{{ asset('larascaff/components/uploader.js' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}" 
+    x-load-css="['{{ asset('larascaff/components/uploader.css?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
+    x-data="initUploader({
+        tempUploadUrl: '{{ url()->temporarySignedRoute('temp-upload', now()->addMinutes(180)) }}',
+        files: @js($files),
+        path: @js($disk == 'local' ? 'storage/' . $path : $path),
+        cropperOptions: @js($cropperOptions),
+        ...@js($config)
+    })" 
+    @class([
+        'w-full form-wrapper',
+        $columnSpan != '1' ? 'md:col-span-' . $columnSpan : '',
+    ])
+>
     @if ($label)
         <label for="" class="inline-block mb-1 text-sm">{{ $label }}</label>
     @endif

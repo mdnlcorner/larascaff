@@ -56,7 +56,7 @@ trait HasMedia
             }
         } else {
             $__file = new File(Storage::disk('local')->path($tmpFiles));
-            Storage::putFileAs(
+            Storage::disk($disk)->putFileAs(
                 path: $path,
                 file: $__file,
                 name: $__file->getFilename()

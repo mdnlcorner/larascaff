@@ -3,10 +3,11 @@
 namespace Mulaidarinull\Larascaff\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Mulaidarinull\Larascaff\LarascaffHandler;
 
 /**
- * @method static \Mulaidarinull\Larascaff\Larascaff content(array $data = [], array $mergeData=[])
- * @method static \Mulaidarinull\Larascaff\Larascaff registerRoutes()
+ * @method static \Mulaidarinull\Larascaff\LarascaffHanlder content(array $data = [], array $mergeData=[])
+ * @method static \Mulaidarinull\Larascaff\LarascaffHanlder registerRoutes()
  */
 class Larascaff extends Facade
 {
@@ -17,6 +18,6 @@ class Larascaff extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'Larascaff';
+        return LarascaffHandler::class;
     }
 }

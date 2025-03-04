@@ -5,7 +5,6 @@ import { glob } from 'glob';
 const entries = glob.sync([
     './resources/scss/*.scss',
     './resources/js/pages/**/{*.ts,*.js}',
-    './vendor/mulaidarinull/larascaff/src/resources/js/{pages}/**/{*.ts,*.js}',
 ], {
     ignore: ['./resources/scss/_*.scss']
 })

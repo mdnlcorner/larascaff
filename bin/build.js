@@ -103,5 +103,20 @@ vendors.forEach(vendor => {
         ],
         outfile: `./dist/vendor/${vendor}.js`,
     })
+})
 
+compile({
+    ...defaultOptions,
+    entryPoints: [
+        `./src/resources/js/app.js`,
+    ],
+    outfile: `./dist/css/app.js`,
+})
+
+compile({
+    ...defaultOptions,
+    entryPoints: [
+        `./src/resources/js/bootstrap.js`,
+    ],
+    outfile: `./dist/js/bootstrap.js`,
 })

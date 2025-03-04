@@ -13,10 +13,16 @@
     'config' => [],
     'columnSpan' => '1'
 ])
-<div x-ignore x-load x-load-src="{{ asset('larascaff/components/datepicker-range.js') }}"
-    x-load-css="['{{ asset('larascaff/components/datepicker-range.css') }}']" x-data="initDatepickerRange({
+<div 
+    x-ignore 
+    x-load 
+    x-load-src="{{ asset('larascaff/components/datepicker-range.js' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
+    x-load-css="['{{ asset('larascaff/components/datepicker-range.css' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
+    x-data="initDatepickerRange({
         ...@js($config)
-    })" @class(['w-full', $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])>
+    })" 
+    @class(['w-full', $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])
+>
     @if ($label)
         <label for="{{ $id }}"
             class="inline-block mb-1 {{ $size == 'sm' ? 'text-xs' : 'text-sm' }}">{{ $label }}</label>

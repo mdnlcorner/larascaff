@@ -4,6 +4,8 @@ namespace Mulaidarinull\Larascaff;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Mulaidarinull\Larascaff\Colors\ColorManager;
+use Mulaidarinull\Larascaff\Facades\LarascaffColor;
 use Mulaidarinull\Larascaff\Models\Record;
 use Mulaidarinull\Larascaff\View\Components\{AppLayout, Auth, GuestLayout};
 
@@ -16,6 +18,9 @@ class LarascaffServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'larascaff');
         Blade::component('larascaff-layout', AppLayout::class);
         Blade::component('larascaff-guest-layout', GuestLayout::class);
+        Blade::directive('larascaffStyles', function (string $expression): string {
+            return "<?php echo \Mulaidarinull\Larascaff\Facades\LarascaffAsset::renderStyles({$expression}) ?>";
+        });
     }
 
     protected function shouldPublishes(): void
@@ -28,7 +33,7 @@ class LarascaffServiceProvider extends ServiceProvider
             ], 'larascaff-config');
 
             $this->publishesMigrations([
-                __DIR__.'/../database/migrations' => database_path('migrations'),
+                __DIR__ . '/../database/migrations' => database_path('migrations'),
             ], 'larascaff-migration');
 
             $this->publishes([
@@ -53,15 +58,26 @@ class LarascaffServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->bind('Larascaff', function ($app) {
-            return new Larascaff();
-        });
-        $this->app->singleton(Record::class, function() {
-            return new Record();
-        });
-        $this->app->singleton(LarascaffConfig::class, function() {
-            return new LarascaffConfig();
-        });
+        $this->app->scoped(
+            LarascaffHandler::class,
+            fn() => new LarascaffHandler()
+        );
+
+        $this->app->scoped(
+            ColorManager::class,
+            fn() => new ColorManager()
+        );
+
+        $this->app->singleton(
+            Record::class,
+            fn() => new Record()
+        );
+
+        $this->app->singleton(
+            LarascaffConfig::class,
+            fn() => new LarascaffConfig()
+        );
+
         $this->mergeConfigFrom(
             __DIR__ . '/../config/larascaff.php',
             'larascaff'

@@ -23,7 +23,10 @@
         </div>
     </div>
 @else
-<div x-ignore x-load x-load-src="{{ asset('larascaff/components/richeditor.js') }}"
+<div 
+    x-ignore 
+    x-load 
+    x-load-src="{{ asset('larascaff/components/richeditor.js' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
     x-data="initRichEditor({
         url: @js(url()->temporarySignedRoute('uploader', now()->addMinutes(60))),
         path: @js($imagePath),
@@ -35,7 +38,8 @@
     @class([
         'w-full form-wrapper',
         $columnSpan != '1' ? 'md:col-span-' . $columnSpan : '',
-    ])>
+    ])
+>
     @if ($label)
         <label for="id_{{ $name }}" class="inline-block mb-1 text-sm">{{ $label }}</label>
     @endif
