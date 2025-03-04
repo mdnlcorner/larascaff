@@ -10,13 +10,10 @@
         <title>{{ ucfirst(last(request()->segments())) . ' - ' . config('app.name', 'Laravel') }}</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" />
         @if ($config->getFavicon())
-        <link rel="icon" href="{{ $config->getFavicon() }} ">
+            <link rel="icon" href="{{ $config->getFavicon() }} ">
         @endif
-        <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
-        rel="stylesheet"
-        />
         <!-- Scripts -->
         <script>
             // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -40,14 +37,12 @@
             })
         </script>
         <script type="module" src="{{ asset('larascaff/vendor/alpine.js') }}"></script>
+        <script type="module" src="{{ asset('larascaff/js/bootstrap.js') }}" ></script>
+        @vite(['resources/js/app.js'])
         
         @larascaffStyles
         
-        @vite(['resources/css/app.css', 'resources/js/app.ts'])
-        
-        <script type="module" src="{{ asset('larascaff/js/bootstrap.js') }}" ></script>
-        
-        
+        @vite(['resources/css/app.css'])
         <link rel="stylesheet" href="{{ asset('larascaff/css/app.css') }}">
         <link rel="stylesheet" href="{{ asset('larascaff/js/bootstrap.css') }}">
         @stack('jsModule')

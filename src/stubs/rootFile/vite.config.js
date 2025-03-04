@@ -23,8 +23,6 @@ export default defineConfig({
                 ...entries,
                 '/resources/css/app.css',
                 '/resources/js/app.js',
-                '/resources/js/app.ts',
-                '/vendor/mulaidarinull/larascaff/src/resources/js/vendor/jquery/jquery.ts'
             ],
             refresh: true,
         }),
