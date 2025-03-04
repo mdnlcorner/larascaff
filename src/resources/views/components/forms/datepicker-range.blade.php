@@ -16,8 +16,8 @@
 <div 
     x-ignore 
     x-load 
-    x-load-src="{{ asset('larascaff/components/datepicker-range.js' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
-    x-load-css="['{{ asset('larascaff/components/datepicker-range.css' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
+    x-load-src="{{ asset('larascaff/components/datepicker-range.js?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
+    x-load-css="['{{ asset('larascaff/components/datepicker-range.css?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
     x-data="initDatepickerRange({
         ...@js($config)
     })" 

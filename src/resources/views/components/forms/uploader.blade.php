@@ -34,7 +34,7 @@
 <div 
     x-ignore 
     x-load 
-    x-load-src="{{ asset('larascaff/components/uploader.js' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}" 
+    x-load-src="{{ asset('larascaff/components/uploader.js?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}" 
     x-load-css="['{{ asset('larascaff/components/uploader.css?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
     x-data="initUploader({
         tempUploadUrl: '{{ url()->temporarySignedRoute('temp-upload', now()->addMinutes(180)) }}',
@@ -119,7 +119,7 @@
                 </div>
                 <div class="flex justify-end w-full gap-2 mt-2">
                     <x-larascaff::button type="button" onclick="window.cropImage()">Crop</x-larascaff::button>
-                    <x-larascaff::button type="button" variant="outline"
+                    <x-larascaff::button type="button" variant="secondary"
                         onclick="window.closeCropper()">Close</x-larascaff::button>
                 </div>
             </div>
