@@ -59,16 +59,16 @@ export default {
                 'fade-out': 'fade-out 250ms ease-in-out',
             },
             colors: {
-                border: "var(--border)",
-                input: "hsl(var(--input))",
-                ring: "hsl(var(--ring))",
+                border: 'var(--border)',
+                input: 'hsl(var(--input))',
+                ring: 'hsl(var(--ring))',
                 background: {
-                    DEFAULT: "var(--background)",
-                    content: "var(--card)"
+                    DEFAULT: 'var(--background)',
+                    content: 'var(--card)'
                 },
-                foreground: "hsl(var(--foreground))",
+                foreground: 'hsl(var(--foreground))',
                 primary: {
-                    DEFAULT: "rgba(var(--primary-500), <alpha-value>)",
+                    DEFAULT: 'rgba(var(--primary-500), <alpha-value>)',
                     50: 'rgba(var(--primary-50), <alpha-value>)',
                     100: 'rgba(var(--primary-100), <alpha-value>)',
                     200: 'rgba(var(--primary-200), <alpha-value>)',
@@ -82,7 +82,7 @@ export default {
                     950: 'rgba(var(--primary-950), <alpha-value>)',
                 },
                 secondary: {
-                    DEFAULT: "rgba(var(--secondary-500), <alpha-value>)",
+                    DEFAULT: 'rgba(var(--secondary-500), <alpha-value>)',
                     50: 'rgba(var(--secondary-50), <alpha-value>)',
                     100: 'rgba(var(--secondary-100), <alpha-value>)',
                     200: 'rgba(var(--secondary-200), <alpha-value>)',
@@ -96,7 +96,7 @@ export default {
                     950: 'rgba(var(--secondary-950), <alpha-value>)',
                 },
                 success: {
-                    DEFAULT: "rgba(var(--success-500), <alpha-value>)",
+                    DEFAULT: 'rgba(var(--success-500), <alpha-value>)',
                     50: 'rgba(var(--success-50), <alpha-value>)',
                     100: 'rgba(var(--success-100), <alpha-value>)',
                     200: 'rgba(var(--success-200), <alpha-value>)',
@@ -110,7 +110,7 @@ export default {
                     950: 'rgba(var(--success-950), <alpha-value>)',
                 },
                 warning: {
-                    DEFAULT: "rgba(var(--warning-500), <alpha-value>)",
+                    DEFAULT: 'rgba(var(--warning-500), <alpha-value>)',
                     50: 'rgba(var(--warning-50), <alpha-value>)',
                     100: 'rgba(var(--warning-100), <alpha-value>)',
                     200: 'rgba(var(--warning-200), <alpha-value>)',
@@ -124,7 +124,7 @@ export default {
                     950: 'rgba(var(--warning-950), <alpha-value>)',
                 },
                 danger: {
-                    DEFAULT: "rgba(var(--danger-500), <alpha-value>)",
+                    DEFAULT: 'rgba(var(--danger-500), <alpha-value>)',
                     50: 'rgba(var(--danger-50), <alpha-value>)',
                     100: 'rgba(var(--danger-100), <alpha-value>)',
                     200: 'rgba(var(--danger-200), <alpha-value>)',
@@ -138,7 +138,7 @@ export default {
                     950: 'rgba(var(--danger-950), <alpha-value>)',
                 },
                 info: {
-                    DEFAULT: "rgba(var(--info-500), <alpha-value>)",
+                    DEFAULT: 'rgba(var(--info-500), <alpha-value>)',
                     50: 'rgba(var(--info-50), <alpha-value>)',
                     100: 'rgba(var(--info-100), <alpha-value>)',
                     200: 'rgba(var(--info-200), <alpha-value>)',
@@ -152,7 +152,7 @@ export default {
                     950: 'rgba(var(--info-950), <alpha-value>)',
                 },
                 dark: {
-                    DEFAULT: "rgba(var(--dark-500), <alpha-value>)",
+                    DEFAULT: 'rgba(var(--dark-500), <alpha-value>)',
                     50: 'rgba(var(--dark-50), <alpha-value>)',
                     100: 'rgba(var(--dark-100), <alpha-value>)',
                     200: 'rgba(var(--dark-200), <alpha-value>)',
@@ -166,28 +166,28 @@ export default {
                     950: 'rgba(var(--dark-950), <alpha-value>)',
                 },
                 muted: {
-                    DEFAULT: "var(--muted)",
-                    foreground: "hsl(var(--muted-foreground))",
+                    DEFAULT: 'var(--muted)',
+                    foreground: 'hsl(var(--muted-foreground))',
                 },
                 popover: {
-                    DEFAULT: "hsl(var(--popover))",
-                    foreground: "hsl(var(--popover-foreground))",
+                    DEFAULT: 'hsl(var(--popover))',
+                    foreground: 'hsl(var(--popover-foreground))',
                 },
                 card: {
-                    DEFAULT: "var(--card)",
-                    foreground: "hsl(var(--card-foreground))",
+                    DEFAULT: 'var(--card)',
+                    foreground: 'hsl(var(--card-foreground))',
                 },
             },
             borderRadius: {
                 primary: '0.4rem',
-                lg: `var(--radius)`,
-                md: `calc(var(--radius) - 2px)`,
-                sm: "calc(var(--radius) - 4px)",
+                lg: 'var(--radius)',
+                md: 'calc(var(--radius) - 2px)',
+                sm: 'calc(var(--radius) - 4px)',
             },
         },
         container: {
             center: true,
-            padding: "1rem",
+            padding: '1rem',
         }
     },
 

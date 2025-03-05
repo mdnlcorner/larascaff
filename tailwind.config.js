@@ -4,6 +4,6 @@ import preset from './tailwind.config.preset'
 export default {
     presets: [preset],
     content: [
-        '../../../vendor/mulaidarinull/larascaff/src/resources/views/**/*.blade.php'
+        '/vendor/mulaidarinull/larascaff/src/resources/views/**/*.blade.php'
     ],
 };

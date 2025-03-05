@@ -21,11 +21,8 @@
         }
     </script>
 
-    @vite(['resources/css/app.css'])
-    
     @larascaffStyles
-
-    <link rel="stylesheet" href="{{ asset('larascaff/css/app.css') }}">
+    @vite(['resources/css/app.css'])
 </head>
 <body class="font-sans antialiased">
     <div class="flex flex-col items-center justify-center w-full min-h-screen p-4 lg:p-6 bg-dark-50 dark:bg-dark-950">

@@ -1,5 +1,3 @@
-import $ from 'jquery'
-
 document.querySelector('#modalAction')?.addEventListener('shownModal', function (e) {
     const el = e.target as HTMLElement
     if ((el.querySelector('form') as HTMLFormElement)?.action?.indexOf('permissions') != -1) {
@@ -9,7 +7,6 @@ document.querySelector('#modalAction')?.addEventListener('shownModal', function 
             $('#menu_permissions tr').show().filter(function (i, item) {
                 return item.innerText.toLowerCase().indexOf(value) == -1
             }).hide()
-
         })
 
         $('.copy').on('change', function (this: HTMLSelectElement) {

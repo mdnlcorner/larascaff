@@ -38,13 +38,11 @@
         </script>
         <script type="module" src="{{ asset('larascaff/vendor/alpine.js') }}"></script>
         <script type="module" src="{{ asset('larascaff/js/bootstrap.js') }}" ></script>
-        @vite(['resources/js/app.js'])
+        <link rel="stylesheet" href="{{ asset('larascaff/js/bootstrap.css') }}">
         
         @larascaffStyles
         
-        @vite(['resources/css/app.css'])
-        <link rel="stylesheet" href="{{ asset('larascaff/css/app.css') }}">
-        <link rel="stylesheet" href="{{ asset('larascaff/js/bootstrap.css') }}">
+        @vite(['resources/css/app.css','resources/js/app.js'])
         @stack('jsModule')
         @stack('css')
     </head>

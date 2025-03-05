@@ -52,7 +52,7 @@ class Install extends BaseCommand
             ],
             app_path('Providers/LarascaffServiceProvider.php')
         );
-        
+
         $this->components->info('Copying asset file');
 
         $this->filesystem->copy(__DIR__ . '/../../stubs/bootstrap/providers.php', base_path('bootstrap/providers.php'));
@@ -64,7 +64,6 @@ class Install extends BaseCommand
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/resources', base_path('resources'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Requests', app_path('Http/Requests'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Larascaff', app_path('Larascaff'));
-        // $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Providers', app_path('Providers'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/routes', base_path('routes'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/seeders', database_path('seeders'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/rootFile', base_path(''));
@@ -76,47 +75,28 @@ class Install extends BaseCommand
         $this->call('vendor:publish', [
             '--tag' => 'larascaff-migration'
         ]);
-        
+
         $this->call('vendor:publish', [
             '--tag' => 'larascaff-config'
         ]);
-
 
         // NPM Packages...
         $this->updateNodePackages(function ($packages) {
             return [
                 "@tailwindcss/forms" => "^0.5.2",
                 "@tailwindcss/typography" => "^0.5.12",
-                "@types/dropzone" => "^5.7.8",
-                "@types/nprogress" => "^0.2.3",
                 "autoprefixer" => "^10.4.2",
                 "axios" => "^1.6.4",
                 "glob" => "^10.3.12",
                 "laravel-vite-plugin" => "^1.0",
                 "postcss" => "^8.4.31",
-                "sass" => "^1.83.0",
                 "tailwind-merge" => "^2.5.2",
                 "tailwindcss" => "^3.3.1",
                 "vite" => "^5.0",
             ] + $packages;
         });
         $this->updateNodePackages(function ($packages) {
-            return [
-                "@fullcalendar/core" => "^6.1.11",
-                "@fullcalendar/daygrid" => "^6.1.11",
-                "@fullcalendar/interaction" => "^6.1.11",
-                "@fullcalendar/list" => "^6.1.11",
-                "@fullcalendar/timegrid" => "^6.1.11",
-                "@popperjs/core" => "^2.11.8",
-                "dropzone" => "^6.0.0-beta.2",
-                "flatpickr" => "^4.6.13",
-                "izitoast" => "^1.4.0",
-                "jquery" => "3.7.1",
-                "simplebar" => "^6.2.5",
-                "sweetalert2" => "^11.12.4",
-                "swiper" => "^11.1.9",
-                "nprogress" => "^0.2.0",
-            ] + $packages;
+            return [] + $packages;
         }, false);
 
         $this->components->info('Installing and building Node dependencies.');
