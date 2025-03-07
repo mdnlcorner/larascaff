@@ -6,7 +6,6 @@ use App\Models\Media;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Http\File;
-use Illuminate\Support\Facades\File as FacadesFile;
 use Illuminate\Support\Facades\Storage;
 
 trait HasMedia
@@ -16,6 +15,9 @@ trait HasMedia
         return $this->morphMany(Media::class, 'model');
     }
 
+    /**
+     * @return MorphOne<Media, $this>
+     */
     public function singleMedia(): MorphOne
     {
         return $this->morphOne(Media::class, 'model');

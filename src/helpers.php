@@ -130,7 +130,7 @@ if (!function_exists('convertDate')) {
 
 
 if (!function_exists('user')) {
-    function user($key = null): string | null | \App\Models\User
+    function user($key = null): string | int | null | \App\Models\User
     {
         if ($key) {
             return request()->user()?->{$key};

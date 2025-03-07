@@ -21,7 +21,7 @@ abstract class BaseModule extends Controller
 {
     use HasPermission, HasMenuPermission;
     /**
-     * @var Model $model
+     * @var \Illuminate\Database\Eloquent\Model|string
      */
     protected $model;
     protected string $viewShow = '';
@@ -641,7 +641,7 @@ abstract class BaseModule extends Controller
         return $this->url;
     }
 
-    public function makeRoute($url, string | Closure | array $action = null, $method = 'get', $name = null)
+    public function makeRoute($url, string|Closure|array|null $action = null, $method = 'get', $name = null)
     {
         return compact('method', 'action', 'url', 'name');
     }

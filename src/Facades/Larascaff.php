@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Facade;
 use Mulaidarinull\Larascaff\LarascaffHandler;
 
 /**
- * @method static \Mulaidarinull\Larascaff\LarascaffHanlder content(array $data = [], array $mergeData=[])
- * @method static \Mulaidarinull\Larascaff\LarascaffHanlder registerRoutes()
+ * @method static \Mulaidarinull\Larascaff\LarascaffHandler content(array $data = [], array $mergeData=[])
+ * @method static \Mulaidarinull\Larascaff\LarascaffHandler registerRoutes()
  */
 class Larascaff extends Facade
 {

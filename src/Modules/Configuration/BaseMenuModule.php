@@ -12,6 +12,9 @@ use Yajra\DataTables\Html\Column;
 
 class BaseMenuModule extends BaseModule
 {
+    /**
+     * @var Illuminate\Database\Eloquent\Model|string
+     */
     protected $model = Menu::class;
     protected string $viewShow = 'larascaff::pages.menu-form';
     protected string $viewAction = 'larascaff::pages.menu-form';

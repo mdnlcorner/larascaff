@@ -2,9 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Console\Commands;
 
-use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\File;
 use Symfony\Component\Process\Process;
 use function Laravel\Prompts\{text};
 
@@ -81,23 +79,21 @@ class Install extends BaseCommand
         ]);
 
         // NPM Packages...
-        $this->updateNodePackages(function ($packages) {
+        $this->updateNodePackages(callback: function ($packages) {
             return [
                 "@tailwindcss/forms" => "^0.5.2",
                 "@tailwindcss/typography" => "^0.5.12",
                 "autoprefixer" => "^10.4.2",
-                "axios" => "^1.6.4",
                 "glob" => "^10.3.12",
                 "laravel-vite-plugin" => "^1.0",
-                "postcss" => "^8.4.31",
                 "tailwind-merge" => "^2.5.2",
-                "tailwindcss" => "^3.3.1",
-                "vite" => "^5.0",
+                "tailwindcss" => "^3.4.13",
             ] + $packages;
-        });
-        $this->updateNodePackages(function ($packages) {
-            return [] + $packages;
-        }, false);
+        }, dev: true);
+
+        $this->updateNodePackages(callback: function ($packages) {
+            return $packages;
+        }, dev: false);
 
         $this->components->info('Installing and building Node dependencies.');
 
@@ -166,7 +162,7 @@ class Install extends BaseCommand
 
         file_put_contents(
             base_path('package.json'),
-            json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
+            json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_FORCE_OBJECT) . PHP_EOL
         );
     }
 }

@@ -1,6 +1,5 @@
 {
     "name": "mulaidarinull/larascaff",
-    "type": "library",
     "description": "Admin dashboard scaffolding with role and permission",
     "keywords": [
         "laravel",
@@ -9,6 +8,7 @@
         "dashboard"
     ],
     "license": "MIT",
+    "homepage": "https://github.com/mdnlcorner/larascaff",
     "support": {
         "issues": "https://github.com/mdnlcorner/larascaff/issues",
         "source": "https://github.com/mdnlcorner/larascaff"
@@ -26,7 +26,27 @@
         "mavinoo/laravel-batch": "^2.4",
         "gehrisandro/tailwind-merge-laravel": "^1.2",
         "secondnetwork/blade-tabler-icons": "^3.28",
-        "spatie/color": "^1.8"
+        "spatie/color": "^1.8",
+        "illuminate/auth": "^11.0",
+        "illuminate/contracts": "^11.0",
+        "illuminate/container": "^11.0",
+        "illuminate/validation": "^11.0",
+        "illuminate/notifications": "^11.0",
+        "illuminate/bus": "^11.0",
+        "illuminate/console": "^11.0",
+        "illuminate/database": "^11.0",
+        "illuminate/http": "^11.0",
+        "illuminate/routing": "^11.0",
+        "illuminate/session": "^11.0",
+        "illuminate/support": "^11.0",
+        "illuminate/view": "^11.0",
+        "illuminate/filesystem": "^11"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0"
+    },
+    "scripts": {
+        "stan": "./vendor/bin/phpstan analyse --memory-limit=2G --ansi --no-progress --no-interaction --configuration=phpstan.neon"
     },
     "autoload": {
         "psr-4": {
@@ -44,6 +64,9 @@
             "aliases": {
                 "Larascaff": "Mulaidarinull\\Larascaff\\Facades\\Larascaff"
             }
+        },
+        "branch-alias": {
+            "dev-master": "11.x-dev"
         }
     },
     "minimum-stability": "dev",
