@@ -10,9 +10,10 @@ class ModuleAction
     {
         if ($request->ajax()) {
             $request->validate(['module' => 'required', 'method' => 'required']);
-            if (!class_exists($request->module)) {
+            if (! class_exists($request->module)) {
                 return responseError('Class not exist');
             }
+
             return $request->module::{$request->method}($request);
         }
         abort(404);

@@ -4,7 +4,6 @@ namespace Mulaidarinull\Larascaff\Models\Configuration;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Permission\Models\Permission as ModelsPermission;
 
 class Permission extends ModelsPermission
@@ -18,7 +17,7 @@ class Permission extends ModelsPermission
 
     public function action(): Attribute
     {
-        return Attribute::make(get: function($value, $attr) {
+        return Attribute::make(get: function ($value, $attr) {
             return explode(' ', $attr['name'])[0];
         });
     }

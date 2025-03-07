@@ -9,14 +9,19 @@ use Mulaidarinull\Larascaff\Components\Concerns\HasComponent;
 class Info
 {
     use HasColumnSpan, HasComponent;
-    protected string | null $label = '';
+
+    protected ?string $label = '';
+
     protected string|array $placeholder = '';
+
     protected bool $show = true;
+
     protected $value = null;
 
     public function value($value)
     {
         $this->value = $value;
+
         return $this;
     }
 
@@ -27,6 +32,7 @@ class Info
         } else {
             $this->show = $show;
         }
+
         return $this;
     }
 
@@ -47,6 +53,7 @@ class Info
     public function name(string|array $name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -55,24 +62,27 @@ class Info
         return $this->name;
     }
 
-    public function label(string|null $name = null)
+    public function label(?string $name = null)
     {
         $this->label = $name;
+
         return $this;
     }
 
     public function placeholder(string|array $name)
     {
         $this->placeholder = $name;
+
         return $this;
     }
 
     public function render()
     {
         $view = '';
-        foreach($this->components as $component) {
-            $view.= $component->view();
+        foreach ($this->components as $component) {
+            $view .= $component->view();
         }
+
         return $view;
     }
 }

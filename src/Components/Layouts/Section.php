@@ -3,28 +3,34 @@
 namespace Mulaidarinull\Larascaff\Components\Layouts;
 
 use Illuminate\Support\Facades\Blade;
-use Mulaidarinull\Larascaff\Components\Concerns\{HasCollapsible, HasColumnSpan, HasComponent, HasModule, HasRelationship};
+use Mulaidarinull\Larascaff\Components\Concerns\HasCollapsible;
+use Mulaidarinull\Larascaff\Components\Concerns\HasColumnSpan;
+use Mulaidarinull\Larascaff\Components\Concerns\HasComponent;
+use Mulaidarinull\Larascaff\Components\Concerns\HasModule;
+use Mulaidarinull\Larascaff\Components\Concerns\HasRelationship;
 
 class Section
 {
-    use HasRelationship, HasComponent, HasColumnSpan, HasCollapsible, HasModule;
+    use HasCollapsible, HasColumnSpan, HasComponent, HasModule, HasRelationship;
 
-    protected string|null $description = null;
+    protected ?string $description = null;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->columnSpan = 'full';
     }
 
     public function description(string $description)
     {
         $this->description = $description;
+
         return $this;
     }
 
     public function view()
     {
         $slot = '';
-        foreach($this->components as $component) {
+        foreach ($this->components as $component) {
             if (method_exists($component, 'module')) {
                 $component->module($this->module);
             }

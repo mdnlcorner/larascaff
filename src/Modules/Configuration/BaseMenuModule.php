@@ -16,13 +16,17 @@ class BaseMenuModule extends BaseModule
      * @var Illuminate\Database\Eloquent\Model|string
      */
     protected $model = Menu::class;
+
     protected string $viewShow = 'larascaff::pages.menu-form';
+
     protected string $viewAction = 'larascaff::pages.menu-form';
+
     protected string $modalSize = 'md';
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
-        $this->actions('sort', url($this->url. '/sort'), 'Sort menu', 'POST');
+        $this->actions('sort', url($this->url.'/sort'), 'Sort menu', 'POST');
     }
 
     public function routes(): array
@@ -49,7 +53,8 @@ class BaseMenuModule extends BaseModule
 
         Cache::forget('menus');
 
-        BatchFacade::update(new Menu(), $data, 'id');
+        BatchFacade::update(new Menu, $data, 'id');
+
         return responseSuccess();
     }
 
@@ -72,6 +77,7 @@ class BaseMenuModule extends BaseModule
                     ->addColumn('permission', function (Menu $menu) {
                         return $menu->permissions->pluck('name')->map(function ($item) {
                             $item = explode(' ', $item)[0];
+
                             return $item;
                         })->implode(', ');
                     });
@@ -91,15 +97,15 @@ class BaseMenuModule extends BaseModule
     public function shareData(Menu $menu)
     {
         $this->addDataToview([
-            'mainMenus' => Menu::where('id', '!=', $menu->id)->get()->map(fn($menu) => ['label' => $menu->name, 'value' => $menu->id]),
-            'permissions' => $menu->permissions->pluck('name')->map(fn($item) => explode(' ', $item)[0]),
+            'mainMenus' => Menu::where('id', '!=', $menu->id)->get()->map(fn ($menu) => ['label' => $menu->name, 'value' => $menu->id]),
+            'permissions' => $menu->permissions->pluck('name')->map(fn ($item) => explode(' ', $item)[0]),
         ]);
     }
 
     public function afterStore(Request $request, Menu $menu)
     {
         foreach ($request->permissions ?? [] as $permission) {
-            $menu->permissions()->create(['name' => $permission . " {$menu->url}"]);
+            $menu->permissions()->create(['name' => $permission." {$menu->url}"]);
         }
         Cache::forget('menus');
         Cache::forget('urlMenu');
@@ -115,17 +121,16 @@ class BaseMenuModule extends BaseModule
             return in_array($item->action, $basic);
         });
 
-
         // detach and delete if user remove permission prof menu
         foreach ($ownedBasicPermission as $permission) {
-            if (!in_array($permission->action, $request->permissions)) {
+            if (! in_array($permission->action, $request->permissions)) {
                 $permission->delete();
             }
         }
         // attach and create if not exist
         foreach ($request->permissions as $permission) {
             if ($ownedBasicPermission->pluck('action')->doesntContain($permission)) {
-                $menu->permissions()->create(['name' => $permission . ' ' . $menu->url]);
+                $menu->permissions()->create(['name' => $permission.' '.$menu->url]);
             }
         }
         Cache::forget('menus');

@@ -14,7 +14,9 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     protected string $url = 'profile';
+
     protected string $pageTitle = 'Profile';
+
     /**
      * Display the user's profile form.
      */
@@ -32,8 +34,9 @@ class ProfileController extends Controller
                 ->imageEditor()
                 ->disk('local')
                 ->label('')
-                ->field('avatar')
+                ->field('avatar'),
         ]);
+
         return view('larascaff::main-content', [
             'view' => $view,
             'pageTitle' => $this->pageTitle,
@@ -60,6 +63,7 @@ class ProfileController extends Controller
     public function avatar(Request $request)
     {
         $request->user()->updateMedia('profile', $request->avatar, 'avatar');
+
         return Redirect::route('profile.edit')->with('status', 'avatar-updated');
     }
 

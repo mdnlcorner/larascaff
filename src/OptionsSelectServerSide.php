@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 class OptionsSelectServerSide
 {
     protected Request $request;
+
     protected string $columnValue;
+
     protected string $columnLabel;
 
     public function __invoke(Request $request)
@@ -25,14 +27,14 @@ class OptionsSelectServerSide
                         $module = new $moduleName[0];
                         $name = $moduleName[1];
                         setRecord($module->getModel());
-                        foreach($module->formBuilder(new \Mulaidarinull\Larascaff\Components\Forms\Form)->getComponents() as $component) {
-                            if(method_exists($component, 'getComponents')) {
-                                foreach($component->getComponents() as $childComp) {
+                        foreach ($module->formBuilder(new \Mulaidarinull\Larascaff\Components\Forms\Form)->getComponents() as $component) {
+                            if (method_exists($component, 'getComponents')) {
+                                foreach ($component->getComponents() as $childComp) {
                                     if ($childComp->getName() == $name) {
                                         $childComp->getModifyQuery()($query);
                                     }
                                 }
-                            } else if ($component->getName() == $name) {
+                            } elseif ($component->getName() == $name) {
                                 $component->getModifyQuery()($query);
                             }
                         }
@@ -43,6 +45,7 @@ class OptionsSelectServerSide
                     // multipe select
                     if (str_contains($this->request->get('value'), ',')) {
                         $value = explode(',', $this->request->get('value'));
+
                         return $query->whereNotIn($this->columnValue, $value);
                     }
                     $query->where($this->columnValue, '!=', $this->request->get('value'));
@@ -58,10 +61,11 @@ class OptionsSelectServerSide
                         'label' => $item->{$this->columnLabel},
                         'value' => $item->{$this->columnValue},
                     ];
+
                     return $res;
                 });
 
-            if ($request->filled('value') && !$request->filled('search')) {
+            if ($request->filled('value') && ! $request->filled('search')) {
                 // multiple select
                 if (str_contains($this->request->get('value'), ',')) {
                     $value = explode(',', $this->request->get('value'));

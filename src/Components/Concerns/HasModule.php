@@ -9,6 +9,7 @@ trait HasModule
     public function module($module)
     {
         $this->module = $module;
+
         return $this;
     }
 

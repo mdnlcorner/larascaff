@@ -25,35 +25,40 @@ class RichEditor extends Field
     ];
 
     protected string $imagePath = 'images';
+
     protected int $imageMaxSize = 2048;
 
     public function imageMaxSize(string $imageMaxSize)
     {
         $this->imageMaxSize = $imageMaxSize;
+
         return $this;
     }
 
     public function imagePath(string $imagePath)
     {
         $this->imagePath = $imagePath;
+
         return $this;
     }
 
     public function toolbar(array $toolbar)
     {
         $this->toolbar = $toolbar;
+
         return $this;
     }
 
     public function disableToolbar(array $disable)
     {
         $newToolbar = [];
-        foreach($this->toolbar as $toolbar) {
-            if (!in_array($toolbar, $disable)) {
+        foreach ($this->toolbar as $toolbar) {
+            if (! in_array($toolbar, $disable)) {
                 $newToolbar[] = $toolbar;
             }
         }
         $this->toolbar = $newToolbar;
+
         return $this;
     }
 
@@ -62,6 +67,7 @@ class RichEditor extends Field
         if (is_null($this->value)) {
             $this->value = getRecord($this->name);
         }
+
         return Blade::render(
             <<<'HTML'
             <x-larascaff::forms.rich-editor 

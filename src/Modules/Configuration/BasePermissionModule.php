@@ -17,6 +17,7 @@ use Yajra\DataTables\Html\Column;
 class BasePermissionModule extends BaseModule
 {
     protected $model = Permission::class;
+
     protected string $modalSize = 'md';
 
     public function validationRules(): array
@@ -24,7 +25,7 @@ class BasePermissionModule extends BaseModule
         return [
             'name' => ['required', Rule::unique('permissions')->ignore($this->model)],
             'guard_name' => 'required',
-            'menu_id' => 'required'
+            'menu_id' => 'required',
         ];
     }
 
@@ -53,7 +54,7 @@ class BasePermissionModule extends BaseModule
                 ->searchable()
                 ->placeholder('Choose Menu')
                 ->serverSide(Menu::class)
-                ->relationship('menu', 'name')
+                ->relationship('menu', 'name'),
         ]);
     }
 
@@ -61,7 +62,7 @@ class BasePermissionModule extends BaseModule
     {
         $this->addDataToview([
             'menus' => Menu::active()->get()
-                ->map(fn($menu) => ['label' => $menu->name, 'value' => $menu->id])
+                ->map(fn ($menu) => ['label' => $menu->name, 'value' => $menu->id]),
         ]);
     }
 }

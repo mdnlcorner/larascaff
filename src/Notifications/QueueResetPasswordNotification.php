@@ -8,5 +8,5 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class QueueResetPasswordNotification extends ResetPassword implements ShouldQueue
 {
-    use Queueable;   
+    use Queueable;
 }

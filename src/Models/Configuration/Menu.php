@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Menu extends Model
 {
     use HasFactory;
+
     protected $fillable = ['name', 'url', 'category', 'orders', 'main_menu_id', 'icon', 'active'];
 
     public function __construct()

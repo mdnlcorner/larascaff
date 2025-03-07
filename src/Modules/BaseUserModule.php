@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Mulaidarinull\Larascaff\BaseModule;
-use Mulaidarinull\Larascaff\Components\Forms\{Form, TextInput, Radio, Select};
+use Mulaidarinull\Larascaff\Components\Forms\Form;
+use Mulaidarinull\Larascaff\Components\Forms\Radio;
+use Mulaidarinull\Larascaff\Components\Forms\Select;
+use Mulaidarinull\Larascaff\Components\Forms\TextInput;
 use Mulaidarinull\Larascaff\Components\Layouts\Section;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
@@ -17,12 +20,13 @@ use Yajra\DataTables\Html\Column;
 class BaseUserModule extends BaseModule
 {
     protected $model = User::class;
+
     protected string $modalSize = 'md';
 
     public function __construct()
     {
         parent::__construct();
-        $this->tableActions(permission: 'update-permissions', action: url($this->url . '/{{id}}/permissions'), label: 'Permissions', icon: 'tabler-shield');
+        $this->tableActions(permission: 'update-permissions', action: url($this->url.'/{{id}}/permissions'), label: 'Permissions', icon: 'tabler-shield');
     }
 
     public function validationRules()
@@ -34,7 +38,7 @@ class BaseUserModule extends BaseModule
                 return request()->routeIs('users.store');
             })],
             'roles' => 'nullable',
-            'gender' => ['required', 'in:Male,Female']
+            'gender' => ['required', 'in:Male,Female'],
         ];
     }
 
@@ -53,27 +57,31 @@ class BaseUserModule extends BaseModule
     public function editPermissions(User $user)
     {
         $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
-        $users = User::query()->where('id', '!=', $user->id)->get()->map(fn($user) => ['label' => $user->name, 'value' => $user->id]);
+        $users = User::query()->where('id', '!=', $user->id)->get()->map(fn ($user) => ['label' => $user->name, 'value' => $user->id]);
         $view = view('larascaff::pages.user-permission-form', [
             'data' => $user,
             'menus' => $menus,
             'users' => $users,
         ]);
         $prefix = getPrefix();
-        if ($prefix) $prefix .= '.';
+        if ($prefix) {
+            $prefix .= '.';
+        }
+
         return $this->form($view, [
             'method' => 'PUT',
             'title' => 'Permission User',
-            'action' => route($prefix . 'users.permissions.update', $user->{$user->getRouteKeyName()}),
-            'size' => 'lg'
+            'action' => route($prefix.'users.permissions.update', $user->{$user->getRouteKeyName()}),
+            'size' => 'lg',
         ]);
     }
 
     public function updatePermissions(Request $request, User $user)
     {
-        Gate::authorize('update-permissions ' . $this->url);
+        Gate::authorize('update-permissions '.$this->url);
 
         $user->syncPermissions($request->permissions);
+
         return responseSuccess();
     }
 
@@ -97,7 +105,7 @@ class BaseUserModule extends BaseModule
                 ->multiple()
                 ->relationship('roles', 'name')
                 ->columnLabel('name')
-                ->columnValue('id')
+                ->columnValue('id'),
         ]);
     }
 
@@ -110,13 +118,13 @@ class BaseUserModule extends BaseModule
                 'options' => [
                     'Male' => 'Male',
                     'Female' => 'Female',
-                ]
+                ],
             ],
             [
                 'type' => 'nullable',
                 'name' => 'email_verified_at',
-                'label' => 'Is Verified'
-            ]
+                'label' => 'Is Verified',
+            ],
         ];
     }
 
@@ -134,9 +142,8 @@ class BaseUserModule extends BaseModule
         $table
             ->customizeColumn(function (EloquentDataTable $eloquentDataTable) {
                 $eloquentDataTable
-                    ->editColumn('created_at', fn(User $user) => $user->created_at->format('d-m-Y H:i'))
-                    ->editColumn('updated_at', fn(User $user) => $user->updated_at->format('d-m-Y H:i'))
-                ;
+                    ->editColumn('created_at', fn (User $user) => $user->created_at->format('d-m-Y H:i'))
+                    ->editColumn('updated_at', fn (User $user) => $user->updated_at->format('d-m-Y H:i'));
             })
             ->columns(function (\Mulaidarinull\Larascaff\Datatable\HtmlBuilder $builder) {
                 $builder
@@ -153,13 +160,13 @@ class BaseUserModule extends BaseModule
     public function beforeStore(Request $request, User $user)
     {
         $request->merge([
-            'password' => bcrypt($request->password)
+            'password' => bcrypt($request->password),
         ]);
     }
 
     public function beforeUpdate(Request $request, User $user)
     {
-        if (!$request->password) {
+        if (! $request->password) {
             $request->merge(['password' => $user->password]);
         } else {
             $request->merge(['password' => bcrypt($request->password)]);

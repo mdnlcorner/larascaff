@@ -8,7 +8,7 @@ class Media extends Info
 {
     protected bool $rounded = false;
 
-    public static function make(string | null $name = null): static
+    public static function make(?string $name = null): static
     {
         $static = app(static::class);
         $static->name = $name;
@@ -19,6 +19,7 @@ class Media extends Info
     public function rounded(bool $rounded = true)
     {
         $this->rounded = $rounded;
+
         return $this;
     }
 

@@ -16,12 +16,13 @@ use Yajra\DataTables\Html\Column;
 class BaseRoleModule extends BaseModule
 {
     protected $model = Role::class;
+
     protected string $modalSize = 'md';
 
     public function __construct()
     {
         parent::__construct();
-        $this->tableActions(permission: 'update-permissions', action: url($this->url . '/{{id}}/permissions'), label:'Permissions', icon: 'tabler-shield');
+        $this->tableActions(permission: 'update-permissions', action: url($this->url.'/{{id}}/permissions'), label: 'Permissions', icon: 'tabler-shield');
     }
 
     public function formBuilder(Form $form): Form
@@ -63,6 +64,7 @@ class BaseRoleModule extends BaseModule
     public function getPermissionsByRole($id)
     {
         $role = Role::findOrNew($id);
+
         return view('larascaff::pages.role-permission-items', [
             'data' => $role,
             'menus' => Menu::active()->with(['subMenus' => function ($query) {
@@ -76,27 +78,31 @@ class BaseRoleModule extends BaseModule
     public function editPermissions(Role $role)
     {
         $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
-        $roles = Role::query()->where('id', '!=', $role->id)->get()->map(fn($role) => ['label' => $role->name, 'value' => $role->id]);
+        $roles = Role::query()->where('id', '!=', $role->id)->get()->map(fn ($role) => ['label' => $role->name, 'value' => $role->id]);
         $view = view('larascaff::pages.role-permission-form', [
             'data' => $role,
             'menus' => $menus,
             'roles' => $roles,
         ]);
         $prefix = getPrefix();
-        if ($prefix) $prefix .= '.';
+        if ($prefix) {
+            $prefix .= '.';
+        }
+
         return $this->form($view, [
             'method' => 'PUT',
             'title' => 'Permission Role',
-            'action' => route($prefix . 'configuration.roles.permissions.update', $role->{$role->getRouteKeyName()}),
-            'size' => 'lg'
+            'action' => route($prefix.'configuration.roles.permissions.update', $role->{$role->getRouteKeyName()}),
+            'size' => 'lg',
         ]);
     }
 
     public function updatePermissions(Request $request, Role $role)
     {
-        Gate::authorize('update-permissions ' . $this->url);
+        Gate::authorize('update-permissions '.$this->url);
 
         $role->syncPermissions($request->permissions);
+
         return responseSuccess();
     }
 }

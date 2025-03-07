@@ -11,6 +11,7 @@ class Radio extends Field
     public function options($options)
     {
         $this->options = $options;
+
         return $this;
     }
 

@@ -2,7 +2,6 @@
 
 namespace Mulaidarinull\Larascaff\Notifications;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -11,7 +10,9 @@ use Mulaidarinull\Larascaff\Notifications\Channels\DatabaseChannel;
 class NotificationHandler extends Notification
 {
     protected $user;
+
     protected array $channels = [];
+
     /**
      * Create a new notification instance.
      */
@@ -28,6 +29,7 @@ class NotificationHandler extends Notification
     public function setPriority(int $priority)
     {
         $this->priority = $priority;
+
         return $this;
     }
 
@@ -42,8 +44,10 @@ class NotificationHandler extends Notification
     public function addChannel(string $channel)
     {
         $this->channels[] = $channel;
+
         return $this;
     }
+
     /**
      * Get the notification's delivery channels.
      *
@@ -66,8 +70,8 @@ class NotificationHandler extends Notification
                 'title' => $this->title,
                 'message' => $this->message,
                 'action' => $this->action,
-                'actionLabel' => $this->actionLabel
-            ]
+                'actionLabel' => $this->actionLabel,
+            ],
         ];
     }
 

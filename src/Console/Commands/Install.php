@@ -4,7 +4,8 @@ namespace Mulaidarinull\Larascaff\Console\Commands;
 
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
-use function Laravel\Prompts\{text};
+
+use function Laravel\Prompts\text;
 
 class Install extends BaseCommand
 {
@@ -13,6 +14,7 @@ class Install extends BaseCommand
         parent::__construct(new Filesystem);
         $this->filesystemystem = $filesystem;
     }
+
     /**
      * The name and signature of the console command.
      *
@@ -38,56 +40,56 @@ class Install extends BaseCommand
         $this->saveStub(
             $this->resolveStubPath('/../../stubs/bootstrap/app.php'),
             [
-                '{{ dashboard }}' => $prefix ? $prefix . '/dashboard' : '/dashboard'
+                '{{ dashboard }}' => $prefix ? $prefix.'/dashboard' : '/dashboard',
             ],
-            $this->laravel->basePath("bootstrap/app.php")
+            $this->laravel->basePath('bootstrap/app.php')
         );
         // copy an d set service providers
         $this->saveStub(
             $this->resolveStubPath('/../../stubs/Providers/LarascaffServiceProvider.php'),
             [
-                '{{ prefix }}' => $prefix
+                '{{ prefix }}' => $prefix,
             ],
             app_path('Providers/LarascaffServiceProvider.php')
         );
 
         $this->components->info('Copying asset file');
 
-        $this->filesystem->copy(__DIR__ . '/../../stubs/bootstrap/providers.php', base_path('bootstrap/providers.php'));
-        $this->filesystem->copy(__DIR__ . '/../../stubs/UserFactory.php', database_path('factories/UserFactory.php'));
-        $this->filesystem->copy(__DIR__ . '/../../stubs/User.php', app_path('Models/User.php'));
-        $this->filesystem->copy(__DIR__ . '/../../stubs/Media.php', app_path('Models/Media.php'));
+        $this->filesystem->copy(__DIR__.'/../../stubs/bootstrap/providers.php', base_path('bootstrap/providers.php'));
+        $this->filesystem->copy(__DIR__.'/../../stubs/UserFactory.php', database_path('factories/UserFactory.php'));
+        $this->filesystem->copy(__DIR__.'/../../stubs/User.php', app_path('Models/User.php'));
+        $this->filesystem->copy(__DIR__.'/../../stubs/Media.php', app_path('Models/Media.php'));
 
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Auth', app_path('Http/Controllers/Auth'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/resources', base_path('resources'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Requests', app_path('Http/Requests'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Larascaff', app_path('Larascaff'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/routes', base_path('routes'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/seeders', database_path('seeders'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/rootFile', base_path(''));
+        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/Auth', app_path('Http/Controllers/Auth'));
+        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/resources', base_path('resources'));
+        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/Requests', app_path('Http/Requests'));
+        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/Larascaff', app_path('Larascaff'));
+        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/routes', base_path('routes'));
+        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/seeders', database_path('seeders'));
+        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/rootFile', base_path(''));
 
-        if (!$this->filesystem->isDirectory(public_path('larascaff')) && !is_link(public_path('larascaff'))) {
+        if (! $this->filesystem->isDirectory(public_path('larascaff')) && ! is_link(public_path('larascaff'))) {
             $this->call('larascaff:link-asset');
         }
 
         $this->call('vendor:publish', [
-            '--tag' => 'larascaff-migration'
+            '--tag' => 'larascaff-migration',
         ]);
 
         $this->call('vendor:publish', [
-            '--tag' => 'larascaff-config'
+            '--tag' => 'larascaff-config',
         ]);
 
         // NPM Packages...
         $this->updateNodePackages(callback: function ($packages) {
             return [
-                "@tailwindcss/forms" => "^0.5.2",
-                "@tailwindcss/typography" => "^0.5.12",
-                "autoprefixer" => "^10.4.2",
-                "glob" => "^10.3.12",
-                "laravel-vite-plugin" => "^1.0",
-                "tailwind-merge" => "^2.5.2",
-                "tailwindcss" => "^3.4.13",
+                '@tailwindcss/forms' => '^0.5.2',
+                '@tailwindcss/typography' => '^0.5.12',
+                'autoprefixer' => '^10.4.2',
+                'glob' => '^10.3.12',
+                'laravel-vite-plugin' => '^1.0',
+                'tailwind-merge' => '^2.5.2',
+                'tailwindcss' => '^3.4.13',
             ] + $packages;
         }, dev: true);
 
@@ -127,19 +129,18 @@ class Install extends BaseCommand
             try {
                 $process->setTty(true);
             } catch (\RuntimeException $e) {
-                $this->output->writeln('  <bg=yellow;fg=black> WARN </> ' . $e->getMessage() . PHP_EOL);
+                $this->output->writeln('  <bg=yellow;fg=black> WARN </> '.$e->getMessage().PHP_EOL);
             }
         }
 
         $process->run(function ($type, $line) {
-            $this->output->write('    ' . $line);
+            $this->output->write('    '.$line);
         });
     }
 
     /**
      * Update the "package.json" file.
      *
-     * @param  callable  $callback
      * @param  bool  $dev
      * @return void
      */
@@ -162,7 +163,7 @@ class Install extends BaseCommand
 
         file_put_contents(
             base_path('package.json'),
-            json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_FORCE_OBJECT) . PHP_EOL
+            json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_FORCE_OBJECT).PHP_EOL
         );
     }
 }

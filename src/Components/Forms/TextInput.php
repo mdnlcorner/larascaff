@@ -7,60 +7,76 @@ use Illuminate\Support\Facades\Blade;
 class TextInput extends Field
 {
     protected string $type = 'input';
+
     protected string $mask = '';
+
     protected array $removeMask = [];
+
     protected bool $revealable = false;
-    protected string|null $appendIcon = null;
-    protected string|null $appendIconBtn = null;
-    protected string|null $prependIcon = null;
-    protected string|null $prependIconBtn = null;
-    protected array|null $numberFormat = null;
+
+    protected ?string $appendIcon = null;
+
+    protected ?string $appendIconBtn = null;
+
+    protected ?string $prependIcon = null;
+
+    protected ?string $prependIconBtn = null;
+
+    protected ?array $numberFormat = null;
 
     public function mask(string $mask)
     {
         $this->mask = $mask;
+
         return $this;
     }
 
     public function password(bool $password = true)
     {
         $this->type = $password ? 'password' : 'text';
+
         return $this;
     }
 
     public function revealable(bool $revealable = true)
     {
         $this->revealable = $revealable;
+
         return $this;
     }
 
     public function appendIcon(string $appendIcon)
     {
         $this->appendIcon = $appendIcon;
+
         return $this;
     }
 
     public function appendIconBtn(string $appendIconBtn)
     {
         $this->appendIconBtn = $appendIconBtn;
+
         return $this;
     }
 
     public function prependIcon(string $prependIcon)
     {
         $this->prependIcon = $prependIcon;
+
         return $this;
     }
 
     public function prependIconBtn(string $prependIconBtn)
     {
         $this->prependIconBtn = $prependIconBtn;
+
         return $this;
     }
 
     public function numberFormat(?string $thousandSeparator = '.', ?string $decimalSeparator = ',')
     {
         $this->numberFormat = [$thousandSeparator, $decimalSeparator];
+
         return $this;
     }
 

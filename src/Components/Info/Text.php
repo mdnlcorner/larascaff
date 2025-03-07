@@ -6,32 +6,39 @@ use Illuminate\Support\Facades\Blade;
 
 class Text extends Info
 {
-    protected array|null $numberFormat = null;
+    protected ?array $numberFormat = null;
+
     protected bool $html = false;
-    protected string | null $appendIcon = null;
-    protected string | null $prependIcon = null;
+
+    protected ?string $appendIcon = null;
+
+    protected ?string $prependIcon = null;
 
     public function appendIcon(string $appendIcon)
     {
         $this->appendIcon = $appendIcon;
+
         return $this;
     }
 
     public function prependIcon(string $prependIcon)
     {
         $this->prependIcon = $prependIcon;
+
         return $this;
     }
 
     public function numberFormat(?string $thousandSeparator = '.', ?string $decimalSeparator = ',')
     {
         $this->numberFormat = [$thousandSeparator, $decimalSeparator];
+
         return $this;
     }
 
     public function html(bool $html = true)
     {
         $this->html = $html;
+
         return $this;
     }
 

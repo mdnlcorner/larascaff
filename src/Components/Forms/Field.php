@@ -8,7 +8,7 @@ use Mulaidarinull\Larascaff\Components\Concerns\HasModule;
 
 class Field
 {
-    use HasColumnSpan, HasModule, HasField;
+    use HasColumnSpan, HasField, HasModule;
 
     protected string|array $name = '';
 
@@ -24,6 +24,7 @@ class Field
     public function name(string|array $name)
     {
         $this->name = $name;
+
         return $this;
     }
 

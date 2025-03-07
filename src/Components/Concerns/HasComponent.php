@@ -4,8 +4,9 @@ namespace Mulaidarinull\Larascaff\Components\Concerns;
 
 trait HasComponent
 {
-    protected \Illuminate\Support\Collection | null $components = null;
-    protected string|null $name = null;
+    protected ?\Illuminate\Support\Collection $components = null;
+
+    protected ?string $name = null;
 
     public function getComponents()
     {
@@ -30,8 +31,9 @@ trait HasComponent
     public function schema(array $components)
     {
         $this->components = collect($components);
-        $e = new \Exception();
+        $e = new \Exception;
         $this->module = $e->getTrace()[1]['class'] ?? null;
+
         return $this;
     }
 }

@@ -3,14 +3,19 @@
 namespace Mulaidarinull\Larascaff\Components\Forms;
 
 use Illuminate\Support\Facades\Blade;
-use Mulaidarinull\Larascaff\Components\Contracts\{HasDatepicker, IsComponent};
+use Mulaidarinull\Larascaff\Components\Contracts\HasDatepicker;
+use Mulaidarinull\Larascaff\Components\Contracts\IsComponent;
 
 class DatepickerRange extends Field implements HasDatepicker, IsComponent
 {
     protected bool $icon = true;
+
     protected string $format = 'yyyy-mm-dd';
+
     protected string $formatPhp = 'Y-m-d';
+
     protected array $config = [];
+
     protected string $type = 'daterange';
 
     public static function make($name): static
@@ -24,18 +29,21 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
     public function icon($icon = true)
     {
         $this->icon = $icon;
+
         return $this;
     }
 
     public function value($value)
     {
         $this->value = $value;
+
         return $this;
     }
 
     public function format($format)
     {
         $this->format = $format;
+
         return $this;
     }
 
@@ -43,6 +51,7 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
     {
         $unformat[$this->getName()[0]] = convertDate(request()->{$this->getName()[0]}, 'Y-m-d');
         $unformat[$this->getName()[1]] = convertDate(request()->{$this->getName()[1]}, 'Y-m-d');
+
         return $unformat;
     }
 
@@ -54,6 +63,7 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
     public function config(array $config): self
     {
         $this->config = $config;
+
         return $this;
     }
 
@@ -64,7 +74,7 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
         if ($this->value) {
             $record = (object) [
                 $this->name[0] => $this->value[0],
-                $this->name[1] => $this->value[1]
+                $this->name[1] => $this->value[1],
             ];
         }
 
@@ -74,7 +84,7 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
                 $expFormat = explode($separator, $this->format);
                 $formatPhp = '';
                 foreach ($expFormat as $i) {
-                    $formatPhp .= ($formatPhp ? $separator . $map[$i] : $map[$i]);
+                    $formatPhp .= ($formatPhp ? $separator.$map[$i] : $map[$i]);
                 }
                 $this->formatPhp = $formatPhp;
             }
@@ -85,6 +95,7 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
         // ====== END FORMATING VALUE ======
 
         $this->config['format'] = $this->format;
+
         return Blade::render(
             <<<'HTML'
             <x-larascaff::forms.datepicker-range 
@@ -106,7 +117,7 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
                 'icon' => $this->icon,
                 'config' => $this->config,
                 'value' => $this->value,
-                'columnSpan' => $this->columnSpan
+                'columnSpan' => $this->columnSpan,
             ]
         );
     }

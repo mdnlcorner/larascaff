@@ -7,10 +7,13 @@ use Mulaidarinull\Larascaff\BasePage;
 class DashboardPage extends BasePage
 {
     protected string $view = 'larascaff::pages.dashboard';
+
     protected string $menuIcon = 'tabler-home';
+
     protected string $url = 'dashboard';
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->permissions = ['read' => true];
     }

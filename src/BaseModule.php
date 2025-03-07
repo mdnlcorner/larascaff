@@ -10,30 +10,42 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Pluralizer;
 use Illuminate\Support\Reflector;
+use Illuminate\Support\Str;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Info\Info;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
-use Mulaidarinull\Larascaff\Traits\HasPermission;
-use Illuminate\Support\Str;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
+use Mulaidarinull\Larascaff\Traits\HasPermission;
 
 abstract class BaseModule extends Controller
 {
-    use HasPermission, HasMenuPermission;
+    use HasMenuPermission, HasPermission;
+
     /**
      * @var \Illuminate\Database\Eloquent\Model|string
      */
     protected $model;
+
     protected string $viewShow = '';
+
     protected string $viewAction = '';
+
     protected array $viewData = [];
+
     protected string $pageTitle = '';
+
     protected string $modalSize = 'md';
+
     protected string $modalTitle = '';
+
     protected string $url = '';
+
     protected array $validations = [];
-    private string|null $routeKeyNameValue = null;
+
+    private ?string $routeKeyNameValue = null;
+
     private array $actions = [];
+
     private array $tableActions = [];
 
     public function __construct()
@@ -41,7 +53,7 @@ abstract class BaseModule extends Controller
         is_string($this->model) && $this->model = new $this->model;
         if ($this->modalTitle == '') {
             if ($this->model) {
-                $this->modalTitle = 'Form ' . ucwords(str_replace('_', ' ', $this->model->getTable()));
+                $this->modalTitle = 'Form '.ucwords(str_replace('_', ' ', $this->model->getTable()));
             }
         }
 
@@ -55,25 +67,25 @@ abstract class BaseModule extends Controller
             }
         }
 
-        if (!count($this->actions)) {
+        if (! count($this->actions)) {
             $this->actions['create'] = [
                 'label' => 'Create',
-                'action' => url($this->url . '/create'),
-                'show' => fn() => true,
+                'action' => url($this->url.'/create'),
+                'show' => fn () => true,
                 'icon' => 'ti ti-copy-plus',
                 'method' => 'get',
             ];
         }
 
         foreach ($this->actions as $action => $item) {
-            if (user()?->cannot($action . ' ' . $this->url)) {
+            if (user()?->cannot($action.' '.$this->url)) {
                 unset($this->actions[$action]);
             }
         }
 
-        $this->tableActions(permission: 'read', action: url($this->url . '/' . '{{id}}'), label: 'View', icon: 'tabler-eye');
-        $this->tableActions(permission: 'update', action: url($this->url . '/' . '{{id}}' . '/edit'), label: 'Edit', icon: 'tabler-edit', color: 'warning');
-        $this->tableActions(permission: 'delete', action: url($this->url . '/' . '{{id}}'), label: 'Delete', method: 'DELETE', icon: 'tabler-trash', color: 'danger');
+        $this->tableActions(permission: 'read', action: url($this->url.'/'.'{{id}}'), label: 'View', icon: 'tabler-eye');
+        $this->tableActions(permission: 'update', action: url($this->url.'/'.'{{id}}'.'/edit'), label: 'Edit', icon: 'tabler-edit', color: 'warning');
+        $this->tableActions(permission: 'delete', action: url($this->url.'/'.'{{id}}'), label: 'Delete', method: 'DELETE', icon: 'tabler-trash', color: 'danger');
     }
 
     public static function makeMenu()
@@ -97,37 +109,41 @@ abstract class BaseModule extends Controller
         return $this->tableActions;
     }
 
-    public function actions($permission, $action, $label = null, $method = 'GET', Closure | null | bool $show = null, bool $ajax = true, bool $targetBlank = false, string | null $icon = null)
+    public function actions($permission, $action, $label = null, $method = 'GET', Closure|null|bool $show = null, bool $ajax = true, bool $targetBlank = false, ?string $icon = null)
     {
         $this->permissions[$permission] = true;
-        if (user()?->can($permission . ' ' . $this->url)) {
-            if (is_bool($show)) $show = fn() => $show;
+        if (user()?->can($permission.' '.$this->url)) {
+            if (is_bool($show)) {
+                $show = fn () => $show;
+            }
             $this->actions[$permission] = [
                 'action' => $action,
                 'label' => $label ?? ucfirst($permission),
                 'method' => $method,
-                'show' => $show ?? fn() => true,
+                'show' => $show ?? fn () => true,
                 'ajax' => $ajax,
                 'blank' => $targetBlank ? '_blank' : '',
-                'icon' => $icon
+                'icon' => $icon,
             ];
         }
     }
 
-    public function tableActions(string $permission, string $action, string $label = null, string $method = 'GET', Closure | null | bool $show = null, bool $ajax = true, bool $targetBlank = false, string | null $icon = null, string | null $color = null)
+    public function tableActions(string $permission, string $action, ?string $label = null, string $method = 'GET', Closure|null|bool $show = null, bool $ajax = true, bool $targetBlank = false, ?string $icon = null, ?string $color = null)
     {
         $this->permissions[$permission] = true;
-        if (user()?->can($permission . ' ' . $this->url)) {
-            if (is_bool($show)) $show = fn() => $show;
+        if (user()?->can($permission.' '.$this->url)) {
+            if (is_bool($show)) {
+                $show = fn () => $show;
+            }
             $this->tableActions[$permission] = [
                 'action' => $action,
                 'label' => $label ?? ucfirst($permission),
                 'method' => $method,
-                'show' => $show ?? fn() => true,
+                'show' => $show ?? fn () => true,
                 'ajax' => $ajax,
                 'blank' => $targetBlank ? '_blank' : '',
-                'icon' => $icon ?? ($permission == 'update'  ? 'tabler-edit' : ($permission == 'view' ? 'tabler-eye' : ($permission == 'delete' ? 'tabler-trash' : null))),
-                'color' => $color ?? ($permission == 'update'  ? 'warning' : ($permission == 'delete' ? 'danger' : null))
+                'icon' => $icon ?? ($permission == 'update' ? 'tabler-edit' : ($permission == 'view' ? 'tabler-eye' : ($permission == 'delete' ? 'tabler-trash' : null))),
+                'color' => $color ?? ($permission == 'update' ? 'warning' : ($permission == 'delete' ? 'danger' : null)),
             ];
         }
     }
@@ -141,7 +157,7 @@ abstract class BaseModule extends Controller
             'pageTitle' => $this->pageTitle,
             'url' => Pluralizer::singular($this->url),
             'actions' => $this->actions,
-            'tableActions' => $this->tableActions
+            'tableActions' => $this->tableActions,
         ];
 
         if (method_exists($this, $method = 'widgets')) {
@@ -149,10 +165,9 @@ abstract class BaseModule extends Controller
             $widgets = call_user_func_array([$this, $method], $parameters);
 
             $data['widgets'] = view('larascaff::widget', [
-                'widgets' => $widgets
+                'widgets' => $widgets,
             ]);
         }
-
 
         if (method_exists($this, 'table')) {
             $datatable = new BaseDatatable($this->model, $this->url, $this->tableActions);
@@ -160,14 +175,16 @@ abstract class BaseModule extends Controller
             if (method_exists($this, 'filterTable')) {
                 $filterTable = call_user_func([$this, 'filterTable']);
                 $data['filterTable'] = view('larascaff::filter', [
-                    'filterTable' => $filterTable
+                    'filterTable' => $filterTable,
                 ]);
                 $datatable->filterTable($filterTable);
             }
             call_user_func([$this, 'table'], $datatable);
             $render = $datatable->render('larascaff::main-content', $data);
+
             return $render;
         }
+
         return view('larascaff::main-content', $data);
     }
 
@@ -176,8 +193,8 @@ abstract class BaseModule extends Controller
      */
     public function create(Request $request)
     {
-        if (!$request->ajax()) {
-            return redirect()->to($this->url . '?action=create');
+        if (! $request->ajax()) {
+            return redirect()->to($this->url.'?action=create');
         }
         try {
             setRecord($this->model);
@@ -196,14 +213,15 @@ abstract class BaseModule extends Controller
             }
 
             if (method_exists($this, $method = 'formBuilder')) {
-                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form()])]);
+                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form])]);
             } else {
                 $view = view($this->viewAction, $this->viewData);
             }
+
             return $this->form($view, [
                 'size' => $this->modalSize,
                 'title' => $this->modalTitle,
-                ...$this->viewData
+                ...$this->viewData,
             ]);
         } catch (\Throwable $th) {
             return responseError($th);
@@ -239,9 +257,11 @@ abstract class BaseModule extends Controller
             }
 
             DB::commit();
+
             return responseSuccess();
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return responseError($th);
         }
     }
@@ -271,16 +291,17 @@ abstract class BaseModule extends Controller
             setRecord($this->model);
 
             if (method_exists($this, $method = 'infoList')) {
-                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Info()])]);
-            } else if (method_exists($this, $method = 'formBuilder')) {
-                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form()])]);
+                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Info])]);
+            } elseif (method_exists($this, $method = 'formBuilder')) {
+                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form])]);
             } else {
                 $view = view($this->viewShow, $this->viewData);
             }
+
             return $this->form($view, [
                 'size' => $this->modalSize,
                 'title' => $this->modalTitle,
-                ...$this->viewData
+                ...$this->viewData,
             ]);
         } catch (\Throwable $th) {
             return responseError($th);
@@ -291,7 +312,10 @@ abstract class BaseModule extends Controller
 
     public function getRecord()
     {
-        if (!$this->routeKeyNameValue) throw new \Exception('routeKeyNameValue must be filled');
+        if (! $this->routeKeyNameValue) {
+            throw new \Exception('routeKeyNameValue must be filled');
+        }
+
         return $this->model = $this->model->query()->where($this->model->getRouteKeyName(), $this->routeKeyNameValue)->firstOrFail();
     }
 
@@ -300,15 +324,15 @@ abstract class BaseModule extends Controller
      */
     public function edit(string $id, Request $request)
     {
-        if (!$request->ajax()) {
-            return redirect()->to($this->url . '?tableAction=update&tableActionId=' . $id);
+        if (! $request->ajax()) {
+            return redirect()->to($this->url.'?tableAction=update&tableActionId='.$id);
         }
         $this->routeKeyNameValue = $id;
         $this->getRecord();
         try {
             $this->addDataToview([
-                'action' => url($this->url . '/' . $this->model->{$this->model->getRouteKeyName()}),
-                'method' => 'PUT'
+                'action' => url($this->url.'/'.$this->model->{$this->model->getRouteKeyName()}),
+                'method' => 'PUT',
             ]);
 
             // run hook before edit
@@ -324,14 +348,15 @@ abstract class BaseModule extends Controller
             setRecord($this->model);
 
             if (method_exists($this, $method = 'formBuilder')) {
-                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form()])]);
+                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form])]);
             } else {
                 $view = view($this->viewAction, $this->viewData);
             }
+
             return $this->form($view, [
                 'size' => $this->modalSize,
                 'title' => $this->modalTitle,
-                ...$this->viewData
+                ...$this->viewData,
             ]);
         } catch (\Throwable $th) {
             return responseError($th);
@@ -390,9 +415,11 @@ abstract class BaseModule extends Controller
             }
 
             DB::commit();
+
             return responseSuccess();
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return responseError($th);
         }
     }
@@ -432,7 +459,7 @@ abstract class BaseModule extends Controller
                         }
                         if (method_exists($component, 'getValidations')) {
                             if ($relationship) {
-                                if (count($component->getValidations()) && !$this->model->{$relationship}() instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
+                                if (count($component->getValidations()) && ! $this->model->{$relationship}() instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
                                     foreach ($component->getValidations()['validations'] ?? [] as $key => $validation) {
                                         $this->validations['validations'][$key] = $validation;
                                         // $this->validations['validations'][$relationship. '.'.$key.'.*'] = $validation;
@@ -460,7 +487,7 @@ abstract class BaseModule extends Controller
         if ($form instanceof \Mulaidarinull\Larascaff\Components\Forms\Uploader) {
             if ((in_array('PUT', $request->route()->methods()) || in_array('PATCH', $request->route()->methods()))) {
                 $model->updateMedia($form->getPath(), $request->{$form->getName()}, $form->getField());
-            } else if (in_array('POST', $request->route()->methods()) && $request->{$form->getName()}) {
+            } elseif (in_array('POST', $request->route()->methods()) && $request->{$form->getName()}) {
                 $model->storeMedia($form->getPath(), $request->{$form->getName()}, $form->getField());
             }
         }
@@ -504,7 +531,7 @@ abstract class BaseModule extends Controller
                                     // store new record
                                     $this->model->{$relationName}()->create($relationInput);
                                 }
-                            } else if ($relationModel instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
+                            } elseif ($relationModel instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
                                 $inputs = [];
                                 $related = ($this->model->{$relationName}()->getRelated());
 
@@ -579,6 +606,7 @@ abstract class BaseModule extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
+
             return responseError($th);
         }
 
@@ -602,7 +630,7 @@ abstract class BaseModule extends Controller
                 }
             }
 
-            if (!$found) {
+            if (! $found) {
                 $parameters[] = $this->container->make($className);
             }
         }
@@ -613,10 +641,12 @@ abstract class BaseModule extends Controller
     private function resolveUrl()
     {
         $prefix = getPrefix();
-        if ($prefix) $prefix = $prefix .= '/';
+        if ($prefix) {
+            $prefix = $prefix .= '/';
+        }
 
         if ($this->url == '') {
-            if (!is_null($this->model?->url)) {
+            if (! is_null($this->model?->url)) {
                 $this->url = $this->model->url;
             } else {
                 $url = explode('App\\Larascaff\\Modules\\', get_class($this));
@@ -628,7 +658,7 @@ abstract class BaseModule extends Controller
                 $this->url = Pluralizer::plural($this->url);
             }
         }
-        $this->url = $prefix . $this->url;
+        $this->url = $prefix.$this->url;
     }
 
     protected function addDataToview(array $data)

@@ -2,29 +2,34 @@
 
 namespace Mulaidarinull\Larascaff\Components\Info;
 
-use Closure;
 use Illuminate\Support\Facades\Blade;
 
 class Icon extends Info
 {
-    protected string | null $color = null;
-    protected string | null $icon = null;
+    protected ?string $color = null;
+
+    protected ?string $icon = null;
 
     public function color(string $color)
     {
         $this->color = $color;
+
         return $this;
     }
 
     public function icon(string $icon)
     {
         $this->icon = $icon;
+
         return $this;
     }
 
     public function view()
     {
-        if (!$this->show) return;
+        if (! $this->show) {
+            return;
+        }
+
         return Blade::render(
             <<<'HTML'
             <x-larascaff::info.icon 

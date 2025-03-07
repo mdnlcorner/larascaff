@@ -10,7 +10,7 @@ class AssetManager
     public function renderStyles()
     {
         $variables = [];
-        
+
         foreach (LarascaffColor::getColors() as $name => $shades) {
             foreach ($shades as $shade => $color) {
                 $variables["{$name}-{$shade}"] = $color;

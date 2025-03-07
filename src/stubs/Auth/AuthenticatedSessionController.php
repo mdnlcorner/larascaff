@@ -3,22 +3,24 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use App\Http\Requests\Auth\LoginRequest;
 
 class AuthenticatedSessionController extends Controller
 {
     protected $prefix = '';
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->prefix = getPrefix();
         if ($this->prefix != '') {
-            $this->prefix = $this->prefix . '/';
+            $this->prefix = $this->prefix.'/';
         }
     }
+
     /**
      * Display the login view.
      */
@@ -36,7 +38,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route(str_replace('/', '.', $this->prefix) . 'dashboard', absolute: false));
+        return redirect()->intended(route(str_replace('/', '.', $this->prefix).'dashboard', absolute: false));
     }
 
     /**

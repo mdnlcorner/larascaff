@@ -23,9 +23,9 @@ trait HasMedia
         return $this->morphOne(Media::class, 'model');
     }
 
-    public function storeMedia(string $path = '', string | array $tmpFiles, string | null $field = null, string $disk = 'public')
+    public function storeMedia(string $path, string|array $tmpFiles, ?string $field = null, string $disk = 'public')
     {
-        if (!$tmpFiles) {
+        if (! $tmpFiles) {
             return;
         }
 
@@ -40,7 +40,7 @@ trait HasMedia
                     name: $__file->getFilename()
                 );
 
-                if (!$field) {
+                if (! $field) {
                     array_push($fileData, new Media([
                         'filename' => $__file->getFilename(),
                         'path' => $path,
@@ -50,7 +50,7 @@ trait HasMedia
                     array_push($fileData, $__file->getFilename());
                 }
             }
-            if (!$field) {
+            if (! $field) {
                 $this->media()->saveMany($fileData);
             } else {
                 $this->{$field} = $fileData;
@@ -64,7 +64,7 @@ trait HasMedia
                 name: $__file->getFilename()
             );
 
-            if (!$field) {
+            if (! $field) {
                 $this->media()->create([
                     'filename' => $__file->getFilename(),
                     'path' => $path,
@@ -77,7 +77,7 @@ trait HasMedia
         }
     }
 
-    public function updateMedia(string $path = '', string | array | null $tmpFiles, string | null $field = null, string $disk = 'public')
+    public function updateMedia(string $path, string|array|null $tmpFiles, ?string $field = null, string $disk = 'public')
     {
         $existingMedia = $this->getMediaUrl();
         if (is_array($tmpFiles)) {
@@ -93,7 +93,7 @@ trait HasMedia
                     );
                 } else {
                     // existing file
-                    $__file = new File(Storage::disk($disk)->path($path . '/' . $tmpFile));
+                    $__file = new File(Storage::disk($disk)->path($path.'/'.$tmpFile));
                 }
                 array_push($media, new Media([
                     'filename' => $__file->getFilename(),
@@ -103,7 +103,7 @@ trait HasMedia
             }
 
             // store new file or edit file
-            if (!$field) {
+            if (! $field) {
                 $this->media()->delete();
                 if (count($media)) {
                     $this->media()->saveMany($media);
@@ -113,16 +113,16 @@ trait HasMedia
                 $this->save();
             }
 
-            $oldFiles = array_filter($tmpFiles, fn($item) => !str_starts_with($item, 'tmp/'));
+            $oldFiles = array_filter($tmpFiles, fn ($item) => ! str_starts_with($item, 'tmp/'));
             foreach ($existingMedia as $existing) {
-                if (!in_array($existing, $oldFiles)) {
+                if (! in_array($existing, $oldFiles)) {
                     $this->deleteMedia($existing, $field);
                 }
             }
         } else {
             if (is_null($tmpFiles)) {
                 if ($field) {
-                    $this->deleteMedia($path . '/' . $this->{$field}, $field);
+                    $this->deleteMedia($path.'/'.$this->{$field}, $field);
                 } else {
                     if ($this->singleMedia?->filename) {
                         foreach ($this->media as $media) {
@@ -130,6 +130,7 @@ trait HasMedia
                         }
                     }
                 }
+
                 return;
             }
             if (str_starts_with($tmpFiles, 'tmp/')) {
@@ -144,7 +145,7 @@ trait HasMedia
                     file: $__file,
                     name: $__file->getFilename()
                 );
-                if (!$field) {
+                if (! $field) {
                     $this->media()->create([
                         'filename' => $__file->getFilename(),
                         'path' => $path,
@@ -158,20 +159,20 @@ trait HasMedia
         }
     }
 
-    public function deleteMedia($filename = null, string $field = null, string $disk = 'public')
+    public function deleteMedia($filename = null, ?string $field = null, string $disk = 'public')
     {
-        // if filename is null, delete all image 
-        if (!$filename) {
+        // if filename is null, delete all image
+        if (! $filename) {
             foreach ($this->media as $media) {
-                Storage::disk($disk)->delete($media->path . '/' . $media->filename);
+                Storage::disk($disk)->delete($media->path.'/'.$media->filename);
             }
             $this->media()->delete();
         } else {
-            if (!$field) {
+            if (! $field) {
                 $explode = explode('/', $filename);
                 $media = $this->media->where('filename', $explode[count($explode) - 1])->first();
                 if ($media) {
-                    Storage::disk($disk)->delete($media->path . '/' . $filename);
+                    Storage::disk($disk)->delete($media->path.'/'.$filename);
                     $media->delete();
                 }
             } else {
@@ -182,14 +183,15 @@ trait HasMedia
         }
     }
 
-    public function getMediaUrl(string|null $field = null, string $disk = 'public')
+    public function getMediaUrl(?string $field = null, string $disk = 'public')
     {
-        if (!$field) {
-            return $this->media->filter(function ($item) use ($disk){
+        if (! $field) {
+            return $this->media->filter(function ($item) use ($disk) {
                 $isExist = Storage::disk($disk)->fileExists("{$item->path}/$item->filename");
-                if (!$isExist) {
+                if (! $isExist) {
                     $item->delete();
                 }
+
                 return $isExist;
             })->values()->map(function ($item) {
                 return $item->filename;
@@ -198,6 +200,7 @@ trait HasMedia
         if (is_string($this->{$field})) {
             return [$this->{$field}];
         }
+
         return $this->{$field};
     }
 }

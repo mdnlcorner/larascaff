@@ -11,20 +11,32 @@ class Select extends Field
     use HasRelationship;
 
     protected array $options = [];
-    protected bool $multiple = false;
-    protected bool $searchable = false;
-    protected ?int $limit = null;
-    protected string | null $serverSide = null;
-    protected string | null $dependValue = null;
-    protected string | null $dependColumn = null;
-    protected string | null $depend = null;
-    protected string | null $data = null;
-    protected Model | null $model = null;
-    protected string | null $columnLabel = null;
-    protected string | null $columnValue = null;
-    protected \Closure | string | null $modifyQuery = null;
 
-    public function relationship(string|null $name = null, string $label)
+    protected bool $multiple = false;
+
+    protected bool $searchable = false;
+
+    protected ?int $limit = null;
+
+    protected ?string $serverSide = null;
+
+    protected ?string $dependValue = null;
+
+    protected ?string $dependColumn = null;
+
+    protected ?string $depend = null;
+
+    protected ?string $data = null;
+
+    protected ?Model $model = null;
+
+    protected ?string $columnLabel = null;
+
+    protected ?string $columnValue = null;
+
+    protected \Closure|string|null $modifyQuery = null;
+
+    public function relationship(?string $name, string $label)
     {
         $this->relationship = $name;
         $this->searchable = true;
@@ -48,18 +60,20 @@ class Select extends Field
                 getRecord()->{$this->relationship}() instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany
             ) {
                 $this->value = getRecord()->{$this->relationship}->pluck('id')->implode(',');
-            } else if (getRecord()->{$this->relationship}() instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo) {
+            } elseif (getRecord()->{$this->relationship}() instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo) {
                 $this->value = getRecord($this->getName());
             }
 
             $this->serverSide = get_class($model);
         }
+
         return $this;
     }
 
     public function modifyQuery(\Closure $cb)
     {
         $this->modifyQuery = $cb;
+
         return $this;
     }
 
@@ -70,66 +84,77 @@ class Select extends Field
 
     /**
      * limit of record shown, max 100
-     * @param int $limit
      */
     public function limit(int $limit)
     {
         $this->limit = $limit;
-        if ($limit > 100) $this->limit = 100;
+        if ($limit > 100) {
+            $this->limit = 100;
+        }
+
         return $this;
     }
 
-    public function dependValue(string|null $dependValue)
+    public function dependValue(?string $dependValue)
     {
         $this->dependValue = $dependValue;
+
         return $this;
     }
 
-    public function columnLabel(string|null $columnLabel)
+    public function columnLabel(?string $columnLabel)
     {
         $this->columnLabel = $columnLabel;
+
         return $this;
     }
 
-    public function columnValue(string|null $columnValue)
+    public function columnValue(?string $columnValue)
     {
         $this->columnValue = $columnValue;
+
         return $this;
     }
 
     public function depend(bool $depend = true)
     {
         $this->depend = $depend;
+
         return $this;
     }
 
-    public function dependColumn(string|null $dependColumn)
+    public function dependColumn(?string $dependColumn)
     {
         $this->dependColumn = $dependColumn;
+
         return $this;
     }
 
     public function serverSide(string $model)
     {
         $this->serverSide = $model;
+
         return $this;
     }
 
     public function options($options)
     {
         $this->options = $options;
+
         return $this;
     }
 
     public function multiple(bool $multiple = true)
     {
         $this->multiple = $multiple;
+
         return $this;
     }
 
     public function searchable(bool $searchable = true)
     {
         $this->searchable = $searchable;
+
         return $this;
     }
 
@@ -137,9 +162,10 @@ class Select extends Field
     {
         if ($this->modifyQuery) {
             if (method_exists($this, 'getModule')) {
-                $this->modifyQuery = $this->getModule(). '@'. $this->name;
+                $this->modifyQuery = $this->getModule().'@'.$this->name;
             }
         }
+
         return Blade::render(
             <<<'HTML'
             <x-larascaff::forms.select 

@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\Blade;
 class Checkbox extends Field
 {
     protected string $variant = 'primary';
-    
+
     public function variant(string $variant)
     {
         $this->variant = $variant;
+
         return $this;
     }
 
@@ -33,7 +34,7 @@ class Checkbox extends Field
                 'checked' => getRecord($this->name) ? true : false,
                 'disabled' => $this->disabled,
                 'readonly' => $this->readonly,
-                'columnSpan' => $this->columnSpan
+                'columnSpan' => $this->columnSpan,
             ]
         );
     }

@@ -43,9 +43,11 @@
         "illuminate/filesystem": "^11"
     },
     "require-dev": {
-        "larastan/larastan": "^3.0"
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.13"
     },
     "scripts": {
+        "pint": "./vendor/bin/pint",
         "stan": "./vendor/bin/phpstan analyse --memory-limit=2G --ansi --no-progress --no-interaction --configuration=phpstan.neon"
     },
     "autoload": {

@@ -10,7 +10,7 @@ interface HasDatepicker
      * @return string
      */
     public function getFormatPhp();
-    
+
     public function icon(bool $icon);
 
     public function format($format);

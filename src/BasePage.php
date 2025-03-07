@@ -12,9 +12,12 @@ use Mulaidarinull\Larascaff\Traits\HasPermission;
 
 abstract class BasePage extends Controller
 {
-    use HasPermission, HasMenuPermission;
+    use HasMenuPermission, HasPermission;
+
     protected string $view = '';
+
     protected string $url = '';
+
     protected string $pageTitle = '';
 
     public function __construct()
@@ -45,8 +48,10 @@ abstract class BasePage extends Controller
     protected function resolveUrl()
     {
         $prefix = getPrefix();
-        if ($prefix) $prefix = $prefix .= '/';
-        
+        if ($prefix) {
+            $prefix = $prefix .= '/';
+        }
+
         if ($this->url == '') {
             $class = get_class($this);
             $pages = explode('App\\Larascaff\\Pages\\', $class);
@@ -60,7 +65,7 @@ abstract class BasePage extends Controller
 
             $this->url = Pluralizer::plural($this->url);
         }
-        $this->url = $prefix . $this->url;
+        $this->url = $prefix.$this->url;
     }
 
     protected function resolveView()
@@ -71,7 +76,7 @@ abstract class BasePage extends Controller
             array_shift($pages);
             $pages[count($pages) - 1] = substr($pages[count($pages) - 1], 0, strlen($pages[count($pages) - 1]) - 4);
             $pages = strtolower(implode('.', $pages));
-            $this->view = 'pages.' . $pages;
+            $this->view = 'pages.'.$pages;
         }
     }
 
@@ -97,7 +102,7 @@ abstract class BasePage extends Controller
             $widgets = call_user_func_array([$this, $method], $parameters);
 
             $data['widgets'] = view('larascaff::widget', [
-                'widgets' => $widgets
+                'widgets' => $widgets,
             ]);
         }
 
@@ -126,7 +131,7 @@ abstract class BasePage extends Controller
                 }
             }
 
-            if (!$found) {
+            if (! $found) {
                 $parameters[] = $this->container->make($className);
             }
         }

@@ -3,22 +3,27 @@
 namespace Mulaidarinull\Larascaff\Components\Layouts;
 
 use Illuminate\Support\Facades\Blade;
-use Mulaidarinull\Larascaff\Components\Concerns\{HasColumnSpan, HasComponent, HasModule, HasRelationship};
+use Mulaidarinull\Larascaff\Components\Concerns\HasColumnSpan;
+use Mulaidarinull\Larascaff\Components\Concerns\HasComponent;
+use Mulaidarinull\Larascaff\Components\Concerns\HasModule;
+use Mulaidarinull\Larascaff\Components\Concerns\HasRelationship;
 
 class Fieldset
 {
-    use HasRelationship, HasComponent, HasColumnSpan, HasModule;
+    use HasColumnSpan, HasComponent, HasModule, HasRelationship;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->columnSpan = 'full';
     }
 
     public function view()
     {
         $slot = '';
-        foreach($this->components as $component) {
+        foreach ($this->components as $component) {
             $slot .= $component->view();
         }
+
         return Blade::render(
             <<<'HTML'
             <x-larascaff::layouts.fieldset 

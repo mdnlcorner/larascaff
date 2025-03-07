@@ -3,32 +3,43 @@
 namespace Mulaidarinull\Larascaff\Components\Layouts;
 
 use Illuminate\Support\Facades\Blade;
-use Mulaidarinull\Larascaff\Components\Concerns\{HasCollapsible, HasColumnSpan, HasComponent, HasRelationship};
+use Mulaidarinull\Larascaff\Components\Concerns\HasCollapsible;
+use Mulaidarinull\Larascaff\Components\Concerns\HasColumnSpan;
+use Mulaidarinull\Larascaff\Components\Concerns\HasComponent;
+use Mulaidarinull\Larascaff\Components\Concerns\HasRelationship;
 
 class Repeater
 {
-    use HasRelationship, HasComponent, HasColumnSpan, HasCollapsible;
+    use HasCollapsible, HasColumnSpan, HasComponent, HasRelationship;
 
-    protected string|null $description = null;
+    protected ?string $description = null;
+
     protected array $withCalculate = [];
+
     protected array $tableRows = [];
+
     protected $handleAddRows = null;
+
     protected $module = null;
+
     protected $beforeStore = null;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->columnSpan = 'full';
     }
 
     public function description(string $description)
     {
         $this->description = $description;
+
         return $this;
     }
 
     public function withCalculate(array $withCalculate)
     {
         $this->withCalculate = $withCalculate;
+
         return $this;
     }
 
@@ -36,6 +47,7 @@ class Repeater
     {
         $this->handleAddRows = $cb;
         $this->module = $module;
+
         return $this;
     }
 
@@ -47,12 +59,14 @@ class Repeater
     public function tableRows(array $tableRows)
     {
         $this->tableRows = $tableRows;
+
         return $this;
     }
 
     public function beforeStore(callable $cb)
     {
         $this->beforeStore = $cb;
+
         return $this;
     }
 
@@ -63,7 +77,7 @@ class Repeater
 
     public function view()
     {
-        if (!$this->relationship) {
+        if (! $this->relationship) {
             $this->relationship = $this->name;
         }
 

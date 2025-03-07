@@ -33,9 +33,10 @@ class ColorManager
     /**
      * @param  array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure  $colors
      */
-    public function register(array | Closure $colors): static
+    public function register(array|Closure $colors): static
     {
         $this->colors[] = $colors;
+
         return $this;
     }
 
@@ -43,7 +44,7 @@ class ColorManager
      * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string  $color
      * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string
      */
-    public function processColor(array | string $color): array | string
+    public function processColor(array|string $color): array|string
     {
         if (is_string($color) && str_starts_with($color, '#')) {
             return Color::hex($color);

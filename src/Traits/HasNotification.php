@@ -10,6 +10,7 @@ use Mulaidarinull\Larascaff\Notifications\QueueNotification;
 trait HasNotification
 {
     protected $channels = [];
+
     public function sendNotification($targetUser, $action, $actionLabel = 'Action', $title = '', $message = '', $priority = 1, $queue = false)
     {
         if ($queue) {
@@ -26,10 +27,13 @@ trait HasNotification
 
     public function routeNotification()
     {
-        if ($this->route) return $this->route;
+        if ($this->route) {
+            return $this->route;
+        }
 
         $route = explode('App\\Models\\', get_class($this));
         array_shift($route);
+
         return Pluralizer::plural(strtolower(str_replace('\\', '/', $route[0])));
     }
 

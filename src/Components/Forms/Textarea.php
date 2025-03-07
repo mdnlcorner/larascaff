@@ -11,6 +11,7 @@ class Textarea extends Field
     public function rows(int $rows)
     {
         $this->rows = $rows;
+
         return $this;
     }
 

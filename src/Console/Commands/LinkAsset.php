@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\File;
 class LinkAsset extends Command
 {
     protected $signature = 'larascaff:link-asset';
+
     protected $description = 'Link asset';
 
     public function handle()

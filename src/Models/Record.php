@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Record extends Model
 {
-    protected Model | null $record = null;
+    protected ?Model $record = null;
 
     public function setRecord(Model $record)
     {
@@ -15,7 +15,7 @@ class Record extends Model
 
     public function getRecord($key = null)
     {
-        if (!$this->record) {
+        if (! $this->record) {
             $this->record = new self;
         }
         if ($key) {
@@ -32,12 +32,16 @@ class Record extends Model
                     foreach ($withRelation as $relation) {
                         $arrayValue[] = $relation->{$name};
                     }
+
                     return $arrayValue;
                 }
+
                 return $withRelation->{$name};
             }
+
             return $this->record->{$key};
         }
+
         return $this->record;
     }
 }
