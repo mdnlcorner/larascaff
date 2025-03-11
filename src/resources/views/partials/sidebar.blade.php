@@ -1,6 +1,6 @@
 <aside class="relative sidebar">
     <!-- Sidebar Header Starts -->
-    <div class="px-6 py-4">
+    <div class="relative z-20 flex items-center px-6 py-4">
         <a class="sidebar-brand-logo" style="height: {{ $config->getBrandHeight() }}" href="{{ url($config->getPrefix(). '/dashboard') }}">
             @if (is_callable($config->renderBrand()))
                 {{ $config->renderBrand()() }}
