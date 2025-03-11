@@ -21,6 +21,8 @@ abstract class BaseModule extends Controller
 {
     use HasMenuPermission, HasPermission;
 
+    protected $oldModelValue;
+
     /**
      * @var \Illuminate\Database\Eloquent\Model|string
      */
@@ -316,7 +318,8 @@ abstract class BaseModule extends Controller
             throw new \Exception('routeKeyNameValue must be filled');
         }
 
-        return $this->model = $this->model->query()->where($this->model->getRouteKeyName(), $this->routeKeyNameValue)->firstOrFail();
+        $this->model = $this->model->query()->where($this->model->getRouteKeyName(), $this->routeKeyNameValue)->firstOrFail();
+        return $this->model;
     }
 
     /**
@@ -402,6 +405,7 @@ abstract class BaseModule extends Controller
                 call_user_func_array([$this, $method], $parameters);
             }
 
+            $this->oldModelValue = $this->model->replicate();
             $this->model->fill($request->all());
             $this->model->save();
 
@@ -486,6 +490,7 @@ abstract class BaseModule extends Controller
     {
         if ($form instanceof \Mulaidarinull\Larascaff\Components\Forms\Uploader) {
             if ((in_array('PUT', $request->route()->methods()) || in_array('PATCH', $request->route()->methods()))) {
+                $model->oldModelValue = $this->oldModelValue;
                 $model->updateMedia($form->getPath(), $request->{$form->getName()}, $form->getField());
             } elseif (in_array('POST', $request->route()->methods()) && $request->{$form->getName()}) {
                 $model->storeMedia($form->getPath(), $request->{$form->getName()}, $form->getField());

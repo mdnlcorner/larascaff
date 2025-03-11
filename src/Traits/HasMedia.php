@@ -134,10 +134,7 @@ trait HasMedia
                 return;
             }
             if (str_starts_with($tmpFiles, 'tmp/')) {
-                // delete old image if exist
-                if ($this->singleMedia) {
-                    $this->deleteMedia($this->singleMedia->filename, $field);
-                }
+                
 
                 $__file = new File(Storage::disk('local')->path($tmpFiles));
                 Storage::disk($disk)->putFileAs(
@@ -146,12 +143,18 @@ trait HasMedia
                     name: $__file->getFilename()
                 );
                 if (! $field) {
+                    // delete old image if exist
+                    if ($this->singleMedia) {
+                        $this->deleteMedia($this->singleMedia->filename, $field);
+                    }
                     $this->media()->create([
                         'filename' => $__file->getFilename(),
                         'path' => $path,
                         'extension' => $__file->getExtension(),
                     ]);
                 } else {
+                    $this->deleteMedia($path.'/'.$this->oldModelValue->{$field}, $field);
+                    unset($this->oldModelValue);
                     $this->{$field} = $__file->getFilename();
                     $this->save();
                 }
@@ -176,9 +179,8 @@ trait HasMedia
                     $media->delete();
                 }
             } else {
+                // dd($filename,123);
                 Storage::disk($disk)->delete($filename);
-                $this->{$field} = null;
-                $this->save();
             }
         }
     }
