@@ -24,7 +24,7 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
     {--B|builder : Determine that Modul using formBuilder}
     ';
 
-    protected $description = 'Create set of module';
+    protected $description = 'Create a module';
 
     protected $moduleName;
 

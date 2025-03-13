@@ -13,7 +13,7 @@ class DeleteTempUploadFiles extends Command
      *
      * @var string
      */
-    protected $signature = 'delete-temp-upload-files';
+    protected $signature = 'larascaff:delete-temp-upload-files';
 
     /**
      * The console command description.

@@ -7,7 +7,7 @@ use Mulaidarinull\Larascaff\BaseModule;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Forms\{TextInput};
 
-class {{ class }} extends BaseModule
+final class {{ class }} extends BaseModule
 {
     protected $model = {{ model }}::class;
     protected string $modalSize = 'md';

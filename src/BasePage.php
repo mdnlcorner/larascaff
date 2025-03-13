@@ -20,6 +20,8 @@ abstract class BasePage extends Controller
 
     protected string $pageTitle = '';
 
+    private \Illuminate\Container\Container $container;
+
     public function __construct()
     {
         $this->resolveUrl();

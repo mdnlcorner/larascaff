@@ -134,8 +134,6 @@ trait HasMedia
                 return;
             }
             if (str_starts_with($tmpFiles, 'tmp/')) {
-                
-
                 $__file = new File(Storage::disk('local')->path($tmpFiles));
                 Storage::disk($disk)->putFileAs(
                     path: $path,
@@ -153,7 +151,7 @@ trait HasMedia
                         'extension' => $__file->getExtension(),
                     ]);
                 } else {
-                    $this->deleteMedia($path.'/'.$this->oldModelValue->{$field}, $field);
+                    $this->deleteMedia($path.'/'.($this->oldModelValue ?? $this)->{$field}, $field);
                     unset($this->oldModelValue);
                     $this->{$field} = $__file->getFilename();
                     $this->save();

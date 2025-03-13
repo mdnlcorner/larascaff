@@ -6,7 +6,7 @@ use {{ modelNamespace }};
 use Mulaidarinull\Larascaff\BaseModule;
 use Illuminate\Http\Request;
 
-class {{ class }} extends BaseModule
+final class {{ class }} extends BaseModule
 {
     protected $model = {{ model }}::class;
     protected string $viewShow = 'pages.{{ view }}-form';

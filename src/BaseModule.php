@@ -50,6 +50,8 @@ abstract class BaseModule extends Controller
 
     private array $tableActions = [];
 
+    private \Illuminate\Container\Container $container;
+
     public function __construct()
     {
         is_string($this->model) && $this->model = new $this->model;
@@ -319,6 +321,7 @@ abstract class BaseModule extends Controller
         }
 
         $this->model = $this->model->query()->where($this->model->getRouteKeyName(), $this->routeKeyNameValue)->firstOrFail();
+
         return $this->model;
     }
 

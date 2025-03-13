@@ -27,7 +27,7 @@ class Install extends BaseCommand
      *
      * @var string
      */
-    protected $description = 'Install Larascaff';
+    protected $description = 'Install larascaff';
 
     /**
      * Execute the console command.
