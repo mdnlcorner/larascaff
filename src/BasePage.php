@@ -3,16 +3,15 @@
 namespace Mulaidarinull\Larascaff;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Container\Container;
 use Illuminate\Http\Request;
 use Illuminate\Support\Pluralizer;
-use Illuminate\Support\Reflector;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
+use Mulaidarinull\Larascaff\Traits\ParameterResolver;
 
 abstract class BasePage extends Controller
 {
-    use HasMenuPermission, HasPermission;
+    use HasMenuPermission, HasPermission, ParameterResolver;
 
     protected string $view = '';
 
@@ -32,7 +31,7 @@ abstract class BasePage extends Controller
     public static function makeMenu()
     {
         $static = new static;
-        $static->handleMakeMenu();
+        (new static)->handleMakeMenu();
     }
 
     protected function resolvePageTitle()
@@ -49,25 +48,15 @@ abstract class BasePage extends Controller
 
     protected function resolveUrl()
     {
-        $prefix = getPrefix();
-        if ($prefix) {
-            $prefix = $prefix .= '/';
-        }
-
         if ($this->url == '') {
-            $class = get_class($this);
-            $pages = explode('App\\Larascaff\\Pages\\', $class);
-            array_shift($pages);
-
-            $this->url = substr($pages[0], 0, strlen($pages[0]) - 4);
-
+            $url = substr(get_class($this),strlen('App\\Larascaff\\Pages\\'));
+            $this->url = substr($url, 0, strlen($url) - 4);
             $this->url = implode('/', array_map(function ($item) {
                 return \Illuminate\Support\Str::kebab($item);
             }, explode('\\', $this->url)));
-
             $this->url = Pluralizer::plural($this->url);
         }
-        $this->url = $prefix.$this->url;
+        $this->url = (getPrefix() ? getPrefix().'/' : '').$this->url;
     }
 
     protected function resolveView()
@@ -114,30 +103,5 @@ abstract class BasePage extends Controller
     public function getUrl(): string
     {
         return $this->url;
-    }
-
-    protected function resolveParameters($method, $excepts = [])
-    {
-        $this->container ??= new Container;
-
-        $beforeSave = new \ReflectionMethod($this, $method);
-        $parameters = [];
-        foreach ($beforeSave->getParameters() as $param) {
-            $className = Reflector::getParameterClassName($param);
-            $found = false;
-            foreach ($excepts as $except) {
-                if ($className == get_class($except)) {
-                    $parameters[] = $except;
-                    $found = true;
-                    break;
-                }
-            }
-
-            if (! $found) {
-                $parameters[] = $this->container->make($className);
-            }
-        }
-
-        return $parameters;
     }
 }

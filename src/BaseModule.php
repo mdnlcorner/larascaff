@@ -4,23 +4,21 @@ namespace Mulaidarinull\Larascaff;
 
 use App\Http\Controllers\Controller;
 use Closure;
-use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Pluralizer;
-use Illuminate\Support\Reflector;
-use Illuminate\Support\Str;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Info\Info;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
+use Mulaidarinull\Larascaff\Traits\ParameterResolver;
 
 abstract class BaseModule extends Controller
 {
-    use HasMenuPermission, HasPermission;
+    use HasMenuPermission, HasPermission, ParameterResolver;
 
     protected $oldModelValue;
 
@@ -95,8 +93,7 @@ abstract class BaseModule extends Controller
 
     public static function makeMenu()
     {
-        $static = new static;
-        $static->handleMakeMenu();
+        (new static)->handleMakeMenu();
     }
 
     public function getModel(): Model
@@ -622,52 +619,17 @@ abstract class BaseModule extends Controller
         return responseSuccess();
     }
 
-    protected function resolveParameters($method, $excepts = [])
-    {
-        $this->container ??= new Container;
-
-        $beforeSave = new \ReflectionMethod($this, $method);
-        $parameters = [];
-        foreach ($beforeSave->getParameters() as $param) {
-            $className = Reflector::getParameterClassName($param);
-            $found = false;
-            foreach ($excepts as $except) {
-                if ($className == get_class($except)) {
-                    $parameters[] = $except;
-                    $found = true;
-                    break;
-                }
-            }
-
-            if (! $found) {
-                $parameters[] = $this->container->make($className);
-            }
-        }
-
-        return $parameters;
-    }
-
     private function resolveUrl()
     {
-        $prefix = getPrefix();
-        if ($prefix) {
-            $prefix = $prefix .= '/';
-        }
-
         if ($this->url == '') {
-            if (! is_null($this->model?->url)) {
-                $this->url = $this->model->url;
-            } else {
-                $url = explode('App\\Larascaff\\Modules\\', get_class($this));
-                array_shift($url);
-                $this->url = substr($url[0], 0, strlen($url[0]) - 6);
-                $this->url = implode('/', array_map(function ($item) {
-                    return Str::kebab($item);
-                }, explode('\\', $this->url)));
-                $this->url = Pluralizer::plural($this->url);
-            }
+            $url = substr(get_class($this),strlen('App\\Larascaff\\Modules\\'));
+            $this->url = substr($url, 0, strlen($url) - 6);
+            $this->url = implode('/', array_map(function ($item) {
+                return \Illuminate\Support\Str::kebab($item);
+            }, explode('\\', $this->url)));
+            $this->url = Pluralizer::plural($this->url);
         }
-        $this->url = $prefix.$this->url;
+        $this->url = (getPrefix() ? getPrefix().'/' : '').$this->url;
     }
 
     protected function addDataToview(array $data)
