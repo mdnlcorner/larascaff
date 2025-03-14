@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Info\Info;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
+use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 
@@ -36,7 +37,7 @@ abstract class BaseModule extends Controller
 
     protected string $pageTitle = '';
 
-    protected string $modalSize = 'md';
+    protected ModalSize $modalSize = ModalSize::Md;
 
     protected string $modalTitle = '';
 

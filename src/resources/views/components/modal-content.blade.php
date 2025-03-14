@@ -1,5 +1,4 @@
 @props(['title' => 'Modal Title', 'method' => 'POST', 'action' => null, 'actionLabel' => 'Save', 'size' => 'md', 'center' => false])
-
 <div {{ $attributes->twMerge('flex px-2 md:px-0 mx-auto my-6 w-full', $size == 'full' ? 'my-0' : ($size == 'sm' ? 'max-w-sm' : ($size == 'lg' ? 'max-w-5xl' : ($size == 'xl' ? 'max-w-7xl' : 'max-w-2xl'))), $center ? 'items-center min-h-screen pointer-events-none my-0' : '') }}>
     <div data-modal-content class="relative transition-all duration-500 w-full scale-90 bg-white {{ $size == 'full' ? 'rounded-none min-h-screen flex flex-col' : 'rounded-lg' }} shadow opacity-0 pointer-events-auto dark:bg-dark-900">
         @if ($action)

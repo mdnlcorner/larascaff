@@ -17,8 +17,6 @@ class BaseRoleModule extends BaseModule
 {
     protected $model = Role::class;
 
-    protected string $modalSize = 'md';
-
     public function __construct()
     {
         parent::__construct();

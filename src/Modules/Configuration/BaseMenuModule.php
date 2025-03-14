@@ -21,8 +21,6 @@ class BaseMenuModule extends BaseModule
 
     protected string $viewAction = 'larascaff::pages.menu-form';
 
-    protected string $modalSize = 'md';
-
     public function __construct()
     {
         parent::__construct();

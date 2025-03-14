@@ -6,11 +6,13 @@ use {{ modelNamespace }};
 use Mulaidarinull\Larascaff\BaseModule;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Forms\{TextInput};
+use Mulaidarinull\Larascaff\Enums\ModalSize;
 
 final class {{ class }} extends BaseModule
 {
     protected $model = {{ model }}::class;
-    protected string $modalSize = 'md';
+    
+    protected ModalSize $modalSize = ModalSize::Md;
 
     public function formBuilder(Form $form): Form
     {

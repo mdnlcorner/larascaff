@@ -21,8 +21,6 @@ class BaseUserModule extends BaseModule
 {
     protected $model = User::class;
 
-    protected string $modalSize = 'md';
-
     public function __construct()
     {
         parent::__construct();

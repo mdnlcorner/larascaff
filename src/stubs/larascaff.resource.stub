@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 final class {{ class }} extends Controller
 {
-
     protected $model = {{ model }}::class;
+    
     protected string $viewShow = '{{ view }}-form';
+    
     protected string $viewAction = '{{ view }}-form';
 
     public function validationRules()

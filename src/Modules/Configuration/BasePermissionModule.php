@@ -18,8 +18,6 @@ class BasePermissionModule extends BaseModule
 {
     protected $model = Permission::class;
 
-    protected string $modalSize = 'md';
-
     public function validationRules(): array
     {
         return [
