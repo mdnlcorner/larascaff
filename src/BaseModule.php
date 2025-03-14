@@ -622,7 +622,7 @@ abstract class BaseModule extends Controller
     private function resolveUrl()
     {
         if ($this->url == '') {
-            $url = substr(get_class($this),strlen('App\\Larascaff\\Modules\\'));
+            $url = substr(get_class($this), strlen('App\\Larascaff\\Modules\\'));
             $this->url = substr($url, 0, strlen($url) - 6);
             $this->url = implode('/', array_map(function ($item) {
                 return \Illuminate\Support\Str::kebab($item);
