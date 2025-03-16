@@ -19,12 +19,12 @@ use Yajra\DataTables\Html\Column;
 
 class BaseUserModule extends BaseModule
 {
-    protected $model = User::class;
+    protected static ?string $model = User::class;
 
     public function __construct()
     {
         parent::__construct();
-        $this->tableActions(permission: 'update-permissions', action: url($this->url.'/{{id}}/permissions'), label: 'Permissions', icon: 'tabler-shield');
+        $this->tableActions(permission: 'update-permissions', action: url(static::getUrl().'/{{id}}/permissions'), label: 'Permissions', icon: 'tabler-shield');
     }
 
     public function validationRules()
@@ -76,7 +76,7 @@ class BaseUserModule extends BaseModule
 
     public function updatePermissions(Request $request, User $user)
     {
-        Gate::authorize('update-permissions '.$this->url);
+        Gate::authorize('update-permissions '.static::getUrl());
 
         $user->syncPermissions($request->permissions);
 
@@ -126,12 +126,12 @@ class BaseUserModule extends BaseModule
         ];
     }
 
-    public function routes()
+    public static function routes()
     {
         return [
-            $this->makeRoute(url: '{user}/copy-permissions', action: 'getPermissionsByUser', name: 'copy-permissions.edit'),
-            $this->makeRoute(url: '{user}/permissions', action: 'editPermissions', name: 'permissions.edit'),
-            $this->makeRoute(url: '{user}/permissions', action: 'updatePermissions', method: 'put', name: 'permissions.update'),
+            static::makeRoute(url: '{user}/copy-permissions', action: 'getPermissionsByUser', name: 'copy-permissions.edit'),
+            static::makeRoute(url: '{user}/permissions', action: 'editPermissions', name: 'permissions.edit'),
+            static::makeRoute(url: '{user}/permissions', action: 'updatePermissions', method: 'put', name: 'permissions.update'),
         ];
     }
 

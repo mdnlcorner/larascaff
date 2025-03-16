@@ -16,7 +16,7 @@ use Yajra\DataTables\Html\Column;
 
 class BasePermissionModule extends BaseModule
 {
-    protected $model = Permission::class;
+    protected static ?string $model = Permission::class;
 
     public function validationRules(): array
     {

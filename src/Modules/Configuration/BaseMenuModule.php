@@ -15,7 +15,7 @@ class BaseMenuModule extends BaseModule
     /**
      * @var Illuminate\Database\Eloquent\Model|string
      */
-    protected $model = Menu::class;
+    protected static ?string $model = Menu::class;
 
     protected string $viewShow = 'larascaff::pages.menu-form';
 
@@ -24,13 +24,13 @@ class BaseMenuModule extends BaseModule
     public function __construct()
     {
         parent::__construct();
-        $this->actions('sort', url($this->url.'/sort'), 'Sort menu', 'POST');
+        $this->actions('sort', url(static::getUrl().'/sort'), 'Sort menu', 'POST');
     }
 
-    public function routes(): array
+    public static function routes(): array
     {
         return [
-            $this->makeRoute(url: 'sort', action: 'sort', method: 'post'),
+            static::makeRoute(url: 'sort', action: 'sort', method: 'post'),
         ];
     }
 

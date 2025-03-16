@@ -9,13 +9,13 @@ use Mulaidarinull\Larascaff\Enums\ModalSize;
 
 final class {{ class }} extends BaseModule
 {
-    protected $model = {{ model }}::class;
+    protected ?string $model = {{ model }}::class;
     
     protected string $viewShow = 'pages.{{ view }}-form';
     
     protected string $viewAction = 'pages.{{ view }}-form';
     
-    protected ModalSize $modalSize = ModalSize::Md;
+    protected static ?ModalSize $modalSize = ModalSize::Md;
 
     public function validationRules()
     {

@@ -7,17 +7,17 @@ use Mulaidarinull\Larascaff\Models\Configuration\Permission;
 
 trait HasMenuPermission
 {
-    protected array $permissions = ['create' => true, 'read' => true, 'update' => true, 'delete' => true];
+    protected static array $permissions = ['create', 'read', 'update', 'delete'];
 
-    protected string $menuIcon = 'tabler-circle';
+    protected static ?string $menuIcon = 'tabler-circle';
 
-    protected string $menuCategory = '';
+    protected static ?string $menuCategory = '';
 
-    public function handleMakeMenu()
+    public static function handleMakeMenu()
     {
         $prefix = getPrefix();
 
-        $menus = explode('/', $this->url);
+        $menus = explode('/', static::getUrl());
         $subMenus = [];
 
         foreach ($menus as $key => $value) {
@@ -28,21 +28,24 @@ trait HasMenuPermission
             }
         }
 
-        $mm = Menu::firstOrCreate(['url' => implode('/', $mainMenu)], ['name' => ucwords(str_replace('-', ' ', array_pop($mainMenu))), 'category' => $this->menuCategory, 'icon' => $this->menuIcon]);
-        $this->attachMenupermission($mm, count($subMenus) ? ['read'] : $this->getPermissions(), ['ADMINISTRATOR']);
+        $mm = Menu::firstOrCreate(['url' => implode('/', $mainMenu)], ['name' => ucwords(str_replace('-', ' ', array_pop($mainMenu))), 'category' => static::$menuCategory, 'icon' => static::$menuIcon]);
+        static::attachMenupermission($mm, count($subMenus) ? ['read'] : static::getPermissions(), ['ADMINISTRATOR']);
 
         foreach ($subMenus as $key => $sub) {
             $mm = $mm->subMenus()->firstOrCreate(['url' => $mm->url.'/'.$sub], ['name' => ucwords(str_replace('-', ' ', $sub)), 'url' => $mm->url.'/'.$sub, 'category' => $mm->category]);
-            $this->attachMenupermission($mm, (count($subMenus) > 1 && $key == 0) ? ['read'] : $this->getPermissions(), ['ADMINISTRATOR']);
+            static::attachMenupermission($mm, (count($subMenus) > 1 && $key == 0) ? ['read'] : static::getPermissions(), ['ADMINISTRATOR']);
         }
     }
 
-    public function getPermissions()
+    public static function getPermissions()
     {
-        return array_keys($this->permissions);
+        if (method_exists(get_called_class(), 'permissions')) {
+            return call_user_func([get_called_class(), 'permissions']);
+        }
+        return static::$permissions;
     }
 
-    public function attachMenupermission(Menu $menu, ?array $permissions, ?array $roles)
+    public static function attachMenupermission(Menu $menu, ?array $permissions, ?array $roles)
     {
         if (is_null($permissions)) {
             $permissions = ['create', 'read', 'update', 'delete'];

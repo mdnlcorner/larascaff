@@ -5,19 +5,19 @@ namespace Mulaidarinull\Larascaff;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Pluralizer;
-use Mulaidarinull\Larascaff\Traits\HasMenuPermissionStatic;
+use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 use Mulaidarinull\Larascaff\Traits\ParameterResolver;
 
 abstract class BasePage extends Controller
 {
-    use HasMenuPermissionStatic, HasPermission, ParameterResolver;
+    use HasMenuPermission, HasPermission, ParameterResolver;
 
     protected static string $view = '';
 
-    protected static string $url = '';
+    protected static ?string $url = '';
 
-    protected static string $pageTitle = '';
+    protected static ?string $pageTitle = '';
 
     public static function makeMenu()
     {

@@ -15,12 +15,12 @@ use Yajra\DataTables\Html\Column;
 
 class BaseRoleModule extends BaseModule
 {
-    protected $model = Role::class;
+    protected static ?string $model = Role::class;
 
     public function __construct()
     {
         parent::__construct();
-        $this->tableActions(permission: 'update-permissions', action: url($this->url.'/{{id}}/permissions'), label: 'Permissions', icon: 'tabler-shield');
+        $this->tableActions(permission: 'update-permissions', action: url(static::getUrl().'/{{id}}/permissions'), label: 'Permissions', icon: 'tabler-shield');
     }
 
     public function formBuilder(Form $form): Form
@@ -39,12 +39,12 @@ class BaseRoleModule extends BaseModule
         ];
     }
 
-    public function routes()
+    public static function routes()
     {
         return [
-            $this->makeRoute(url: '{role}/copy-permissions', action: 'getPermissionsByRole', name: 'copy-permissions.edit'),
-            $this->makeRoute(url: '{role}/permissions', action: 'editPermissions', name: 'permissions.edit'),
-            $this->makeRoute(url: '{role}/permissions', action: 'updatePermissions', method: 'put', name: 'permissions.update'),
+            static::makeRoute(url: '{role}/copy-permissions', action: 'getPermissionsByRole', name: 'copy-permissions.edit'),
+            static::makeRoute(url: '{role}/permissions', action: 'editPermissions', name: 'permissions.edit'),
+            static::makeRoute(url: '{role}/permissions', action: 'updatePermissions', method: 'put', name: 'permissions.update'),
         ];
     }
 
@@ -97,7 +97,7 @@ class BaseRoleModule extends BaseModule
 
     public function updatePermissions(Request $request, Role $role)
     {
-        Gate::authorize('update-permissions '.$this->url);
+        Gate::authorize('update-permissions '.static::getUrl());
 
         $role->syncPermissions($request->permissions);
 

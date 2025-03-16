@@ -4,6 +4,7 @@ namespace Mulaidarinull\Larascaff;
 
 use App\Http\Controllers\Controller;
 use Closure;
+use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,26 +21,25 @@ abstract class BaseModule extends Controller
 {
     use HasMenuPermission, HasPermission, ParameterResolver;
 
-    protected $oldModelValue;
+    protected Model $oldModelValue;
 
-    /**
-     * @var \Illuminate\Database\Eloquent\Model|string
-     */
-    protected $model;
+    protected static ?string $model = null;
+
+    protected static ?Model $instanceModel = null;
+
+    protected static ?string $url = null;
+
+    protected static ?string $pageTitle = null;
+
+    protected static ?ModalSize $modalSize = ModalSize::Md;
+
+    protected static ?string $modalTitle = null;
 
     protected string $viewShow = '';
 
     protected string $viewAction = '';
 
     protected array $viewData = [];
-
-    protected string $pageTitle = '';
-
-    protected ModalSize $modalSize = ModalSize::Md;
-
-    protected string $modalTitle = '';
-
-    protected string $url = '';
 
     protected array $validations = [];
 
@@ -49,31 +49,12 @@ abstract class BaseModule extends Controller
 
     private array $tableActions = [];
 
-    private \Illuminate\Container\Container $container;
-
     public function __construct()
     {
-        is_string($this->model) && $this->model = new $this->model;
-        if ($this->modalTitle == '') {
-            if ($this->model) {
-                $this->modalTitle = 'Form '.ucwords(str_replace('_', ' ', $this->model->getTable()));
-            }
-        }
-
-        $this->resolveUrl();
-        if ($this->pageTitle == '') {
-            $segments = explode('/', $this->url);
-            if (count($segments)) {
-                $this->pageTitle = ucwords(str_replace('-', ' ', array_pop($segments)));
-            } else {
-                $this->pageTitle = '';
-            }
-        }
-
         if (! count($this->actions)) {
             $this->actions['create'] = [
                 'label' => 'Create',
-                'action' => url($this->url.'/create'),
+                'action' => url(static::getUrl().'/create'),
                 'show' => fn () => true,
                 'icon' => 'ti ti-copy-plus',
                 'method' => 'get',
@@ -81,29 +62,56 @@ abstract class BaseModule extends Controller
         }
 
         foreach ($this->actions as $action => $item) {
-            if (user()?->cannot($action.' '.$this->url)) {
+            if (user()?->cannot($action.' '.static::getUrl())) {
                 unset($this->actions[$action]);
             }
         }
 
-        $this->tableActions(permission: 'read', action: url($this->url.'/'.'{{id}}'), label: 'View', icon: 'tabler-eye');
-        $this->tableActions(permission: 'update', action: url($this->url.'/'.'{{id}}'.'/edit'), label: 'Edit', icon: 'tabler-edit', color: 'warning');
-        $this->tableActions(permission: 'delete', action: url($this->url.'/'.'{{id}}'), label: 'Delete', method: 'DELETE', icon: 'tabler-trash', color: 'danger');
+        $this->tableActions(permission: 'read', action: url(static::getUrl().'/'.'{{id}}'), label: 'View', icon: 'tabler-eye');
+        $this->tableActions(permission: 'update', action: url(static::getUrl().'/'.'{{id}}'.'/edit'), label: 'Edit', icon: 'tabler-edit', color: 'warning');
+        $this->tableActions(permission: 'delete', action: url(static::getUrl().'/'.'{{id}}'), label: 'Delete', method: 'DELETE', icon: 'tabler-trash', color: 'danger');
+    }
+
+    public static function getModel(): string
+    {
+        return static::$model ?? (string) str(static::class)
+            ->beforeLast('Module')
+            ->replace('App\\Larascaff\\Modules', '')
+            ->prepend('App\\Models');
+    }
+
+    protected static function getInstanceModel(): Model
+    {
+        if (!static::$instanceModel) {
+            $model = static::getModel();
+            static::$instanceModel = new $model;
+        }  
+        return static::$instanceModel;
     }
 
     public static function makeMenu()
     {
-        (new static)->handleMakeMenu();
-    }
-
-    public function getModel(): Model
-    {
-        return $this->model;
+        return static::handleMakeMenu();
     }
 
     public function getActions()
     {
         return $this->actions;
+    }
+
+    public static function getPageTitle()
+    {
+        $title = static::$pageTitle;
+        if (!$title) {
+            $segments = explode('/', static::getUrl());
+            if (count($segments)) {
+                $title = ucwords(str_replace('-', ' ', array_pop($segments)));
+            } else {
+                $title = '';
+            }
+        }
+
+        return $title;
     }
 
     public function getTableActions()
@@ -113,8 +121,8 @@ abstract class BaseModule extends Controller
 
     public function actions($permission, $action, $label = null, $method = 'GET', Closure|null|bool $show = null, bool $ajax = true, bool $targetBlank = false, ?string $icon = null)
     {
-        $this->permissions[$permission] = true;
-        if (user()?->can($permission.' '.$this->url)) {
+        static::$permissions[$permission] = true;
+        if (user()?->can($permission.' '.static::getUrl())) {
             if (is_bool($show)) {
                 $show = fn () => $show;
             }
@@ -132,8 +140,8 @@ abstract class BaseModule extends Controller
 
     public function tableActions(string $permission, string $action, ?string $label = null, string $method = 'GET', Closure|null|bool $show = null, bool $ajax = true, bool $targetBlank = false, ?string $icon = null, ?string $color = null)
     {
-        $this->permissions[$permission] = true;
-        if (user()?->can($permission.' '.$this->url)) {
+        static::$permissions[$permission] = true;
+        if (user()?->can($permission.' '.static::getUrl())) {
             if (is_bool($show)) {
                 $show = fn () => $show;
             }
@@ -156,14 +164,14 @@ abstract class BaseModule extends Controller
     public function index()
     {
         $data = [
-            'pageTitle' => $this->pageTitle,
-            'url' => Pluralizer::singular($this->url),
+            'pageTitle' => static::getPageTitle(),
+            'url' => Pluralizer::singular(static::getUrl()),
             'actions' => $this->actions,
             'tableActions' => $this->tableActions,
         ];
 
         if (method_exists($this, $method = 'widgets')) {
-            $parameters = $this->resolveParameters($method, [$this->model]);
+            $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
             $widgets = call_user_func_array([$this, $method], $parameters);
 
             $data['widgets'] = view('larascaff::widget', [
@@ -172,7 +180,7 @@ abstract class BaseModule extends Controller
         }
 
         if (method_exists($this, 'table')) {
-            $datatable = new BaseDatatable($this->model, $this->url, $this->tableActions);
+            $datatable = new BaseDatatable(static::getInstanceModel(), static::getUrl(), $this->tableActions);
 
             if (method_exists($this, 'filterTable')) {
                 $filterTable = call_user_func([$this, 'filterTable']);
@@ -190,27 +198,38 @@ abstract class BaseModule extends Controller
         return view('larascaff::main-content', $data);
     }
 
+    public static function getModalTitle()
+    {
+        $title = static::$modalTitle;
+        if (!$title) {
+            if (static::getInstanceModel()) {
+                $title = 'Form '.ucwords(str_replace('_', ' ', static::getInstanceModel()->getTable()));
+            }
+        }
+        return  $title;
+    }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create(Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to($this->url.'?action=create');
+            return redirect()->to(static::getUrl().'?action=create');
         }
         try {
-            setRecord($this->model);
+            setRecord(static::getInstanceModel());
             $this->addDataToview([
-                'action' => url($this->url),
+                'action' => url(static::getUrl()),
             ]);
 
             // run hook before create
             if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
             if (method_exists($this, $method = 'beforeCreate')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -221,8 +240,8 @@ abstract class BaseModule extends Controller
             }
 
             return $this->form($view, [
-                'size' => $this->modalSize,
-                'title' => $this->modalTitle,
+                'size' => static::$modalSize,
+                'title' => static::getModalTitle(),
                 ...$this->viewData,
             ]);
         } catch (\Throwable $th) {
@@ -242,19 +261,19 @@ abstract class BaseModule extends Controller
         try {
             // run hook before store
             if (method_exists($this, $method = 'beforeStore')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
-            $this->model->fill($request->all());
-            $this->model->save();
+            static::getInstanceModel()->fill($request->all());
+            static::getInstanceModel()->save();
 
             // handle form builder input
             $this->handleFormBuilder($request);
 
             // run hook after store
             if (method_exists($this, $method = 'afterStore')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -282,15 +301,15 @@ abstract class BaseModule extends Controller
 
             // run hook before show
             if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
             if (method_exists($this, $method = 'beforeShow')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
-            setRecord($this->model);
+            setRecord(static::getInstanceModel());
 
             if (method_exists($this, $method = 'infoList')) {
                 $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Info])]);
@@ -301,8 +320,8 @@ abstract class BaseModule extends Controller
             }
 
             return $this->form($view, [
-                'size' => $this->modalSize,
-                'title' => $this->modalTitle,
+                'size' => static::$modalSize,
+                'title' => static::getModalTitle(),
                 ...$this->viewData,
             ]);
         } catch (\Throwable $th) {
@@ -312,15 +331,14 @@ abstract class BaseModule extends Controller
         return response()->json([]);
     }
 
-    public function getRecord()
+    public function getRecord(): Model
     {
         if (! $this->routeKeyNameValue) {
             throw new \Exception('routeKeyNameValue must be filled');
         }
-
-        $this->model = $this->model->query()->where($this->model->getRouteKeyName(), $this->routeKeyNameValue)->firstOrFail();
-
-        return $this->model;
+        static::$instanceModel = static::getInstanceModel()->query()->where(static::getInstanceModel()->getRouteKeyName(), $this->routeKeyNameValue)->firstOrFail();
+        
+        return static::$instanceModel;
     }
 
     /**
@@ -329,27 +347,27 @@ abstract class BaseModule extends Controller
     public function edit(string $id, Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to($this->url.'?tableAction=update&tableActionId='.$id);
+            return redirect()->to(static::getUrl().'?tableAction=update&tableActionId='.$id);
         }
         $this->routeKeyNameValue = $id;
         $this->getRecord();
         try {
             $this->addDataToview([
-                'action' => url($this->url.'/'.$this->model->{$this->model->getRouteKeyName()}),
+                'action' => url(static::getUrl().'/'.static::getInstanceModel()->{static::getInstanceModel()->getRouteKeyName()}),
                 'method' => 'PUT',
             ]);
 
             // run hook before edit
             if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
             if (method_exists($this, $method = 'beforeEdit')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
-            setRecord($this->model);
+            setRecord(static::getInstanceModel());
 
             if (method_exists($this, $method = 'formBuilder')) {
                 $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form])]);
@@ -358,8 +376,8 @@ abstract class BaseModule extends Controller
             }
 
             return $this->form($view, [
-                'size' => $this->modalSize,
-                'title' => $this->modalTitle,
+                'size' => static::$modalSize,
+                'title' => static::getModalTitle(),
                 ...$this->viewData,
             ]);
         } catch (\Throwable $th) {
@@ -402,20 +420,20 @@ abstract class BaseModule extends Controller
         try {
             // run hook before udpate
             if (method_exists($this, $method = 'beforeUpdate')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
-            $this->oldModelValue = $this->model->replicate();
-            $this->model->fill($request->all());
-            $this->model->save();
+            $this->oldModelValue = static::getInstanceModel()->replicate();
+            static::getInstanceModel()->fill($request->all());
+            static::getInstanceModel()->save();
 
             // handle form builder
             $this->handleFormBuilder($request);
 
             // run hook after update
             if (method_exists($this, $method = 'afterUpdate')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -432,7 +450,7 @@ abstract class BaseModule extends Controller
     protected function transformFormBuilder(Request $request)
     {
         if (method_exists($this, $method = 'formBuilder')) {
-            setRecord($this->model);
+            setRecord(static::getInstanceModel());
             $parameters = $this->resolveParameters($method, []);
 
             $forms = call_user_func_array([$this, $method], $parameters);
@@ -464,7 +482,7 @@ abstract class BaseModule extends Controller
                         }
                         if (method_exists($component, 'getValidations')) {
                             if ($relationship) {
-                                if (count($component->getValidations()) && ! $this->model->{$relationship}() instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
+                                if (count($component->getValidations()) && ! static::getInstanceModel()->{$relationship}() instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
                                     foreach ($component->getValidations()['validations'] ?? [] as $key => $validation) {
                                         $this->validations['validations'][$key] = $validation;
                                         // $this->validations['validations'][$relationship. '.'.$key.'.*'] = $validation;
@@ -502,19 +520,19 @@ abstract class BaseModule extends Controller
     protected function handleFormBuilder(Request $request)
     {
         if (method_exists($this, $method = 'formBuilder')) {
-            setRecord($this->model);
+            setRecord(static::getInstanceModel());
             $parameters = $this->resolveParameters($method, []);
 
             $forms = call_user_func_array([$this, $method], $parameters);
 
             foreach ($forms->getComponents() as $form) {
-                $this->handleMedia($request, $form, $this->model);
+                $this->handleMedia($request, $form, static::getInstanceModel());
                 // handle relationship input
                 if ($form->getRelationship()) {
                     // form input that has sub components
                     if (method_exists($form, 'getComponents') && $form->getComponents()) {
                         $relationships = [];
-                        $relationModel = $this->model->{$form->getRelationship()}();
+                        $relationModel = static::getInstanceModel()->{$form->getRelationship()}();
 
                         foreach ($form->getComponents() as $component) {
                             $relationships[$form->getRelationship()][] = $component->getName();
@@ -531,15 +549,15 @@ abstract class BaseModule extends Controller
                                     $relationInput[$item] = $request->input($item);
                                 }
                                 // if already exist, update
-                                if ($this->model->{$relationName}) {
-                                    $this->model->{$relationName}->fill($relationInput)->save();
+                                if (static::getInstanceModel()->{$relationName}) {
+                                    static::getInstanceModel()->{$relationName}->fill($relationInput)->save();
                                 } else {
                                     // store new record
-                                    $this->model->{$relationName}()->create($relationInput);
+                                    static::getInstanceModel()->{$relationName}()->create($relationInput);
                                 }
                             } elseif ($relationModel instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
                                 $inputs = [];
-                                $related = ($this->model->{$relationName}()->getRelated());
+                                $related = (static::getInstanceModel()->{$relationName}()->getRelated());
 
                                 for ($i = 0; $i < count($request->{$relationName}[$relationship[0]]); $i++) {
                                     $data = [];
@@ -549,11 +567,11 @@ abstract class BaseModule extends Controller
                                     $inputs[] = new $related($data);
                                 }
 
-                                $this->model->{$relationName}()->saveMany($inputs);
+                                static::getInstanceModel()->{$relationName}()->saveMany($inputs);
                             }
                         }
                     } else {
-                        $relationship = $this->model->{$form->getRelationship()}();
+                        $relationship = static::getInstanceModel()->{$form->getRelationship()}();
                         if (
                             $relationship instanceof \Illuminate\Database\Eloquent\Relations\MorphToMany ||
                             $relationship instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -565,7 +583,7 @@ abstract class BaseModule extends Controller
                     // inside other component
                     if (method_exists($form, 'getComponents') && $form->getComponents()) {
                         foreach ($form->getComponents() as $component) {
-                            $this->handleMedia($request, $component, $this->model);
+                            $this->handleMedia($request, $component, static::getInstanceModel());
                         }
                     }
                 }
@@ -584,29 +602,29 @@ abstract class BaseModule extends Controller
         try {
             // run hook before delete
             if (method_exists($this, $method = 'beforeDelete')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
-            $this->model->delete();
+            static::getInstanceModel()->delete();
 
             // delete media
             if (method_exists($this, $method = 'formBuilder')) {
-                setRecord($this->model);
+                setRecord(static::getInstanceModel());
                 $parameters = $this->resolveParameters($method, []);
 
                 $forms = call_user_func_array([$this, $method], $parameters);
 
                 foreach ($forms->getComponents() as $form) {
                     if ($form instanceof \Mulaidarinull\Larascaff\Components\Forms\Uploader) {
-                        $this->model->deleteMedia();
+                        static::getInstanceModel()->deleteMedia();
                     }
                 }
             }
 
             // run hook after delete
             if (method_exists($this, $method = 'afterDelete')) {
-                $parameters = $this->resolveParameters($method, [$this->model, $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
             DB::commit();
@@ -619,30 +637,27 @@ abstract class BaseModule extends Controller
         return responseSuccess();
     }
 
-    private function resolveUrl()
-    {
-        if ($this->url == '') {
-            $url = substr(get_class($this), strlen('App\\Larascaff\\Modules\\'));
-            $this->url = substr($url, 0, strlen($url) - 6);
-            $this->url = implode('/', array_map(function ($item) {
-                return \Illuminate\Support\Str::kebab($item);
-            }, explode('\\', $this->url)));
-            $this->url = Pluralizer::plural($this->url);
-        }
-        $this->url = (getPrefix() ? getPrefix().'/' : '').$this->url;
-    }
-
     protected function addDataToview(array $data)
     {
         $this->viewData = [...$this->viewData, ...$data];
     }
 
-    public function getUrl()
+    public static function getUrl(): string
     {
-        return $this->url;
+        $url = static::$url;
+        if (!$url) {
+            $url = substr(static::class, strlen('App\\Larascaff\\Modules\\'));
+            $url = substr($url, 0, strlen($url) - 6);
+            $url = implode('/', array_map(function ($item) {
+                return \Illuminate\Support\Str::kebab($item);
+            }, explode('\\', $url)));
+            $url = Pluralizer::plural($url);
+        }
+
+        return (getPrefix() ? getPrefix().'/' : '').$url;
     }
 
-    public function makeRoute($url, string|Closure|array|null $action = null, $method = 'get', $name = null)
+    public static function makeRoute($url, string|Closure|array|null $action = null, $method = 'get', $name = null)
     {
         return compact('method', 'action', 'url', 'name');
     }
