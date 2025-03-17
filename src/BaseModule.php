@@ -20,8 +20,6 @@ abstract class BaseModule extends Controller
 {
     use HasMenuPermission, HasPermission, ParameterResolver;
 
-    protected Model $oldModelValue;
-
     protected static ?string $model = null;
 
     protected static ?Model $instanceModel = null;
@@ -40,9 +38,11 @@ abstract class BaseModule extends Controller
 
     protected static array $viewData = [];
 
-    protected array $validations = [];
+    protected static array $validations = [];
 
     private ?string $routeKeyNameValue = null;
+
+    protected static ?Model $oldModelValue = null;
 
     public static function getModel(): string
     {
@@ -52,7 +52,7 @@ abstract class BaseModule extends Controller
             ->prepend('App\\Models');
     }
 
-    protected static function getInstanceModel(): Model
+    public static function getInstanceModel(): Model
     {
         if (! static::$instanceModel) {
             $model = static::getModel();
@@ -251,7 +251,7 @@ abstract class BaseModule extends Controller
     {
         $this->initValidation($request);
         $this->transformFormBuilder($request);
-        $request->validate($this->validations['validations'] ?? [], $this->validations['messages'] ?? []);
+        $request->validate(static::$validations['validations'] ?? [], static::$validations['messages'] ?? []);
         DB::beginTransaction();
         try {
             // run hook before store
@@ -393,10 +393,10 @@ abstract class BaseModule extends Controller
                 $messages = call_user_func([$this, 'validationMessages']);
             }
             foreach (call_user_func([$this, 'validationRules']) as $key => $validation) {
-                $this->validations['validations'][$key] = $validation;
+                static::$validations['validations'][$key] = $validation;
             }
             foreach ($messages as $key => $message) {
-                $this->validations['messages'][$key] = $message;
+                static::$validations['messages'][$key] = $message;
             }
         }
     }
@@ -410,7 +410,7 @@ abstract class BaseModule extends Controller
         $this->getRecord();
         $this->initValidation($request);
         $this->transformFormBuilder($request);
-        $request->validate($this->validations['validations'] ?? [], $this->validations['messages'] ?? []);
+        $request->validate(static::$validations['validations'] ?? [], static::$validations['messages'] ?? []);
         DB::beginTransaction();
         try {
             // run hook before udpate
@@ -419,7 +419,7 @@ abstract class BaseModule extends Controller
                 call_user_func_array([$this, $method], $parameters);
             }
 
-            $this->oldModelValue = static::getInstanceModel()->replicate();
+            static::$oldModelValue = static::getInstanceModel()->replicate();
             static::getInstanceModel()->fill($request->all());
             static::getInstanceModel()->save();
 
@@ -453,10 +453,10 @@ abstract class BaseModule extends Controller
             foreach ($forms->getComponents() as $form) {
                 if (method_exists($form, 'getValidations')) {
                     foreach ($form->getValidations()['validations'] ?? [] as $key => $validation) {
-                        $this->validations['validations'][$key] = $validation;
+                        static::$validations['validations'][$key] = $validation;
                     }
                     foreach ($form->getValidations()['messages'] ?? [] as $key => $validation) {
-                        $this->validations['messages'][$key] = $validation;
+                        static::$validations['messages'][$key] = $validation;
                     }
                 }
 
@@ -479,17 +479,17 @@ abstract class BaseModule extends Controller
                             if ($relationship) {
                                 if (count($component->getValidations()) && ! static::getInstanceModel()->{$relationship}() instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
                                     foreach ($component->getValidations()['validations'] ?? [] as $key => $validation) {
-                                        $this->validations['validations'][$key] = $validation;
-                                        // $this->validations['validations'][$relationship. '.'.$key.'.*'] = $validation;
+                                        static::$validations['validations'][$key] = $validation;
+                                        // static::$validations['validations'][$relationship. '.'.$key.'.*'] = $validation;
                                     }
                                 }
                             } else {
                                 if (count($component->getValidations())) {
                                     foreach ($component->getValidations()['validations'] ?? [] as $key => $validation) {
-                                        $this->validations['validations'][$key] = $validation;
+                                        static::$validations['validations'][$key] = $validation;
                                     }
                                     foreach ($component->getValidations()['messages'] ?? [] as $key => $validation) {
-                                        $this->validations['messages'][$key] = $validation;
+                                        static::$validations['messages'][$key] = $validation;
                                     }
                                 }
                             }
@@ -504,7 +504,7 @@ abstract class BaseModule extends Controller
     {
         if ($form instanceof \Mulaidarinull\Larascaff\Components\Forms\Uploader) {
             if ((in_array('PUT', $request->route()->methods()) || in_array('PATCH', $request->route()->methods()))) {
-                $model->oldModelValue = $this->oldModelValue;
+                $model->oldModelValue = static::$oldModelValue;
                 $model->updateMedia($form->getPath(), $request->{$form->getName()}, $form->getField());
             } elseif (in_array('POST', $request->route()->methods()) && $request->{$form->getName()}) {
                 $model->storeMedia($form->getPath(), $request->{$form->getName()}, $form->getField());

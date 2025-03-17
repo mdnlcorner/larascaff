@@ -85,7 +85,7 @@ class BaseUserModule extends BaseModule
         return responseSuccess();
     }
 
-    public function formBuilder(Form $form): Form
+    public static function formBuilder(Form $form): Form
     {
         return $form->schema([
             TextInput::make('name'),
@@ -137,7 +137,7 @@ class BaseUserModule extends BaseModule
         ];
     }
 
-    public function table(BaseDatatable $table)
+    public static function table(BaseDatatable $table)
     {
         $table
             ->customizeColumn(function (EloquentDataTable $eloquentDataTable) {
@@ -157,14 +157,14 @@ class BaseUserModule extends BaseModule
             });
     }
 
-    public function beforeStore(Request $request, User $user)
+    public static function beforeStore(Request $request, User $user)
     {
         $request->merge([
             'password' => bcrypt($request->password),
         ]);
     }
 
-    public function beforeUpdate(Request $request, User $user)
+    public static function beforeUpdate(Request $request, User $user)
     {
         if (! $request->password) {
             $request->merge(['password' => $user->password]);

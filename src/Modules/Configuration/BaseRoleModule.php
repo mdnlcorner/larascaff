@@ -25,7 +25,7 @@ class BaseRoleModule extends BaseModule
         ];
     }
 
-    public function formBuilder(Form $form): Form
+    public static function formBuilder(Form $form): Form
     {
         return $form->schema([
             TextInput::make('name'),
@@ -50,7 +50,7 @@ class BaseRoleModule extends BaseModule
         ];
     }
 
-    public function table(BaseDatatable $table)
+    public static function table(BaseDatatable $table)
     {
         $table
             ->columns(function (\Mulaidarinull\Larascaff\Datatable\HtmlBuilder $builder) {
