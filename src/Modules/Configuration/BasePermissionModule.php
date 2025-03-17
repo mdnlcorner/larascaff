@@ -21,7 +21,7 @@ class BasePermissionModule extends BaseModule
     public function validationRules(): array
     {
         return [
-            'name' => ['required', Rule::unique('permissions')->ignore($this->model)],
+            'name' => ['required', Rule::unique('permissions')->ignore(static::getInstanceModel())],
             'guard_name' => 'required',
             'menu_id' => 'required',
         ];

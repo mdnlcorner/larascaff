@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Traits;
 
+use Mulaidarinull\Larascaff\BasePage;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Permission;
 
@@ -39,10 +40,11 @@ trait HasMenuPermission
 
     public static function getPermissions()
     {
-        if (method_exists(get_called_class(), 'permissions')) {
-            return call_user_func([get_called_class(), 'permissions']);
+        if (method_exists(static::class, 'permissions') && is_subclass_of(static::class, BasePage::class)) {
+            return call_user_func([static::class, 'permissions']);
         }
-        return static::$permissions;
+
+        return array_values(array_unique([...static::$permissions, ...array_keys(static::getActions()), ...array_keys(static::getTableActions())]));
     }
 
     public static function attachMenupermission(Menu $menu, ?array $permissions, ?array $roles)

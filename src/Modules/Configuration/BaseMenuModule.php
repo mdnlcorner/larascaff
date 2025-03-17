@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\BaseModule;
+use Mulaidarinull\Larascaff\Concerns\ModuleAction;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Yajra\DataTables\Html\Column;
 
@@ -21,10 +22,11 @@ class BaseMenuModule extends BaseModule
 
     protected string $viewAction = 'larascaff::pages.menu-form';
 
-    public function __construct()
+    public static function actions()
     {
-        parent::__construct();
-        $this->actions('sort', url(static::getUrl().'/sort'), 'Sort menu', 'POST');
+        return [
+            ModuleAction::make(permission: 'sort', url: '/sort', label: 'Sort menu', method: 'POST'),
+        ];
     }
 
     public static function routes(): array
@@ -36,7 +38,7 @@ class BaseMenuModule extends BaseModule
 
     public function sort()
     {
-        $menus = $this->model->getMenus();
+        $menus = static::getInstanceModel()->getMenus();
 
         $data = [];
         $i = 0;
@@ -60,7 +62,7 @@ class BaseMenuModule extends BaseModule
     {
         return [
             'name' => 'required',
-            'url' => ['required', Rule::unique($this->model->getTable())->ignore($this->model)],
+            'url' => ['required', Rule::unique(static::getInstanceModel()->getTable())->ignore(static::getInstanceModel())],
         ];
     }
 

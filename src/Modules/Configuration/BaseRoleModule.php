@@ -8,6 +8,7 @@ use Illuminate\Validation\Rule;
 use Mulaidarinull\Larascaff\BaseModule;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Forms\TextInput;
+use Mulaidarinull\Larascaff\Concerns\ModuleAction;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Role;
@@ -17,10 +18,11 @@ class BaseRoleModule extends BaseModule
 {
     protected static ?string $model = Role::class;
 
-    public function __construct()
+    public static function tableActions()
     {
-        parent::__construct();
-        $this->tableActions(permission: 'update-permissions', action: url(static::getUrl().'/{{id}}/permissions'), label: 'Permissions', icon: 'tabler-shield');
+        return [
+            ModuleAction::make(permission: 'update-permissions', url: '/{{id}}/permissions', label: 'Permissions', icon: 'tabler-shield'),
+        ];
     }
 
     public function formBuilder(Form $form): Form
@@ -34,7 +36,7 @@ class BaseRoleModule extends BaseModule
     public function validationRules(): array
     {
         return [
-            'name' => ['required', Rule::unique('roles')->ignore($this->model)],
+            'name' => ['required', Rule::unique('roles')->ignore(static::getInstanceModel())],
             'guard_name' => 'required',
         ];
     }

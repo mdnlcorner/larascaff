@@ -3,14 +3,13 @@
 namespace Mulaidarinull\Larascaff;
 
 use App\Http\Controllers\Controller;
-use Closure;
-use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Info\Info;
+use Mulaidarinull\Larascaff\Concerns\ModuleAction;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
@@ -45,33 +44,6 @@ abstract class BaseModule extends Controller
 
     private ?string $routeKeyNameValue = null;
 
-    private array $actions = [];
-
-    private array $tableActions = [];
-
-    public function __construct()
-    {
-        if (! count($this->actions)) {
-            $this->actions['create'] = [
-                'label' => 'Create',
-                'action' => url(static::getUrl().'/create'),
-                'show' => fn () => true,
-                'icon' => 'ti ti-copy-plus',
-                'method' => 'get',
-            ];
-        }
-
-        foreach ($this->actions as $action => $item) {
-            if (user()?->cannot($action.' '.static::getUrl())) {
-                unset($this->actions[$action]);
-            }
-        }
-
-        $this->tableActions(permission: 'read', action: url(static::getUrl().'/'.'{{id}}'), label: 'View', icon: 'tabler-eye');
-        $this->tableActions(permission: 'update', action: url(static::getUrl().'/'.'{{id}}'.'/edit'), label: 'Edit', icon: 'tabler-edit', color: 'warning');
-        $this->tableActions(permission: 'delete', action: url(static::getUrl().'/'.'{{id}}'), label: 'Delete', method: 'DELETE', icon: 'tabler-trash', color: 'danger');
-    }
-
     public static function getModel(): string
     {
         return static::$model ?? (string) str(static::class)
@@ -82,10 +54,11 @@ abstract class BaseModule extends Controller
 
     protected static function getInstanceModel(): Model
     {
-        if (!static::$instanceModel) {
+        if (! static::$instanceModel) {
             $model = static::getModel();
             static::$instanceModel = new $model;
-        }  
+        }
+
         return static::$instanceModel;
     }
 
@@ -94,15 +67,10 @@ abstract class BaseModule extends Controller
         return static::handleMakeMenu();
     }
 
-    public function getActions()
-    {
-        return $this->actions;
-    }
-
     public static function getPageTitle()
     {
         $title = static::$pageTitle;
-        if (!$title) {
+        if (! $title) {
             $segments = explode('/', static::getUrl());
             if (count($segments)) {
                 $title = ucwords(str_replace('-', ' ', array_pop($segments)));
@@ -114,48 +82,74 @@ abstract class BaseModule extends Controller
         return $title;
     }
 
-    public function getTableActions()
+    public static function getActions(bool $validatePermission = false)
     {
-        return $this->tableActions;
+        $url = static::getUrl();
+        // default table actions => read, update & delete
+        $actions = collect([
+            ModuleAction::make(permission: 'create', url: '/create', label: 'Create', icon: 'tabler-plus'),
+        ])
+            ->flatMap(fn ($item) => $item)
+            ->map(function ($item) use ($url) {
+                $item['url'] = url($url.$item['url']);
+
+                return $item;
+            })->toArray();
+
+        // add custom table actions
+        if (method_exists(static::class, $method = 'actions')) {
+            $actions = [...$actions, ...collect(call_user_func([static::class, $method]))
+                ->flatMap(fn ($item) => $item)
+                ->map(function ($item) use ($url) {
+                    $item['url'] = url($url.$item['url']);
+
+                    return $item;
+                })->toArray()];
+        }
+
+        if ($validatePermission) {
+            return array_filter($actions, function ($permission) use ($url) {
+                return user()->can($permission.' '.$url);
+            }, ARRAY_FILTER_USE_KEY);
+        }
+
+        return $actions;
     }
 
-    public function actions($permission, $action, $label = null, $method = 'GET', Closure|null|bool $show = null, bool $ajax = true, bool $targetBlank = false, ?string $icon = null)
+    public static function getTableActions(bool $validatePermission = false)
     {
-        static::$permissions[$permission] = true;
-        if (user()?->can($permission.' '.static::getUrl())) {
-            if (is_bool($show)) {
-                $show = fn () => $show;
-            }
-            $this->actions[$permission] = [
-                'action' => $action,
-                'label' => $label ?? ucfirst($permission),
-                'method' => $method,
-                'show' => $show ?? fn () => true,
-                'ajax' => $ajax,
-                'blank' => $targetBlank ? '_blank' : '',
-                'icon' => $icon,
-            ];
-        }
-    }
+        $url = static::getUrl();
+        // default table actions => read, update & delete
+        $tableActions = collect([
+            ModuleAction::make(permission: 'read', url: '/{{id}}', label: 'View', icon: 'tabler-eye'),
+            ModuleAction::make(permission: 'update', url: '/{{id}}/edit', label: 'Edit', icon: 'tabler-edit', color: 'warning'),
+            ModuleAction::make(permission: 'delete', url: '/{{id}}', label: 'Delete', method: 'DELETE', icon: 'tabler-trash', color: 'danger'),
+        ])
+            ->flatMap(fn ($item) => $item)
+            ->map(function ($item) use ($url) {
+                $item['url'] = url($url.$item['url']);
 
-    public function tableActions(string $permission, string $action, ?string $label = null, string $method = 'GET', Closure|null|bool $show = null, bool $ajax = true, bool $targetBlank = false, ?string $icon = null, ?string $color = null)
-    {
-        static::$permissions[$permission] = true;
-        if (user()?->can($permission.' '.static::getUrl())) {
-            if (is_bool($show)) {
-                $show = fn () => $show;
-            }
-            $this->tableActions[$permission] = [
-                'action' => $action,
-                'label' => $label ?? ucfirst($permission),
-                'method' => $method,
-                'show' => $show ?? fn () => true,
-                'ajax' => $ajax,
-                'blank' => $targetBlank ? '_blank' : '',
-                'icon' => $icon ?? ($permission == 'update' ? 'tabler-edit' : ($permission == 'view' ? 'tabler-eye' : ($permission == 'delete' ? 'tabler-trash' : null))),
-                'color' => $color ?? ($permission == 'update' ? 'warning' : ($permission == 'delete' ? 'danger' : null)),
-            ];
+                return $item;
+            })->toArray();
+
+        // add custom table actions
+        if (method_exists(static::class, $method = 'tableActions')) {
+            $tableActions = [...$tableActions, ...collect(call_user_func([static::class, $method]))
+                ->flatMap(fn ($item) => $item)
+                ->map(function ($item) use ($url) {
+                    $item['url'] = url($url.$item['url']);
+
+                    return $item;
+                })->toArray()];
         }
+
+        if ($validatePermission) {
+            return array_filter($tableActions, function ($permission) use ($url) {
+                return user()->can($permission.' '.$url);
+            }, ARRAY_FILTER_USE_KEY);
+        }
+
+        return $tableActions;
     }
 
     /**
@@ -166,8 +160,8 @@ abstract class BaseModule extends Controller
         $data = [
             'pageTitle' => static::getPageTitle(),
             'url' => Pluralizer::singular(static::getUrl()),
-            'actions' => $this->actions,
-            'tableActions' => $this->tableActions,
+            'actions' => static::getActions(true),
+            'tableActions' => static::getTableActions(true),
         ];
 
         if (method_exists($this, $method = 'widgets')) {
@@ -180,7 +174,7 @@ abstract class BaseModule extends Controller
         }
 
         if (method_exists($this, 'table')) {
-            $datatable = new BaseDatatable(static::getInstanceModel(), static::getUrl(), $this->tableActions);
+            $datatable = new BaseDatatable(static::getInstanceModel(), static::getUrl(), static::getTableActions());
 
             if (method_exists($this, 'filterTable')) {
                 $filterTable = call_user_func([$this, 'filterTable']);
@@ -201,12 +195,13 @@ abstract class BaseModule extends Controller
     public static function getModalTitle()
     {
         $title = static::$modalTitle;
-        if (!$title) {
+        if (! $title) {
             if (static::getInstanceModel()) {
                 $title = 'Form '.ucwords(str_replace('_', ' ', static::getInstanceModel()->getTable()));
             }
         }
-        return  $title;
+
+        return $title;
     }
 
     /**
@@ -337,7 +332,7 @@ abstract class BaseModule extends Controller
             throw new \Exception('routeKeyNameValue must be filled');
         }
         static::$instanceModel = static::getInstanceModel()->query()->where(static::getInstanceModel()->getRouteKeyName(), $this->routeKeyNameValue)->firstOrFail();
-        
+
         return static::$instanceModel;
     }
 
@@ -645,7 +640,7 @@ abstract class BaseModule extends Controller
     public static function getUrl(): string
     {
         $url = static::$url;
-        if (!$url) {
+        if (! $url) {
             $url = substr(static::class, strlen('App\\Larascaff\\Modules\\'));
             $url = substr($url, 0, strlen($url) - 6);
             $url = implode('/', array_map(function ($item) {
@@ -657,7 +652,7 @@ abstract class BaseModule extends Controller
         return (getPrefix() ? getPrefix().'/' : '').$url;
     }
 
-    public static function makeRoute($url, string|Closure|array|null $action = null, $method = 'get', $name = null)
+    public static function makeRoute($url, string|\Closure|array|null $action = null, $method = 'get', $name = null)
     {
         return compact('method', 'action', 'url', 'name');
     }

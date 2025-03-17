@@ -6,7 +6,7 @@
     <x-larascaff::dropdown class="w-40">
         @foreach ($actions as $permission => $item)
             @if ($item['ajax'])
-                <x-larascaff::dropdown-link data-method="{{ $item['method'] }}" data-action="{{ $item['action'] }}">
+                <x-larascaff::dropdown-link data-method="{{ $item['method'] }}" data-action="{{ $item['url'] }}">
                     <button type="buttton" @class([
                         'flex items-center w-full gap-x-1 text-left',
                         'text-' . $item['color'] => $item['color'],
@@ -18,7 +18,7 @@
                     </button>
                 </x-larascaff::dropdown-link>
             @else
-                <x-larascaff::dropdown-link href="{{ $item['action'] }}" target="{{ $item['blank'] }}">
+                <x-larascaff::dropdown-link href="{{ $item['url'] }}" target="{{ $item['blank'] }}">
                     <button type="buttton" @class([
                         'flex items-center w-full gap-x-1 text-left',
                         'text-' . $item['color'] => $item['color'],
@@ -36,7 +36,7 @@
     <div class="flex items-center gap-x-2">
         @foreach ($actions as $permission => $item)
             @if ($item['ajax'])
-                <button type="buttton" data-method="{{ $item['method'] }}" data-action="{{ $item['action'] }}"
+                <button type="buttton" data-method="{{ $item['method'] }}" data-action="{{ $item['url'] }}"
                 @class([
                     'flex items-center w-full gap-x-1 text-left hover:underline',
                     'text-' . $item['color'] => $item['color'],
@@ -47,7 +47,7 @@
                     <span>{{ $item['label'] }}</span>
                 </button>
             @else
-                <a href="{{ $item['action'] }}" target="{{ $item['blank'] }}"
+                <a href="{{ $item['url'] }}" target="{{ $item['blank'] }}"
                     @class(["flex items-center w-full gap-x-1 group", 'text-' . $item['color'] => $item['color'],])>
                     @if ($item['icon'])
                         <div>@svg($item['icon'], 'w-4 h-4')</div>

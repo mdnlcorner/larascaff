@@ -46,7 +46,7 @@ class LarascaffHandler
             File::ensureDirectoryExists(app_path('Larascaff/Modules'));
             foreach (File::allFiles(app_path('Larascaff/Modules')) as $modules) {
                 $class = getFileNamespace($modules->getContents()).'\\'.$modules->getFilenameWithoutExtension();
-                
+
                 $routeName = explode('/', $class::getUrl());
                 if (method_exists($class, 'routes')) {
                     $implodeRouteName = (implode('.', $routeName)).'.';
