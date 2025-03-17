@@ -6,9 +6,9 @@ use Mulaidarinull\Larascaff\BasePage;
 
 final class {{ class }} extends BasePage
 {
-    protected string $view = '{{ view }}';
+    protected static string $view = '{{ view }}';
     
-    public function viewData(): array
+    public static function viewData(): array
     {
         return [];
     }

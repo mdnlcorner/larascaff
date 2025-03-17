@@ -13,11 +13,11 @@ abstract class BasePage extends Controller
 {
     use HasMenuPermission, HasPermission, ParameterResolver;
 
-    protected static string $view = '';
+    protected static ?string $view = null;
 
-    protected static ?string $url = '';
+    protected static ?string $url = null;
 
-    protected static ?string $pageTitle = '';
+    protected static ?string $pageTitle = null;
 
     public static function makeMenu()
     {
@@ -27,7 +27,7 @@ abstract class BasePage extends Controller
     public static function getPageTitle()
     {
         $title = static::$pageTitle;
-        if ($title == '') {
+        if (! $title) {
             $segments = explode('/', static::getUrl());
             if (count($segments)) {
                 $title = ucwords(str_replace('-', ' ', array_pop($segments)));
@@ -42,7 +42,7 @@ abstract class BasePage extends Controller
     public static function getUrl(): string
     {
         $url = static::$url;
-        if ($url == '') {
+        if (! $url) {
             $url = substr(get_called_class(), strlen('App\\Larascaff\\Pages\\'));
             $url = substr($url, 0, strlen($url) - 4);
             $url = implode('/', array_map(function ($item) {
@@ -57,7 +57,7 @@ abstract class BasePage extends Controller
     public static function getView()
     {
         $view = static::$view;
-        if ($view == '') {
+        if (! $view) {
             $class = get_called_class();
             $pages = explode('App\\Larascaff\\Pages\\', $class);
             array_shift($pages);

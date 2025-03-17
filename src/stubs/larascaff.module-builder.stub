@@ -10,18 +10,18 @@ use Mulaidarinull\Larascaff\Enums\ModalSize;
 
 final class {{ class }} extends BaseModule
 {
-    protected ?string $model = {{ model }}::class;
+    protected static ?string $model = {{ model }}::class;
     
     protected static ?ModalSize $modalSize = ModalSize::Md;
 
-    public function formBuilder(Form $form): Form
+    public static function formBuilder(Form $form): Form
     {
         return $form->schema([
             TextInput::make('name'),
         ]);
     }
 
-    public function table(\Mulaidarinull\Larascaff\Datatable\BaseDatatable $table)
+    public static function table(\Mulaidarinull\Larascaff\Datatable\BaseDatatable $table)
     {
         $table
             ->customQuery(function (\Illuminate\Database\Eloquent\Builder $query) {

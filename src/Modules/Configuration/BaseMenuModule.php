@@ -18,9 +18,9 @@ class BaseMenuModule extends BaseModule
      */
     protected static ?string $model = Menu::class;
 
-    protected string $viewShow = 'larascaff::pages.menu-form';
+    protected static ?string $viewShow = 'larascaff::pages.menu-form';
 
-    protected string $viewAction = 'larascaff::pages.menu-form';
+    protected static ?string $viewAction = 'larascaff::pages.menu-form';
 
     public static function actions()
     {
@@ -66,7 +66,7 @@ class BaseMenuModule extends BaseModule
         ];
     }
 
-    public function table(\Mulaidarinull\Larascaff\Datatable\BaseDatatable $table)
+    public static function table(\Mulaidarinull\Larascaff\Datatable\BaseDatatable $table)
     {
         $table
             ->customQuery(function (\Illuminate\Database\Eloquent\Builder $query) {
@@ -102,7 +102,7 @@ class BaseMenuModule extends BaseModule
         ]);
     }
 
-    public function afterStore(Request $request, Menu $menu)
+    public static function afterStore(Request $request, Menu $menu)
     {
         foreach ($request->permissions ?? [] as $permission) {
             $menu->permissions()->create(['name' => $permission." {$menu->url}"]);
@@ -111,7 +111,7 @@ class BaseMenuModule extends BaseModule
         Cache::forget('urlMenu');
     }
 
-    public function afterUpdate(Request $request, Menu $menu)
+    public static function afterUpdate(Request $request, Menu $menu)
     {
         $menu->load('permissions');
 

@@ -10,58 +10,58 @@ use Illuminate\Support\Facades\DB;
 
 final class {{ class }} extends Controller
 {
-    protected ?string $model = {{ model }}::class;
+    protected static ?string $model = {{ model }}::class;
     
-    protected string $viewShow = '{{ view }}-form';
+    protected static ?string $viewShow = '{{ view }}-form';
     
-    protected string $viewAction = '{{ view }}-form';
+    protected static ?string $viewAction = '{{ view }}-form';
 
-    public function validationRules()
+    public static function validationRules()
     {
         return [];
     }
 
-    public function validationMessages()
+    public static function validationMessages()
     {
         return [];
     }
 
-    public function table()
+    public static function table()
     {
         // 
     }
 
-    protected function beforeShow()
+    public static function beforeShow()
     {
         //
     }
 
-    public function beforeEdit()
+    public static function beforeEdit()
     {
         //
     }
 
-    public function beforeCreate()
+    public static function beforeCreate()
     {
         //
     }
 
-    public function beforeStore()
+    public static function beforeStore()
     {
         //
     }
 
-    public function afterStore()
+    public static function afterStore()
     {
         //
     }
 
-    public function beforeUpdate()
+    public static function beforeUpdate()
     {
         //
     }
 
-    public function afterUpdate()
+    public static function afterUpdate()
     {
         //
     }

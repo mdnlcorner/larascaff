@@ -27,7 +27,7 @@ class BasePermissionModule extends BaseModule
         ];
     }
 
-    public function table(BaseDatatable $table)
+    public static function table(BaseDatatable $table)
     {
         $table
             ->customQuery(function (Builder $query) {
@@ -42,7 +42,7 @@ class BasePermissionModule extends BaseModule
             });
     }
 
-    public function formBuilder(Form $form): Form
+    public static function formBuilder(Form $form): Form
     {
         return $form->schema([
             TextInput::make('name'),

@@ -24,10 +24,10 @@ class OptionsSelectServerSide
                 ->when($request->filled('modifyQuery'), function (Builder $query) {
                     $moduleName = explode('@', $this->request->get('modifyQuery'));
                     try {
-                        $module = new $moduleName[0];
+                        $module = $moduleName[0];
                         $name = $moduleName[1];
-                        setRecord($module->getModel());
-                        foreach ($module->formBuilder(new \Mulaidarinull\Larascaff\Components\Forms\Form)->getComponents() as $component) {
+                        setRecord($module::getInstanceModel());
+                        foreach ($module::formBuilder(new \Mulaidarinull\Larascaff\Components\Forms\Form)->getComponents() as $component) {
                             if (method_exists($component, 'getComponents')) {
                                 foreach ($component->getComponents() as $childComp) {
                                     if ($childComp->getName() == $name) {
@@ -39,6 +39,7 @@ class OptionsSelectServerSide
                             }
                         }
                     } catch (\Throwable $th) {
+                        throw new \Exception($th->getMessage());
                     }
                 })
                 ->when($request->filled('value'), function (Builder $query) {
