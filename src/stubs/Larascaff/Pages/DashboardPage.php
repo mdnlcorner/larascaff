@@ -6,19 +6,18 @@ use Mulaidarinull\Larascaff\BasePage;
 
 final class DashboardPage extends BasePage
 {
-    protected string $view = 'larascaff::pages.dashboard';
+    protected static string $view = 'larascaff::pages.dashboard';
 
-    protected string $menuIcon = 'tabler-home';
+    protected static ?string $menuIcon = 'tabler-home';
 
-    protected string $url = 'dashboard';
+    protected static ?string $url = 'dashboard';
 
-    public function __construct()
+    public static function permissions()
     {
-        parent::__construct();
-        $this->permissions = ['read' => true];
+        return ['read'];
     }
 
-    public function viewData(): array
+    public static function viewData(): array
     {
         return [];
     }

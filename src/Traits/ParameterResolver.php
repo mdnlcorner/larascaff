@@ -7,6 +7,8 @@ use Illuminate\Support\Reflector;
 
 trait ParameterResolver
 {
+    private Container $container;
+
     protected function resolveParameters($method, $excepts = [])
     {
         $this->container ??= new Container;

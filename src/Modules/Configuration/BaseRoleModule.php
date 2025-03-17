@@ -8,6 +8,7 @@ use Illuminate\Validation\Rule;
 use Mulaidarinull\Larascaff\BaseModule;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Forms\TextInput;
+use Mulaidarinull\Larascaff\Concerns\ModuleAction;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Role;
@@ -15,12 +16,13 @@ use Yajra\DataTables\Html\Column;
 
 class BaseRoleModule extends BaseModule
 {
-    protected $model = Role::class;
+    protected static ?string $model = Role::class;
 
-    public function __construct()
+    public static function tableActions()
     {
-        parent::__construct();
-        $this->tableActions(permission: 'update-permissions', action: url($this->url.'/{{id}}/permissions'), label: 'Permissions', icon: 'tabler-shield');
+        return [
+            ModuleAction::make(permission: 'update-permissions', url: '/{{id}}/permissions', label: 'Permissions', icon: 'tabler-shield'),
+        ];
     }
 
     public function formBuilder(Form $form): Form
@@ -34,17 +36,17 @@ class BaseRoleModule extends BaseModule
     public function validationRules(): array
     {
         return [
-            'name' => ['required', Rule::unique('roles')->ignore($this->model)],
+            'name' => ['required', Rule::unique('roles')->ignore(static::getInstanceModel())],
             'guard_name' => 'required',
         ];
     }
 
-    public function routes()
+    public static function routes()
     {
         return [
-            $this->makeRoute(url: '{role}/copy-permissions', action: 'getPermissionsByRole', name: 'copy-permissions.edit'),
-            $this->makeRoute(url: '{role}/permissions', action: 'editPermissions', name: 'permissions.edit'),
-            $this->makeRoute(url: '{role}/permissions', action: 'updatePermissions', method: 'put', name: 'permissions.update'),
+            static::makeRoute(url: '{role}/copy-permissions', action: 'getPermissionsByRole', name: 'copy-permissions.edit'),
+            static::makeRoute(url: '{role}/permissions', action: 'editPermissions', name: 'permissions.edit'),
+            static::makeRoute(url: '{role}/permissions', action: 'updatePermissions', method: 'put', name: 'permissions.update'),
         ];
     }
 
@@ -97,7 +99,7 @@ class BaseRoleModule extends BaseModule
 
     public function updatePermissions(Request $request, Role $role)
     {
-        Gate::authorize('update-permissions '.$this->url);
+        Gate::authorize('update-permissions '.static::getUrl());
 
         $role->syncPermissions($request->permissions);
 

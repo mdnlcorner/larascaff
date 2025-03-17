@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 final class {{ class }} extends Controller
 {
-    protected $model = {{ model }}::class;
+    protected ?string $model = {{ model }}::class;
     
     protected string $viewShow = '{{ view }}-form';
     

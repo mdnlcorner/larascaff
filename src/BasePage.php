@@ -13,72 +13,67 @@ abstract class BasePage extends Controller
 {
     use HasMenuPermission, HasPermission, ParameterResolver;
 
-    protected string $view = '';
+    protected static string $view = '';
 
-    protected string $url = '';
+    protected static ?string $url = '';
 
-    protected string $pageTitle = '';
-
-    private \Illuminate\Container\Container $container;
-
-    public function __construct()
-    {
-        $this->resolveUrl();
-        $this->resolvePageTitle();
-        $this->resolveView();
-    }
+    protected static ?string $pageTitle = '';
 
     public static function makeMenu()
     {
-        $static = new static;
-        (new static)->handleMakeMenu();
+        return static::handleMakeMenu();
     }
 
-    protected function resolvePageTitle()
+    public static function getPageTitle()
     {
-        if ($this->pageTitle == '') {
-            $segments = explode('/', $this->url);
+        $title = static::$pageTitle;
+        if ($title == '') {
+            $segments = explode('/', static::getUrl());
             if (count($segments)) {
-                $this->pageTitle = ucwords(str_replace('-', ' ', array_pop($segments)));
+                $title = ucwords(str_replace('-', ' ', array_pop($segments)));
             } else {
-                $this->pageTitle = '';
+                $title = '';
             }
         }
+
+        return $title;
     }
 
-    protected function resolveUrl()
+    public static function getUrl(): string
     {
-        if ($this->url == '') {
-            $url = substr(get_class($this),strlen('App\\Larascaff\\Pages\\'));
-            $this->url = substr($url, 0, strlen($url) - 4);
-            $this->url = implode('/', array_map(function ($item) {
+        $url = static::$url;
+        if ($url == '') {
+            $url = substr(get_called_class(), strlen('App\\Larascaff\\Pages\\'));
+            $url = substr($url, 0, strlen($url) - 4);
+            $url = implode('/', array_map(function ($item) {
                 return \Illuminate\Support\Str::kebab($item);
-            }, explode('\\', $this->url)));
-            $this->url = Pluralizer::plural($this->url);
+            }, explode('\\', $url)));
+            $url = Pluralizer::plural($url);
         }
-        $this->url = (getPrefix() ? getPrefix().'/' : '').$this->url;
+
+        return (getPrefix() ? getPrefix().'/' : '').$url;
     }
 
-    protected function resolveView()
+    public static function getView()
     {
-        if ($this->view == '') {
-            $class = get_class($this);
+        $view = static::$view;
+        if ($view == '') {
+            $class = get_called_class();
             $pages = explode('App\\Larascaff\\Pages\\', $class);
             array_shift($pages);
             $pages[count($pages) - 1] = substr($pages[count($pages) - 1], 0, strlen($pages[count($pages) - 1]) - 4);
             $pages = strtolower(implode('.', $pages));
-            $this->view = 'pages.'.$pages;
+            $view = 'pages.'.$pages;
         }
+
+        return $view;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $data = [
-            'pageTitle' => $this->pageTitle,
-            'url' => $this->url,
+            'pageTitle' => static::getPageTitle(),
+            'url' => static::getUrl(),
         ];
 
         $viewData = [];
@@ -86,7 +81,7 @@ abstract class BasePage extends Controller
             $parameters = $this->resolveParameters($method, [$request]);
             $viewData = call_user_func_array([$this, $method], $parameters);
         }
-        $data['view'] = view($this->view, $viewData);
+        $data['view'] = view(static::getView(), $viewData);
 
         if (method_exists($this, $method = 'widgets')) {
             $parameters = $this->resolveParameters($method, []);
@@ -100,8 +95,8 @@ abstract class BasePage extends Controller
         return view('larascaff::main-content', $data);
     }
 
-    public function getUrl(): string
+    public static function makeRoute($url, string|callable|array|null $action = null, $method = 'get', $name = null)
     {
-        return $this->url;
+        return compact('method', 'action', 'url', 'name');
     }
 }

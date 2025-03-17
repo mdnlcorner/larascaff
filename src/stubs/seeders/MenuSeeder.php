@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 
 class MenuSeeder extends Seeder
@@ -20,8 +19,14 @@ class MenuSeeder extends Seeder
         Cache::forget('menus');
         Cache::forget('urlMenu');
 
-        $mm = Menu::firstOrCreate(['url' => (getPrefix() ? getPrefix().'/' : '').'dashboard'], ['name' => 'Dashboard', 'category' => '', 'icon' => 'tabler-home']);
-        $this->attachMenupermission($mm, ['read'], ['ADMINISTRATOR']);
+        File::ensureDirectoryExists(app_path('Larascaff/Pages'));
+
+        foreach (File::allFiles(app_path('Larascaff/Pages')) as $pages) {
+            $module = getFileNamespace($pages->getContents()).'\\'.$pages->getFilenameWithoutExtension();
+            if ($module) {
+                $module::makeMenu();
+            }
+        }
 
         File::ensureDirectoryExists(app_path('Larascaff/Modules'));
         foreach (File::allFiles(app_path('Larascaff/Modules')) as $modules) {

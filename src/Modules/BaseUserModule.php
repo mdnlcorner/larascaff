@@ -12,6 +12,7 @@ use Mulaidarinull\Larascaff\Components\Forms\Radio;
 use Mulaidarinull\Larascaff\Components\Forms\Select;
 use Mulaidarinull\Larascaff\Components\Forms\TextInput;
 use Mulaidarinull\Larascaff\Components\Layouts\Section;
+use Mulaidarinull\Larascaff\Concerns\ModuleAction;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Yajra\DataTables\EloquentDataTable;
@@ -19,19 +20,20 @@ use Yajra\DataTables\Html\Column;
 
 class BaseUserModule extends BaseModule
 {
-    protected $model = User::class;
+    protected static ?string $model = User::class;
 
-    public function __construct()
+    public static function tableActions()
     {
-        parent::__construct();
-        $this->tableActions(permission: 'update-permissions', action: url($this->url.'/{{id}}/permissions'), label: 'Permissions', icon: 'tabler-shield');
+        return [
+            ModuleAction::make(permission: 'update-permissions', url: '/{{id}}/permissions', label: 'Permissions', icon: 'tabler-shield'),
+        ];
     }
 
     public function validationRules()
     {
         return [
             'name' => 'required',
-            'email' => ['required', 'email', Rule::unique('users')->ignore($this->model)],
+            'email' => ['required', 'email', Rule::unique('users')->ignore(static::getInstanceModel())],
             'password' => ['confirmed', Rule::requiredIf(function () {
                 return request()->routeIs('users.store');
             })],
@@ -76,7 +78,7 @@ class BaseUserModule extends BaseModule
 
     public function updatePermissions(Request $request, User $user)
     {
-        Gate::authorize('update-permissions '.$this->url);
+        Gate::authorize('update-permissions '.static::getUrl());
 
         $user->syncPermissions($request->permissions);
 
@@ -126,12 +128,12 @@ class BaseUserModule extends BaseModule
         ];
     }
 
-    public function routes()
+    public static function routes()
     {
         return [
-            $this->makeRoute(url: '{user}/copy-permissions', action: 'getPermissionsByUser', name: 'copy-permissions.edit'),
-            $this->makeRoute(url: '{user}/permissions', action: 'editPermissions', name: 'permissions.edit'),
-            $this->makeRoute(url: '{user}/permissions', action: 'updatePermissions', method: 'put', name: 'permissions.update'),
+            static::makeRoute(url: '{user}/copy-permissions', action: 'getPermissionsByUser', name: 'copy-permissions.edit'),
+            static::makeRoute(url: '{user}/permissions', action: 'editPermissions', name: 'permissions.edit'),
+            static::makeRoute(url: '{user}/permissions', action: 'updatePermissions', method: 'put', name: 'permissions.update'),
         ];
     }
 

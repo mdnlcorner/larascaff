@@ -26,43 +26,41 @@ class LarascaffHandler
             // Pages route
             File::ensureDirectoryExists(app_path('Larascaff/Pages'));
             foreach (File::allFiles(app_path('Larascaff/Pages')) as $page) {
-                $namespace = getFileNamespace($page->getContents()).'\\'.$page->getFilenameWithoutExtension();
-                $page = new $namespace;
-                $routeName = explode('/', $page->getUrl());
+                $class = getFileNamespace($page->getContents()).'\\'.$page->getFilenameWithoutExtension();
 
-                if (method_exists($page, 'routes')) {
+                if (method_exists($class, 'routes')) {
+                    $routeName = explode('/', $class::getUrl());
                     $implodeRouteName = (implode('.', $routeName)).'.';
 
-                    foreach ($page->routes() as $route) {
-                        $url = $page->getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
-                        $action = is_string($route['action']) ? [$namespace, $route['action']] : $route['action'];
+                    foreach ($class::routes() as $route) {
+                        $url = $class::getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
+                        $action = is_string($route['action']) ? [$class, $route['action']] : $route['action'];
                         Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName.$route['name'] : null);
                     }
                 }
 
-                Route::get($page->getUrl(), [$namespace, 'index'])->name(implode('.', $routeName));
+                Route::get($class::getUrl(), [$class, 'index'])->name(implode('.', explode('/', $class::getUrl())));
             }
 
             // Modules route
             File::ensureDirectoryExists(app_path('Larascaff/Modules'));
             foreach (File::allFiles(app_path('Larascaff/Modules')) as $modules) {
-                $namespace = getFileNamespace($modules->getContents()).'\\'.$modules->getFilenameWithoutExtension();
-                $module = new $namespace;
-                $routeName = explode('/', $module->getUrl());
+                $class = getFileNamespace($modules->getContents()).'\\'.$modules->getFilenameWithoutExtension();
 
-                if (method_exists($module, 'routes')) {
+                $routeName = explode('/', $class::getUrl());
+                if (method_exists($class, 'routes')) {
                     $implodeRouteName = (implode('.', $routeName)).'.';
 
-                    foreach ($module->routes() as $route) {
-                        $url = $module->getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
-                        $action = is_string($route['action']) ? [$namespace, $route['action']] : $route['action'];
+                    foreach ($class::routes() as $route) {
+                        $url = $class::getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
+                        $action = is_string($route['action']) ? [$class, $route['action']] : $route['action'];
                         Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName.$route['name'] : null);
                     }
                 }
 
                 array_pop($routeName);
-                Route::name(implode('.', $routeName).(count($routeName) ? '.' : ''))->group(function () use ($module, $namespace) {
-                    Route::resource($module->getUrl(), $namespace);
+                Route::name(implode('.', $routeName).(count($routeName) ? '.' : ''))->group(function () use ($class) {
+                    Route::resource($class::getUrl(), $class);
                 });
             }
         });

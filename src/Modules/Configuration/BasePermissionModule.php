@@ -16,12 +16,12 @@ use Yajra\DataTables\Html\Column;
 
 class BasePermissionModule extends BaseModule
 {
-    protected $model = Permission::class;
+    protected static ?string $model = Permission::class;
 
     public function validationRules(): array
     {
         return [
-            'name' => ['required', Rule::unique('permissions')->ignore($this->model)],
+            'name' => ['required', Rule::unique('permissions')->ignore(static::getInstanceModel())],
             'guard_name' => 'required',
             'menu_id' => 'required',
         ];

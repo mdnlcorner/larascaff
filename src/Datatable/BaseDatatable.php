@@ -54,10 +54,10 @@ class BaseDatatable extends DataTable
             $this->eloquentTable = (new EloquentDataTable($this->query))->addIndexColumn()
                 ->addColumn('action', function (Model $model) {
                     $actions = [];
-                    foreach ($this->tableActions as $key => $action) {
+                    foreach ($this->tableActions as $permission => $action) {
                         if ($action['show']($model)) {
-                            $action['action'] = str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['action']);
-                            $actions[$key] = $action;
+                            $action['url'] = str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']);
+                            $actions[$permission] = $action;
                         }
                     }
 

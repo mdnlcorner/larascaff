@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\BaseModule;
+use Mulaidarinull\Larascaff\Concerns\ModuleAction;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Yajra\DataTables\Html\Column;
 
@@ -15,28 +16,29 @@ class BaseMenuModule extends BaseModule
     /**
      * @var Illuminate\Database\Eloquent\Model|string
      */
-    protected $model = Menu::class;
+    protected static ?string $model = Menu::class;
 
     protected string $viewShow = 'larascaff::pages.menu-form';
 
     protected string $viewAction = 'larascaff::pages.menu-form';
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->actions('sort', url($this->url.'/sort'), 'Sort menu', 'POST');
-    }
-
-    public function routes(): array
+    public static function actions()
     {
         return [
-            $this->makeRoute(url: 'sort', action: 'sort', method: 'post'),
+            ModuleAction::make(permission: 'sort', url: '/sort', label: 'Sort menu', method: 'POST'),
+        ];
+    }
+
+    public static function routes(): array
+    {
+        return [
+            static::makeRoute(url: 'sort', action: 'sort', method: 'post'),
         ];
     }
 
     public function sort()
     {
-        $menus = $this->model->getMenus();
+        $menus = static::getInstanceModel()->getMenus();
 
         $data = [];
         $i = 0;
@@ -60,7 +62,7 @@ class BaseMenuModule extends BaseModule
     {
         return [
             'name' => 'required',
-            'url' => ['required', Rule::unique($this->model->getTable())->ignore($this->model)],
+            'url' => ['required', Rule::unique(static::getInstanceModel()->getTable())->ignore(static::getInstanceModel())],
         ];
     }
 
