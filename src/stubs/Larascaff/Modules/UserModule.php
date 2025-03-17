@@ -6,7 +6,7 @@ use Mulaidarinull\Larascaff\Modules\BaseUserModule;
 
 final class UserModule extends BaseUserModule
 {
-    protected string $menuIcon = 'tabler-users-group';
+    protected static ?string $menuIcon = 'tabler-users-group';
 
-    protected string $menuCategory = 'CONFIGURATION';
+    protected static ?string $menuCategory = 'CONFIGURATION';
 }

@@ -6,7 +6,7 @@ use Mulaidarinull\Larascaff\Modules\Configuration\BaseMenuModule;
 
 final class MenuModule extends BaseMenuModule
 {
-    protected string $menuIcon = 'tabler-settings';
+    protected static ?string $menuIcon = 'tabler-settings';
 
-    protected string $menuCategory = 'CONFIGURATION';
+    protected static ?string $menuCategory = 'CONFIGURATION';
 }

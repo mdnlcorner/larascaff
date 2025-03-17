@@ -18,9 +18,9 @@ class BaseMenuModule extends BaseModule
      */
     protected static ?string $model = Menu::class;
 
-    protected string $viewShow = 'larascaff::pages.menu-form';
+    protected static ?string $viewShow = 'larascaff::pages.menu-form';
 
-    protected string $viewAction = 'larascaff::pages.menu-form';
+    protected static ?string $viewAction = 'larascaff::pages.menu-form';
 
     public static function actions()
     {

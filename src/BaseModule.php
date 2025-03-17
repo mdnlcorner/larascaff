@@ -34,11 +34,11 @@ abstract class BaseModule extends Controller
 
     protected static ?string $modalTitle = null;
 
-    protected string $viewShow = '';
+    protected static ?string $viewShow = null;
 
-    protected string $viewAction = '';
+    protected static ?string $viewAction = null;
 
-    protected array $viewData = [];
+    protected static array $viewData = [];
 
     protected array $validations = [];
 
@@ -231,13 +231,13 @@ abstract class BaseModule extends Controller
             if (method_exists($this, $method = 'formBuilder')) {
                 $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form])]);
             } else {
-                $view = view($this->viewAction, $this->viewData);
+                $view = view(static::$viewAction, static::$viewData);
             }
 
             return $this->form($view, [
                 'size' => static::$modalSize,
                 'title' => static::getModalTitle(),
-                ...$this->viewData,
+                ...static::$viewData,
             ]);
         } catch (\Throwable $th) {
             return responseError($th);
@@ -311,13 +311,13 @@ abstract class BaseModule extends Controller
             } elseif (method_exists($this, $method = 'formBuilder')) {
                 $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form])]);
             } else {
-                $view = view($this->viewShow, $this->viewData);
+                $view = view(static::$viewShow, static::$viewData);
             }
 
             return $this->form($view, [
                 'size' => static::$modalSize,
                 'title' => static::getModalTitle(),
-                ...$this->viewData,
+                ...static::$viewData,
             ]);
         } catch (\Throwable $th) {
             return responseError($th);
@@ -367,13 +367,13 @@ abstract class BaseModule extends Controller
             if (method_exists($this, $method = 'formBuilder')) {
                 $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form])]);
             } else {
-                $view = view($this->viewAction, $this->viewData);
+                $view = view(static::$viewAction, static::$viewData);
             }
 
             return $this->form($view, [
                 'size' => static::$modalSize,
                 'title' => static::getModalTitle(),
-                ...$this->viewData,
+                ...static::$viewData,
             ]);
         } catch (\Throwable $th) {
             return responseError($th);
@@ -634,7 +634,7 @@ abstract class BaseModule extends Controller
 
     protected function addDataToview(array $data)
     {
-        $this->viewData = [...$this->viewData, ...$data];
+        static::$viewData = [...static::$viewData, ...$data];
     }
 
     public static function getUrl(): string
