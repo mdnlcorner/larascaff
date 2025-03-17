@@ -6,7 +6,7 @@ use Mulaidarinull\Larascaff\BasePage;
 
 final class DashboardPage extends BasePage
 {
-    protected static string $view = 'larascaff::pages.dashboard';
+    protected static ?string $view = 'larascaff::pages.dashboard';
 
     protected static ?string $menuIcon = 'tabler-home';
 
