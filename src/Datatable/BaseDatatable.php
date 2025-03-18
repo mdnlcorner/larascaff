@@ -13,7 +13,7 @@ class BaseDatatable extends DataTable
 
     public ?EloquentDataTable $eloquentTable = null;
 
-    public function __construct(protected Model $model, protected string $url, protected array $tableActions)
+    public function __construct(protected Model|QueryBuilder $model, protected string $url, protected array $tableActions)
     {
         $this->model = $this->query = $model;
         $this->url = $url;

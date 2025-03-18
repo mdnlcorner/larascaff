@@ -20,6 +20,22 @@
             {!! $view !!}
         @endisset
         @isset($dataTable)
+            @isset($tabs)
+                <div class="flex justify-center pb-6">
+                    <div class="px-3 py-2.5 rounded-xl bg-card border">
+                        <div class="flex items-center overflow-x-auto text-sm gap-x-4">
+                            @foreach ($tabs as $name => $tab)
+                                <a class="flex items-center gap-x-2 text-muted-foreground hover:text-foreground px-2 py-2 rounded-md [&.active]:dark:bg-dark-800 [&.active]:bg-dark-100 [&.active]:text-primary {{ (request()->get('activeTab') == $name || (!request()->has('activeTab') && $loop->first)) ? 'active' : '' }}" href="?activeTab={{ $name }}">{{ ucfirst(strtolower($name)) }} 
+                                    @if ($tab->getBadge())
+                                        <div class="py-0.5 min-w-5 text-center px-1 border-primary/40 border text-xs rounded-md bg-primary/30 text-primary">{{ $tab->getBadge() }}</div>
+                                    @endif
+                                </a>
+                            @endforeach
+                        </div>
+
+                    </div>
+                </div>
+            @endisset
             <div class="card">
                 <div class="border rounded-md dark:border-dark-800 border-dark-100">
                     @isset($filterTable)

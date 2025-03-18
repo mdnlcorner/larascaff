@@ -50,7 +50,6 @@ class Section
             HTML,
             [
                 'name' => $this->name,
-                // 'components' => $this->components,
                 'columnSpan' => $this->columnSpan,
                 'columns' => $this->columns,
                 'description' => $this->description,

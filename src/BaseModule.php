@@ -3,6 +3,7 @@
 namespace Mulaidarinull\Larascaff;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,7 @@ abstract class BaseModule extends Controller
 
     protected static ?string $model = null;
 
-    protected static ?Model $instanceModel = null;
+    protected static Model|Builder|null $instanceModel = null;
 
     protected static ?string $url = null;
 
@@ -44,6 +45,8 @@ abstract class BaseModule extends Controller
 
     protected static ?Model $oldModelValue = null;
 
+    protected static ?Builder $datatable = null;
+
     public static function getModel(): string
     {
         return static::$model ?? (string) str(static::class)
@@ -52,7 +55,7 @@ abstract class BaseModule extends Controller
             ->prepend('App\\Models');
     }
 
-    public static function getInstanceModel(): Model
+    public static function getInstanceModel(): Model|Builder
     {
         if (! static::$instanceModel) {
             $model = static::getModel();
@@ -138,7 +141,6 @@ abstract class BaseModule extends Controller
                 ->flatMap(fn ($item) => $item)
                 ->map(function ($item) use ($url) {
                     $item['url'] = url($url.$item['url']);
-
                     return $item;
                 })->toArray()];
         }
@@ -155,7 +157,7 @@ abstract class BaseModule extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $data = [
             'pageTitle' => static::getPageTitle(),
@@ -173,8 +175,34 @@ abstract class BaseModule extends Controller
             ]);
         }
 
+        if (method_exists($this, $method = 'tabs')) {
+            $tabs = collect(call_user_func([$this, $method]));
+            $data['tabs'] = $tabs;
+        }
+
         if (method_exists($this, 'table')) {
-            $datatable = new BaseDatatable(static::getInstanceModel(), static::getUrl(), static::getTableActions());
+            static::$datatable = static::getInstanceModel()->query();
+            if (isset($data['tabs'])) {
+
+                $tabs = $data['tabs'];
+                if (!$request->has('activeTab')) {
+                    if (is_callable($tabs->first()->getQuery())) {
+                        call_user_func($tabs->first()->getQuery(), static::$datatable);
+                    }
+                } else {
+                    $tab = $tabs[$request->get('activeTab')] ?? null;
+                    if ($tab) {
+                        if (is_callable($tab->getQuery())) {
+                            call_user_func($tab->getQuery(), static::$datatable);
+                        }
+                    } else {
+                        if (is_callable($tabs->first()->getQuery())) {
+                            call_user_func($tabs->first()->getQuery(), static::$datatable);
+                        }
+                    }
+                }
+            }
+            $datatable = new BaseDatatable(static::$datatable, static::getUrl(), static::getTableActions());
 
             if (method_exists($this, 'filterTable')) {
                 $filterTable = call_user_func([$this, 'filterTable']);
