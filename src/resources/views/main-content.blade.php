@@ -23,11 +23,46 @@
             @isset($tabs)
                 <div class="flex justify-center pb-6">
                     <div class="px-3 py-2.5 rounded-xl bg-card border">
-                        <div class="flex items-center overflow-x-auto text-sm gap-x-4">
+                        <div x-data="{
+                            init: function() {
+                                const togglers = $el.querySelectorAll('[data-tabname]')
+                                togglers.forEach(toggler => {
+                                    toggler.addEventListener('click', function(e) {
+                                        e.preventDefault()
+                                        const location = window.location
+                                        const reloadUrl = `${location.origin}${location.pathname}?activeTab=${this.dataset.tabname}`
+                                        
+                                        window.LaravelDataTables[(window.datatableId)].ajax.url(reloadUrl).load()
+                                        
+                                        togglers.forEach(_t => _t.classList.remove('active'))
+                                        this.classList.add('active')
+                                        
+                                        window.history.pushState({}, '', reloadUrl)
+                                    })
+                                })
+                            }
+                        }" class="flex items-center overflow-x-auto text-sm gap-x-4">
                             @foreach ($tabs as $name => $tab)
-                                <a class="flex items-center gap-x-2 text-muted-foreground hover:text-foreground px-2 py-2 rounded-md [&.active]:dark:bg-dark-800 [&.active]:bg-dark-100 [&.active]:text-primary {{ (request()->get('activeTab') == $name || (!request()->has('activeTab') && $loop->first)) ? 'active' : '' }}" href="?activeTab={{ $name }}">{{ ucfirst(strtolower($name)) }} 
+                                <a href="?activeTab={{ $name }}" data-tabname="{{ $name }}" class="flex items-center gap-x-2 text-muted-foreground hover:text-foreground px-2 py-2 rounded-md [&.active]:dark:bg-dark-800 [&.active]:bg-dark-100 [&.active]:text-primary {{ (request()->get('activeTab') == $name || (!request()->has('activeTab') && $loop->first)) ? 'active' : '' }}">{{ ucfirst(strtolower($name)) }} 
                                     @if ($tab->getBadge())
-                                        <div class="py-0.5 min-w-5 text-center px-1 border-primary/40 border text-xs rounded-md bg-primary/30 text-primary">{{ $tab->getBadge() }}</div>
+                                        @php
+                                            $getColor = $tab->getBadgeColor();
+                                            $badgeColor = ['border-primary/40', 'bg-primary/30', 'text-primary'];
+                                            if ($getColor == 'danger') {
+                                                $badgeColor = ['border-danger/40', 'bg-danger/30', 'text-danger'];
+                                            } elseif($getColor == 'info') {
+                                                $badgeColor = ['border-info/40', 'bg-info/30', 'text-info'];
+                                            } elseif($getColor == 'warning') {
+                                                $badgeColor = ['border-warning/40', 'bg-warning/30', 'text-warning'];
+                                            } elseif($getColor == 'success') {
+                                                $badgeColor = ['border-success/40', 'bg-success/30', 'text-success'];
+                                            } elseif($getColor == 'secondary') {
+                                                $badgeColor = ['border-secondary/40', 'bg-secondary/30', 'text-secondary'];
+                                            } elseif($getColor == 'dark') {
+                                                $badgeColor = ['border-dark/40', 'bg-dark/30', 'text-dark'];
+                                            }
+                                        @endphp
+                                        <div class="py-0.5 min-w-5 text-center px-1 border {{ $badgeColor[0] }} {{ $badgeColor[1] }} {{ $badgeColor[2] }} border text-xs rounded-md"><div class="{{ $tab->getBadgeIcon() ? 'flex items-center gap-x-2' : '' }} {{ $tab->getBadgeIconPosition() == 'after' ? 'flex-row-reverse' : '' }}">@if ($tab->getBadgeIcon()) @svg($tab->getBadgeIcon(), 'w-4 h-4') @endif{{ $tab->getBadge() }}</div></div>
                                     @endif
                                 </a>
                             @endforeach

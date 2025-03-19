@@ -166,6 +166,7 @@ abstract class BaseModule extends Controller
             'tableActions' => static::getTableActions(true),
         ];
 
+        // ====== Widgets ======
         if (method_exists($this, $method = 'widgets')) {
             $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
             $widgets = call_user_func_array([$this, $method], $parameters);
@@ -174,16 +175,17 @@ abstract class BaseModule extends Controller
                 'widgets' => $widgets,
             ]);
         }
+        // ====== End Widgets ======
 
-        if (method_exists($this, $method = 'tabs')) {
-            $tabs = collect(call_user_func([$this, $method]));
-            $data['tabs'] = $tabs;
-        }
-
+        // ====== Table ======
         if (method_exists($this, 'table')) {
+            // ====== Tabs ======
+            if (method_exists($this, $method = 'tabs')) {
+                $tabs = collect(call_user_func([$this, $method]));
+                $data['tabs'] = $tabs;
+            }
             static::$datatable = static::getInstanceModel()->query();
             if (isset($data['tabs'])) {
-
                 $tabs = $data['tabs'];
                 if (!$request->has('activeTab')) {
                     if (is_callable($tabs->first()->getQuery())) {
@@ -202,6 +204,8 @@ abstract class BaseModule extends Controller
                     }
                 }
             }
+            // ====== End Tabs ======
+
             $datatable = new BaseDatatable(static::$datatable, static::getUrl(), static::getTableActions());
 
             if (method_exists($this, 'filterTable')) {
@@ -216,6 +220,7 @@ abstract class BaseModule extends Controller
 
             return $render;
         }
+        // ====== End Table ======
 
         return view('larascaff::main-content', $data);
     }

@@ -117,7 +117,7 @@ class BaseDatatable extends DataTable
 
     public function columns($cb)
     {
-        $model = explode('Models\\', get_class($this->model));
+        $model = explode('Models\\', get_class($this->model->getModel()));
         $this->htmlBuilder = $this->generateHtmlBuilder()->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))).'-table');
         $cb($this->htmlBuilder);
 
