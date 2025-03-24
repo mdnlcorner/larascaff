@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Blade;
 
 class TextInput extends Field
 {
-    protected string $type = 'input';
+    protected ?string $type = 'input';
 
-    protected string $mask = '';
+    protected ?string $mask = null;
 
     protected array $removeMask = [];
 
@@ -24,49 +24,49 @@ class TextInput extends Field
 
     protected ?array $numberFormat = null;
 
-    public function mask(string $mask)
+    public function mask(string $mask): static
     {
         $this->mask = $mask;
 
         return $this;
     }
 
-    public function password(bool $password = true)
+    public function password(bool $password = true): static
     {
         $this->type = $password ? 'password' : 'text';
 
         return $this;
     }
 
-    public function revealable(bool $revealable = true)
+    public function revealable(bool $revealable = true): static
     {
         $this->revealable = $revealable;
 
         return $this;
     }
 
-    public function appendIcon(string $appendIcon)
+    public function appendIcon(string $appendIcon): static
     {
         $this->appendIcon = $appendIcon;
 
         return $this;
     }
 
-    public function appendIconBtn(string $appendIconBtn)
+    public function appendIconBtn(string $appendIconBtn): static
     {
         $this->appendIconBtn = $appendIconBtn;
 
         return $this;
     }
 
-    public function prependIcon(string $prependIcon)
+    public function prependIcon(string $prependIcon): static
     {
         $this->prependIcon = $prependIcon;
 
         return $this;
     }
 
-    public function prependIconBtn(string $prependIconBtn)
+    public function prependIconBtn(string $prependIconBtn): static
     {
         $this->prependIconBtn = $prependIconBtn;
 
@@ -80,12 +80,12 @@ class TextInput extends Field
         return $this;
     }
 
-    public function getNumberFormat()
+    public function getNumberFormat(): ?array
     {
         return $this->numberFormat;
     }
 
-    public function view()
+    public function view(): string
     {
         return Blade::render(
             <<<'HTML'
@@ -108,12 +108,12 @@ class TextInput extends Field
             />
             HTML,
             [
-                'name' => $this->name,
-                'label' => $this->label,
-                'placeholder' => $this->placeholder,
-                'type' => $this->type,
+                'name' => $this->getName(),
+                'label' => $this->getLabel(),
+                'placeholder' => $this->getPlaceholder(),
+                'type' => $this->getType(),
                 'mask' => $this->mask,
-                'value' => $this->value,
+                'value' => $this->getValue(),
                 'disabled' => $this->disabled,
                 'readonly' => $this->readonly,
                 'columnSpan' => $this->columnSpan,

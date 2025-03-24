@@ -8,14 +8,14 @@ class Radio extends Field
 {
     public array $options = [];
 
-    public function options($options)
+    public function options($options): static
     {
         $this->options = $options;
 
         return $this;
     }
 
-    public function view()
+    public function view(): string
     {
         return Blade::render(
             <<<'HTML'

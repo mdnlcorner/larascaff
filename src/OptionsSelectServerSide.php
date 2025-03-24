@@ -20,7 +20,8 @@ class OptionsSelectServerSide
         $this->columnLabel = $request->get('columnLabel') ?? 'name';
 
         try {
-            $data = $request->get('serverSide')::query()->select($this->columnValue, $this->columnLabel)
+            $data = $request->get('serverSide')::query()
+                ->select($this->columnValue, $this->columnLabel)
                 ->when($request->filled('modifyQuery'), function (Builder $query) {
                     $moduleName = explode('@', $this->request->get('modifyQuery'));
                     try {
@@ -42,7 +43,7 @@ class OptionsSelectServerSide
                         throw new \Exception($th->getMessage());
                     }
                 })
-                ->when($request->filled('value'), function (Builder $query) {
+                ->when($request->filled('value') && ! $request->filled('search'), function (Builder $query) {
                     // multipe select
                     if (str_contains($this->request->get('value'), ',')) {
                         $value = explode(',', $this->request->get('value'));
@@ -57,7 +58,9 @@ class OptionsSelectServerSide
                 ->when($request->filled('search'), function ($query) {
                     $query->where($this->columnLabel, 'like', "%{$this->request->get('search')}%");
                 })
-                ->take($request->limit ? ($request->limit > 100 ? 100 : $request->limit) : 20)->get()->map(function ($item) {
+                ->take($request->limit ? ($request->limit > 100 ? 100 : $request->limit) : 20)
+                ->get()
+                ->map(function ($item) {
                     $res = [
                         'label' => $item->{$this->columnLabel},
                         'value' => $item->{$this->columnValue},
@@ -72,12 +75,20 @@ class OptionsSelectServerSide
                     $value = explode(',', $this->request->get('value'));
                     $getData = $request->get('serverSide')::query()->whereIn($this->columnValue, $value)->get();
                     foreach ($getData as $item) {
-                        $data->prepend(['label' => $item->{$this->columnLabel}, 'value' => $item->{$this->columnValue}, 'selected' => 'true']);
+                        $data->prepend([
+                            'label' => $item->{$this->columnLabel},
+                            'value' => $item->{$this->columnValue},
+                            'selected' => 'true',
+                        ]);
                     }
                 } else {
                     $getData = $request->get('serverSide')::query()->where($this->columnValue, $request->get('value'))->first();
                     if ($getData) {
-                        $data->prepend(['label' => $getData->{$this->columnLabel}, 'value' => $getData->{$this->columnValue}, 'selected' => 'true']);
+                        $data->prepend([
+                            'label' => $getData->{$this->columnLabel},
+                            'value' => $getData->{$this->columnValue},
+                            'selected' => 'true',
+                        ]);
                     }
                 }
             }

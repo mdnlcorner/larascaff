@@ -8,14 +8,14 @@ class Textarea extends Field
 {
     protected int $rows = 3;
 
-    public function rows(int $rows)
+    public function rows(int $rows): static
     {
         $this->rows = $rows;
 
         return $this;
     }
 
-    public function view()
+    public function view(): string
     {
         return Blade::render(
             <<<'HTML'

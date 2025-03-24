@@ -141,6 +141,7 @@ abstract class BaseModule extends Controller
                 ->flatMap(fn ($item) => $item)
                 ->map(function ($item) use ($url) {
                     $item['url'] = url($url.$item['url']);
+
                     return $item;
                 })->toArray()];
         }
@@ -187,7 +188,7 @@ abstract class BaseModule extends Controller
             static::$datatable = static::getInstanceModel()->query();
             if (isset($data['tabs'])) {
                 $tabs = $data['tabs'];
-                if (!$request->has('activeTab')) {
+                if (! $request->has('activeTab')) {
                     if (is_callable($tabs->first()->getQuery())) {
                         call_user_func($tabs->first()->getQuery(), static::$datatable);
                     }

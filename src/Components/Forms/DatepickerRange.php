@@ -16,7 +16,7 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
 
     protected array $config = [];
 
-    protected string $type = 'daterange';
+    protected ?string $type = 'daterange';
 
     public static function make($name): static
     {
@@ -26,28 +26,28 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
         return $static;
     }
 
-    public function icon($icon = true)
+    public function icon($icon = true): static
     {
         $this->icon = $icon;
 
         return $this;
     }
 
-    public function value($value)
+    public function value($value): static
     {
         $this->value = $value;
 
         return $this;
     }
 
-    public function format($format)
+    public function format($format): static
     {
         $this->format = $format;
 
         return $this;
     }
 
-    public function unformat()
+    public function unformat(): array
     {
         $unformat[$this->getName()[0]] = convertDate(request()->{$this->getName()[0]}, 'Y-m-d');
         $unformat[$this->getName()[1]] = convertDate(request()->{$this->getName()[1]}, 'Y-m-d');
@@ -55,19 +55,19 @@ class DatepickerRange extends Field implements HasDatepicker, IsComponent
         return $unformat;
     }
 
-    public function getformatPhp()
+    public function getformatPhp(): string
     {
         return $this->formatPhp;
     }
 
-    public function config(array $config): self
+    public function config(array $config): static
     {
         $this->config = $config;
 
         return $this;
     }
 
-    public function view()
+    public function view(): string
     {
         // ====== FORMATING VALUE ======
         $record = getRecord();

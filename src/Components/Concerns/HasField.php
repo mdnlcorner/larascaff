@@ -4,49 +4,23 @@ namespace Mulaidarinull\Larascaff\Components\Concerns;
 
 trait HasField
 {
-    protected string $type = '';
+    protected ?string $type = null;
 
-    protected ?string $label = '';
+    protected ?string $label = null;
 
-    protected string|array $placeholder = '';
+    protected ?string $placeholder = null;
 
-    protected string|array|null $value = null;
+    protected string|int|array|null $value = null;
 
     protected bool $disabled = false;
 
     protected bool $readonly = false;
-
-    protected array $validations = [];
 
     public function disabled(bool $disabled = true)
     {
         $this->disabled = $disabled;
 
         return $this;
-    }
-
-    public function validations(array $validations, array $messages = [])
-    {
-        foreach ($validations as $validation) {
-            $this->validations['validations'][$this->name][] = $validation;
-        }
-        foreach ($messages as $key => $message) {
-            $this->validations['messages'][$this->name.'.'.$key] = $message;
-        }
-
-        return $this;
-    }
-
-    public function required(bool $required = true)
-    {
-        $this->validations(['required']);
-
-        return $this;
-    }
-
-    public function getValidations(): array
-    {
-        return $this->validations;
     }
 
     public function readonly(bool $readonly = true)
@@ -87,10 +61,25 @@ trait HasField
         return $this;
     }
 
-    public function placeholder(string|array $name)
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function placeholder(?string $name)
     {
         $this->placeholder = $name;
 
         return $this;
+    }
+
+    public function getPlaceholder(): ?string
+    {
+        return $this->placeholder;
+    }
+
+    public function getValue(): string|int|array|null
+    {
+        return $this->value;
     }
 }

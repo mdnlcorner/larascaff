@@ -28,28 +28,28 @@ class RichEditor extends Field
 
     protected int $imageMaxSize = 2048;
 
-    public function imageMaxSize(string $imageMaxSize)
+    public function imageMaxSize(string $imageMaxSize): static
     {
         $this->imageMaxSize = $imageMaxSize;
 
         return $this;
     }
 
-    public function imagePath(string $imagePath)
+    public function imagePath(string $imagePath): static
     {
         $this->imagePath = $imagePath;
 
         return $this;
     }
 
-    public function toolbar(array $toolbar)
+    public function toolbar(array $toolbar): static
     {
         $this->toolbar = $toolbar;
 
         return $this;
     }
 
-    public function disableToolbar(array $disable)
+    public function disableToolbar(array $disable): static
     {
         $newToolbar = [];
         foreach ($this->toolbar as $toolbar) {
@@ -62,7 +62,7 @@ class RichEditor extends Field
         return $this;
     }
 
-    public function view()
+    public function view(): string
     {
         if (is_null($this->value)) {
             $this->value = getRecord($this->name);

@@ -90,79 +90,47 @@ const initSelect = (config: Partial<Options> & Config) => {
                 }
             }
 
-            if (this.select._isSelectElement) {
-                if ((this.serverSide && this.options.length == 0 && !config.depend) || (this.serverSide && (this.value.length || this.value != ''))) {
+            this.select.setChoices(this.options)
 
-                    this.url.searchParams.set('serverSide', this.serverSide)
-                    if (config.dependColumn) {
-                        this.url.searchParams.set('dependColumn', config.dependColumn)
-                    }
-                    if (config.modifyQuery) {
-                        this.url.searchParams.set('modifyQuery', config.modifyQuery)
-                    }
-                    if (config.columnLabel) {
-                        this.url.searchParams.set('columnLabel', config.columnLabel)
-                    }
-                    if (config.columnValue) {
-                        this.url.searchParams.set('columnValue', config.columnValue)
-                    }
-                    if (config.limit) {
-                        this.url.searchParams.set('limit', config.limit)
-                    }
-
-                    if (this.value) {
-                        this.url.searchParams.set('value', this.value)
-                    }
-                    if (this.select.dependValue) {
-                        this.url.searchParams.set('dependValue', this.select.dependValue)
-                    }
-
-                    if (this.select._isSelectMultipleElement) {
-                        this.select.input.element.setAttribute('placeholder', 'Loading...')
-                    } else {
-                        this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>Loading...</div>`
-                    }
-
-                    const req = await (await fetch(this.url.href)).json()
-                    this.select.clearChoices()
-                    if (req.length) {
-                        this.options = req
-                        this.select.setChoices(req)
-                    }
-
-                    this.select._isSelectMultipleElement && this.select.input.element.setAttribute('placeholder', this.select._placeholderValue)
-
-                } else {
-                    this.options.map((item: any) => {
-                        this.value.includes(item.value) && (item.selected = true)
-                        return item
-                    })
-                    this.select.setChoices(this.options)
+            if (this.serverSide) {
+                this.url.searchParams.set('serverSide', this.serverSide)
+                if (config.dependColumn) {
+                    this.url.searchParams.set('dependColumn', config.dependColumn)
+                }
+                if (config.modifyQuery) {
+                    this.url.searchParams.set('modifyQuery', config.modifyQuery)
+                }
+                if (config.columnLabel) {
+                    this.url.searchParams.set('columnLabel', config.columnLabel)
+                }
+                if (config.columnValue) {
+                    this.url.searchParams.set('columnValue', config.columnValue)
+                }
+                if (config.limit) {
+                    this.url.searchParams.set('limit', config.limit)
                 }
 
-                this.value = this.options.filter((item: Choice) => item.selected)
-                if (!this.value.length && this.select._isSelectOneElement) {
-                    this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`
+                if (this.value) {
+                    this.url.searchParams.set('value', this.value)
+                }
+                if (this.select.dependValue) {
+                    this.url.searchParams.set('dependValue', this.select.dependValue)
                 }
 
-                this.select.passedElement.element.addEventListener('showDropdown', async () => {
-                    //
-                })
-
-                this.select.passedElement.element.addEventListener('removeItem', async () => {
-                    if (typeof this.select.getValue(true) == 'undefined') {
-                        this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`
-                    }
-                })
-            }
-
-            if (this?.serverSide) {
+                // if (this.select._isSelectMultipleElement) {
+                //     this.select.input.element.setAttribute('placeholder', 'Loading...')
+                // } else {
+                //     this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>Loading...</div>`
+                // }
+                
+                // add search event listener
                 this.select.passedElement.element.addEventListener('search',
                     window['Alpine'].debounce(async (e: any) => {
                         this.select.clearChoices()
                         if (config.depend && !this.select.dependValue) {
                             return
                         }
+
                         await this.select.setChoices([
                             {
                                 label: 'Loading...',
@@ -181,6 +149,26 @@ const initSelect = (config: Partial<Options> & Config) => {
                     }, 500)
                 )
             }
+
+            if (this.select._isSelectElement) {
+
+                this.value = this.options.filter((item: Choice) => item.selected)
+                if (!this.value.length && this.select._isSelectOneElement) {
+                    this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`
+                }
+
+                this.select.passedElement.element.addEventListener('showDropdown', async () => {
+                    //
+                })
+
+                this.select.passedElement.element.addEventListener('removeItem', async () => {
+                    if (typeof this.select.getValue(true) == 'undefined') {
+                        this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`
+                    }
+                })
+            }
+
+            
             if (!window['Select']) {
                 window['Select'] = {}
             }

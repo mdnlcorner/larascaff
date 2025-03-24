@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\BaseModule;
+use Mulaidarinull\Larascaff\Components\Forms\Form;
+use Mulaidarinull\Larascaff\Components\Forms\Radio;
+use Mulaidarinull\Larascaff\Components\Forms\Select;
+use Mulaidarinull\Larascaff\Components\Forms\TextInput;
 use Mulaidarinull\Larascaff\Concerns\ModuleAction;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Yajra\DataTables\Html\Column;
@@ -101,6 +105,23 @@ class BaseMenuModule extends BaseModule
             'permissions' => $menu->permissions->pluck('name')->map(fn ($item) => explode(' ', $item)[0]),
         ]);
     }
+
+    // public function formBuilder(Form $form): Form
+    // {
+    //     return $form->schema([
+    //         TextInput::make('name')->required(),
+    //         TextInput::make('url')->required(),
+    //         TextInput::make('icon'),
+    //         TextInput::make('category'),
+    //         TextInput::make('orders'),
+    //         Select::make('main_menu_id')
+    //             ->relationship('mainMenu', 'name')
+    //             ->searchable()
+    //             ->placeholder('Choose Main Menu')
+    //             ->modifyQuery(fn ($query) => $query->active()),
+    //         Radio::make('active')->options(['Y' => 1, 'N' => 0]),
+    //     ]);
+    // }
 
     public static function afterStore(Request $request, Menu $menu)
     {

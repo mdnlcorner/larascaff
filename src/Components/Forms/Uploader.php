@@ -6,8 +6,6 @@ use Illuminate\Support\Facades\Blade;
 
 class Uploader extends Field
 {
-    protected string $type = 'uploader';
-
     protected string $path = 'storage';
 
     protected string $accept = 'image/png, image/jpeg, image/jpg, image/svg';

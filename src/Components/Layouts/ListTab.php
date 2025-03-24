@@ -8,21 +8,22 @@ use Mulaidarinull\Larascaff\Enums\IconPosition;
 class ListTab
 {
     protected ?\Closure $query = null;
-    
+
     protected string|int|float|\Closure|null $badge = null;
-    
+
     protected string|\Closure|ColorVariant|null $badgeColor = null;
-    
+
     protected string|\Closure|null $badgeIcon = null;
-    
+
     protected string|\Closure|IconPosition|null $badgeIconPosition = null;
 
     public static function make(): static
     {
         $static = app(static::class);
+
         return $static;
     }
-    
+
     protected function resolve($prop)
     {
         return is_callable($prop) ? $prop() : $prop;
@@ -31,6 +32,7 @@ class ListTab
     public function badge(string|int|float|\Closure|null $badge): static
     {
         $this->badge = $badge;
+
         return $this;
     }
 
@@ -42,6 +44,7 @@ class ListTab
     public function badgeIcon(string|\Closure|null $badgeIcon): static
     {
         $this->badgeIcon = $badgeIcon;
+
         return $this;
     }
 
@@ -53,6 +56,7 @@ class ListTab
     public function badgeColor(string|\Closure|ColorVariant|null $badgeColor): static
     {
         $this->badgeColor = $badgeColor;
+
         return $this;
     }
 
@@ -62,12 +66,14 @@ class ListTab
         if ($prop instanceof ColorVariant) {
             return $prop->value;
         }
+
         return $prop;
     }
 
     public function badgeIconPosition(string|\Closure|IconPosition|null $badgeIconPosition): static
     {
         $this->badgeIconPosition = $badgeIconPosition;
+
         return $this;
     }
 
@@ -77,12 +83,14 @@ class ListTab
         if ($prop instanceof IconPosition) {
             return $prop->value;
         }
+
         return $prop;
     }
 
     public function query(?\Closure $cb): static
     {
         $this->query = $cb;
+
         return $this;
     }
 

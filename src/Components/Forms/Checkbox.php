@@ -8,19 +8,19 @@ class Checkbox extends Field
 {
     protected string $variant = 'primary';
 
-    public function variant(string $variant)
+    public function variant(string $variant): static
     {
         $this->variant = $variant;
 
         return $this;
     }
 
-    public function unformat()
+    public function unformat(): array
     {
         return [$this->getName() => request()->{$this->getName()} ?? 0];
     }
 
-    public function view()
+    public function view(): string
     {
         return Blade::render(
             <<<'HTML'

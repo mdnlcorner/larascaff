@@ -16,16 +16,16 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
 
     protected array $config = [];
 
-    protected string $type = 'date';
+    protected ?string $type = 'date';
 
-    public function icon($icon = true)
+    public function icon($icon = true): static
     {
         $this->icon = $icon;
 
         return $this;
     }
 
-    public function format($format)
+    public function format($format): static
     {
         $this->format = $format;
         $record = getRecord();
@@ -46,24 +46,24 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
         return $this;
     }
 
-    public function unformat()
+    public function unformat(): array
     {
         return [$this->getName() => convertDate(request()->{$this->getName()}, 'Y-m-d')];
     }
 
-    public function getformatPhp()
+    public function getformatPhp(): string
     {
         return $this->formatPhp;
     }
 
-    public function config(array $config): self
+    public function config(array $config): static
     {
         $this->config = $config;
 
         return $this;
     }
 
-    public function view()
+    public function view(): string
     {
         $this->config['format'] = $this->format;
 
