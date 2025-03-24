@@ -33,150 +33,150 @@ class Uploader extends Field
         'ascpectRatio' => '16:9',
     ];
 
-    public function path(string $path)
+    public function path(string $path): static
     {
         $this->path = $path;
 
         return $this;
     }
 
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
-    public function avatar()
+    public function avatar(): static
     {
         $this->config['stylePanelLayout'] = 'compact circle';
 
         return $this;
     }
 
-    public function allowReorder(bool $allowReorder = true)
+    public function allowReorder(bool $allowReorder = true): static
     {
         $this->config['allowReorder'] = $allowReorder;
 
         return $this;
     }
 
-    public function allowImagePreview(bool $allowImagePreview = true)
+    public function allowImagePreview(bool $allowImagePreview = true): static
     {
         $this->config['allowImagePreview'] = $allowImagePreview;
 
         return $this;
     }
 
-    public function imageCropAspectRatio(string $imageCropAspectRatio)
+    public function imageCropAspectRatio(string $imageCropAspectRatio): static
     {
         $this->config['imageCropAspectRatio'] = $imageCropAspectRatio;
 
         return $this;
     }
 
-    public function cropperOptions($cropperOptions)
+    public function cropperOptions($cropperOptions): static
     {
         $this->config['cropperOptions'] = $cropperOptions;
 
         return $this;
     }
 
-    public function disk(string $disk)
+    public function disk(string $disk): static
     {
         $this->disk = $disk;
 
         return $this;
     }
 
-    public function linkPreview(bool $linkPreview = true)
+    public function linkPreview(bool $linkPreview = true): static
     {
         $this->config['linkPreview'] = $linkPreview;
 
         return $this;
     }
 
-    public function accept(string $accept)
+    public function accept(string $accept): static
     {
         $this->accept = $accept;
 
         return $this;
     }
 
-    public function config(string $config)
+    public function config(array $config): static
     {
         $this->config = $config;
 
         return $this;
     }
 
-    public function multiple(bool $multiple = true)
+    public function multiple(bool $multiple = true): static
     {
         $this->multiple = $multiple;
 
         return $this;
     }
 
-    public function imageResizeTargetHeight(int $imageResizeTargetHeight)
+    public function imageResizeTargetHeight(int $imageResizeTargetHeight): static
     {
         $this->config['imageResizeTargetHeight'] = $imageResizeTargetHeight;
 
         return $this;
     }
 
-    public function imageResizeTargetWidth(int $imageResizeTargetWidth)
+    public function imageResizeTargetWidth(int $imageResizeTargetWidth): static
     {
         $this->config['imageResizeTargetWidth'] = $imageResizeTargetWidth;
 
         return $this;
     }
 
-    public function imagePreviewHeight(int $imagePreviewHeight)
+    public function imagePreviewHeight(int $imagePreviewHeight): static
     {
         $this->config['imagePreviewHeight'] = $imagePreviewHeight;
 
         return $this;
     }
 
-    public function imageResizeMode(string $imageResizeMode)
+    public function imageResizeMode(string $imageResizeMode): static
     {
         $this->config['imageResizeMode'] = $imageResizeMode;
 
         return $this;
     }
 
-    public function allowRemove(bool $allowRemove = true)
+    public function allowRemove(bool $allowRemove = true): static
     {
         $this->config['allowRemove'] = $allowRemove;
 
         return $this;
     }
 
-    public function imageEditor(bool $editor = true)
+    public function imageEditor(bool $editor = true): static
     {
         $this->config['imageEditor'] = $editor;
 
         return $this;
     }
 
-    public function files(array $files)
+    public function files(array $files): static
     {
         $this->files = $files;
 
         return $this;
     }
 
-    public function field(?string $field = null)
+    public function field(?string $field = null): static
     {
         $this->field = $field ?? $this->name;
 
         return $this;
     }
 
-    public function getField()
+    public function getField(): ?string
     {
         return $this->field;
     }
 
-    public function view()
+    public function view(): string
     {
         return Blade::render(
             <<<'HTML'

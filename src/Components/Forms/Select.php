@@ -131,7 +131,7 @@ class Select extends Field
         return $this;
     }
 
-    public function getModifyQuery(): Closure|string|null
+    public function getModifyQuery(): \Closure|string|null
     {
         return $this->modifyQuery;
     }
