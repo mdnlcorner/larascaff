@@ -51,14 +51,19 @@ class BaseDataTable extends DataTable
 
     public function actions(array $actions): static
     {
-        $this->tableActions = $actions;
+        $this->tableActions = collect($actions)
+            ->flatMap(fn ($item) => $item)
+            ->filter(function ($item, $key) {
+                return user()->can($key.' '.$this->url);
+            })
+            ->toArray();
 
         return $this;
     }
 
     public function getActions()
     {
-        return collect($this->tableActions)->flatMap(fn ($item) => $item)->toArray();
+        return $this->tableActions;
     }
 
     protected function generateTable()
@@ -67,7 +72,7 @@ class BaseDataTable extends DataTable
             $this->eloquentTable = (new EloquentDataTable($this->query))->addIndexColumn()
                 ->addColumn('action', function (Model $model) {
                     $actions = [];
-                    foreach ($this->getActions() as $action) {
+                    foreach ($this->tableActions as $action) {
                         if ($action['show']($model)) {
                             $action['url'] = url($this->url.str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']));
                             $actions[$action['permission']] = $action;

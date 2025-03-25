@@ -60,7 +60,7 @@ class BaseRoleModule extends BaseModule
                     icon: 'tabler-shield'
                 ),
             ])
-            ->columns(function (\Mulaidarinull\Larascaff\Datatable\HtmlBuilder $builder) {
+            ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
                 $builder
                     ->columnsWithActions([
                         Column::make('name'),
