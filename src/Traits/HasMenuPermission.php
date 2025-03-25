@@ -44,9 +44,7 @@ trait HasMenuPermission
             return call_user_func([static::class, 'permissions']);
         }
 
-        // dd(static::table(new \Mulaidarinull\Larascaff\Datatable\BaseDatatable(static::getInstanceModel(), static::getUrl()))->getActions());
-
-        return array_values(array_unique([...static::$permissions, ...array_keys(static::getActions()), ...array_keys(static::getTableActions())]));
+        return array_values(array_unique([...static::$permissions, ...array_keys(static::getActions()), ...array_keys(static::table(new \Mulaidarinull\Larascaff\Datatable\BaseDatatable(static::getInstanceModel(), static::getUrl()))->getActions())]));
     }
 
     public static function attachMenupermission(Menu $menu, ?array $permissions, ?array $roles)

@@ -130,7 +130,6 @@ abstract class BaseModule extends Controller
             'pageTitle' => static::getPageTitle(),
             'url' => Pluralizer::singular(static::getUrl()),
             'actions' => static::getActions(true),
-            'tableActions' => static::getTableActions(true),
         ];
 
         // ====== Widgets ======
@@ -173,7 +172,7 @@ abstract class BaseModule extends Controller
             }
             // ====== End Tabs ======
 
-            $datatable = new BaseDatatable(static::$datatable, static::getUrl(), static::getTableActions());
+            $datatable = new BaseDatatable(static::$datatable, static::getUrl());
 
             if (method_exists($this, 'filterTable')) {
                 $filterTable = call_user_func([$this, 'filterTable']);

@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\BaseModule;
+use Mulaidarinull\Larascaff\Components\Forms\Form;
+use Mulaidarinull\Larascaff\Components\Forms\Radio;
+use Mulaidarinull\Larascaff\Components\Forms\Select;
+use Mulaidarinull\Larascaff\Components\Forms\TextInput;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Tables\Actions\Action;
@@ -109,62 +113,31 @@ class BaseMenuModule extends BaseModule
             });
     }
 
-    public function shareData(Menu $menu)
+    public function formBuilder(Form $form): Form
     {
-        $this->addDataToview([
-            'mainMenus' => Menu::where('id', '!=', $menu->id)->get()->map(fn ($menu) => ['label' => $menu->name, 'value' => $menu->id]),
-            'permissions' => $menu->permissions->pluck('name')->map(fn ($item) => explode(' ', $item)[0]),
+        return $form->schema([
+            TextInput::make('name')->required(),
+            TextInput::make('url')->required(),
+            TextInput::make('icon'),
+            TextInput::make('category'),
+            TextInput::make('orders'),
+            Select::make('main_menu_id')
+                ->relationship('mainMenu', 'name')
+                ->searchable()
+                ->placeholder('Choose Main Menu')
+                ->modifyQuery(fn ($query) => $query->active()),
+            Radio::make('active')->options(['Y' => 1, 'N' => 0]),
         ]);
     }
 
-    // public function formBuilder(Form $form): Form
-    // {
-    //     return $form->schema([
-    //         TextInput::make('name')->required(),
-    //         TextInput::make('url')->required(),
-    //         TextInput::make('icon'),
-    //         TextInput::make('category'),
-    //         TextInput::make('orders'),
-    //         Select::make('main_menu_id')
-    //             ->relationship('mainMenu', 'name')
-    //             ->searchable()
-    //             ->placeholder('Choose Main Menu')
-    //             ->modifyQuery(fn ($query) => $query->active()),
-    //         Radio::make('active')->options(['Y' => 1, 'N' => 0]),
-    //     ]);
-    // }
-
     public static function afterStore(Request $request, Menu $menu)
     {
-        foreach ($request->permissions ?? [] as $permission) {
-            $menu->permissions()->create(['name' => $permission." {$menu->url}"]);
-        }
         Cache::forget('menus');
         Cache::forget('urlMenu');
     }
 
     public static function afterUpdate(Request $request, Menu $menu)
     {
-        $menu->load('permissions');
-
-        // basic permission , create read update delete
-        $basic = ['create', 'read', 'update', 'delete'];
-        $ownedBasicPermission = $menu->permissions->filter(function ($item) use ($basic) {
-            return in_array($item->action, $basic);
-        });
-
-        // detach and delete if user remove permission prof menu
-        foreach ($ownedBasicPermission as $permission) {
-            if (! in_array($permission->action, $request->permissions)) {
-                $permission->delete();
-            }
-        }
-        // attach and create if not exist
-        foreach ($request->permissions as $permission) {
-            if ($ownedBasicPermission->pluck('action')->doesntContain($permission)) {
-                $menu->permissions()->create(['name' => $permission.' '.$menu->url]);
-            }
-        }
         Cache::forget('menus');
         Cache::forget('urlMenu');
     }
