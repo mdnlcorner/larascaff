@@ -13,11 +13,12 @@ class BaseDatatable extends DataTable
 
     public ?EloquentDataTable $eloquentTable = null;
 
-    public function __construct(protected Model|QueryBuilder $model, protected string $url, protected array $tableActions)
+    public function __construct(protected Model|QueryBuilder $model, protected string $url, protected array $tableActions = [])
     {
         $this->model = $this->query = $model;
         $this->url = $url;
-        $this->tableActions = $tableActions;
+        // $this->tableActions = $tableActions;
+        $this->tableActions = [];
     }
 
     public function dataTable(): EloquentDataTable
@@ -27,7 +28,7 @@ class BaseDatatable extends DataTable
         return $this->eloquentTable;
     }
 
-    public function filterTable($filter = [])
+    public function filterTable($filter = []): static
     {
         $this->filterTable = $filter;
         $this->query = $this->query->newQuery();
@@ -48,16 +49,28 @@ class BaseDatatable extends DataTable
         return $this;
     }
 
+    public function actions(array $actions): static
+    {
+        $this->tableActions = $actions;
+
+        return $this;
+    }
+
+    public function getActions()
+    {
+        return collect($this->tableActions)->flatMap(fn ($item) => $item)->toArray();
+    }
+
     protected function generateTable()
     {
         if (! $this->eloquentTable) {
             $this->eloquentTable = (new EloquentDataTable($this->query))->addIndexColumn()
                 ->addColumn('action', function (Model $model) {
                     $actions = [];
-                    foreach ($this->tableActions as $permission => $action) {
+                    foreach ($this->getActions() as $action) {
                         if ($action['show']($model)) {
-                            $action['url'] = str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']);
-                            $actions[$permission] = $action;
+                            $action['url'] = url($this->url.str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']));
+                            $actions[$action['permission']] = $action;
                         }
                     }
 
@@ -66,7 +79,7 @@ class BaseDatatable extends DataTable
         }
     }
 
-    public function customizeColumn(callable $cb)
+    public function customizeColumn(callable $cb): static
     {
         $this->generateTable();
         $cb($this->eloquentTable);
@@ -74,7 +87,7 @@ class BaseDatatable extends DataTable
         return $this;
     }
 
-    public function customQuery($cb)
+    public function customQuery($cb): static
     {
         if (is_callable($cb)) {
             $this->query = $this->query->newQuery();
@@ -94,7 +107,7 @@ class BaseDatatable extends DataTable
         return $this->query->newQuery();
     }
 
-    private function generateHtmlBuilder()
+    private function generateHtmlBuilder(): \Mulaidarinull\Larascaff\Datatable\HtmlBuilder
     {
         return app(HtmlBuilder::class)
             ->parameters([
@@ -115,7 +128,7 @@ class BaseDatatable extends DataTable
             ->orderBy(1, 'desc');
     }
 
-    public function columns($cb)
+    public function columns($cb): static
     {
         $model = explode('Models\\', get_class($this->model->getModel()));
         $this->htmlBuilder = $this->generateHtmlBuilder()->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))).'-table');

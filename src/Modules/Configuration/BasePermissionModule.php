@@ -12,6 +12,9 @@ use Mulaidarinull\Larascaff\Components\Forms\TextInput;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Permission;
+use Mulaidarinull\Larascaff\Tables\Actions\DeleteAction;
+use Mulaidarinull\Larascaff\Tables\Actions\EditAction;
+use Mulaidarinull\Larascaff\Tables\Actions\ViewAction;
 use Yajra\DataTables\Html\Column;
 
 class BasePermissionModule extends BaseModule
@@ -27,9 +30,14 @@ class BasePermissionModule extends BaseModule
         ];
     }
 
-    public static function table(BaseDatatable $table)
+    public static function table(BaseDatatable $table): BaseDatatable
     {
-        $table
+        return $table
+            ->actions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
+            ])
             ->customQuery(function (Builder $query) {
                 $query->with('menu');
             })

@@ -8,22 +8,18 @@ use Illuminate\Validation\Rule;
 use Mulaidarinull\Larascaff\BaseModule;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Forms\TextInput;
-use Mulaidarinull\Larascaff\Concerns\ModuleAction;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Role;
+use Mulaidarinull\Larascaff\Tables\Actions\Action;
+use Mulaidarinull\Larascaff\Tables\Actions\DeleteAction;
+use Mulaidarinull\Larascaff\Tables\Actions\EditAction;
+use Mulaidarinull\Larascaff\Tables\Actions\ViewAction;
 use Yajra\DataTables\Html\Column;
 
 class BaseRoleModule extends BaseModule
 {
     protected static ?string $model = Role::class;
-
-    public static function tableActions()
-    {
-        return [
-            ModuleAction::make(permission: 'update-permissions', url: '/{{id}}/permissions', label: 'Permissions', icon: 'tabler-shield'),
-        ];
-    }
 
     public static function formBuilder(Form $form): Form
     {
@@ -50,9 +46,20 @@ class BaseRoleModule extends BaseModule
         ];
     }
 
-    public static function table(BaseDatatable $table)
+    public static function table(BaseDatatable $table): BaseDatatable
     {
-        $table
+        return $table
+            ->actions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
+                Action::make(
+                    permission: 'update-permissions',
+                    url: '/{{id}}/permissions',
+                    label: 'Permissions',
+                    icon: 'tabler-shield'
+                ),
+            ])
             ->columns(function (\Mulaidarinull\Larascaff\Datatable\HtmlBuilder $builder) {
                 $builder
                     ->columnsWithActions([

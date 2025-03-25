@@ -53,29 +53,31 @@ class Select extends Field
 
     protected function setRelationshipValue(): void
     {
-        if (! $this->columnValue) {
-            $this->columnValue('id');
-        }
-        if (str_contains($this->relationship, '.')) {
-            $relationships = explode('.', $this->relationship);
-            $value = getRecord();
-            foreach ($relationships as $item) {
-                $value = $value?->{$item};
-                $model = ($model ?? getRecord())->{$item}()->getRelated();
+        if ($this->relationship) {
+            if (! $this->columnValue) {
+                $this->columnValue('id');
             }
-            $this->value = $value?->id;
-        } else {
-            $model = getRecord()->{$this->relationship}()->getRelated();
-            if (
-                getRecord()->{$this->relationship}() instanceof \Illuminate\Database\Eloquent\Relations\MorphToMany ||
-                getRecord()->{$this->relationship}() instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany
-            ) {
-                $this->value = getRecord()->{$this->relationship}->pluck($this->columnValue)->implode(',');
-            } elseif (getRecord()->{$this->relationship}() instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo) {
-                $this->value = getRecord($this->getName());
+            if (str_contains($this->relationship, '.')) {
+                $relationships = explode('.', $this->relationship);
+                $value = getRecord();
+                foreach ($relationships as $item) {
+                    $value = $value?->{$item};
+                    $model = ($model ?? getRecord())->{$item}()->getRelated();
+                }
+                $this->value = $value?->id;
+            } else {
+                $model = getRecord()->{$this->relationship}()->getRelated();
+                if (
+                    getRecord()->{$this->relationship}() instanceof \Illuminate\Database\Eloquent\Relations\MorphToMany ||
+                    getRecord()->{$this->relationship}() instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany
+                ) {
+                    $this->value = getRecord()->{$this->relationship}->pluck($this->columnValue)->implode(',');
+                } elseif (getRecord()->{$this->relationship}() instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo) {
+                    $this->value = getRecord($this->getName());
+                }
             }
+            $this->serverSide = $model;
         }
-        $this->serverSide = $model;
     }
 
     protected function setServerSideOptions(): void
@@ -119,9 +121,9 @@ class Select extends Field
             }
 
             $this->options = $options->toArray();
+            $this->serverSide = get_class($this->serverSide);
         }
 
-        $this->serverSide = get_class($this->serverSide);
     }
 
     public function modifyQuery(\Closure $cb): static
@@ -214,7 +216,9 @@ class Select extends Field
 
     public function view(): string
     {
+
         $this->setRelationshipValue();
+        // dd($this->name);
         $this->setServerSideOptions();
 
         if ($this->modifyQuery) {

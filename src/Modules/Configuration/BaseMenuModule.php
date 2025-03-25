@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\BaseModule;
-use Mulaidarinull\Larascaff\Components\Forms\Form;
-use Mulaidarinull\Larascaff\Components\Forms\Radio;
-use Mulaidarinull\Larascaff\Components\Forms\Select;
-use Mulaidarinull\Larascaff\Components\Forms\TextInput;
-use Mulaidarinull\Larascaff\Concerns\ModuleAction;
+use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
+use Mulaidarinull\Larascaff\Tables\Actions\Action;
+use Mulaidarinull\Larascaff\Tables\Actions\DeleteAction;
+use Mulaidarinull\Larascaff\Tables\Actions\EditAction;
+use Mulaidarinull\Larascaff\Tables\Actions\ViewAction;
 use Yajra\DataTables\Html\Column;
 
 class BaseMenuModule extends BaseModule
@@ -29,7 +29,7 @@ class BaseMenuModule extends BaseModule
     public static function actions()
     {
         return [
-            ModuleAction::make(permission: 'sort', url: '/sort', label: 'Sort menu', method: 'POST'),
+            Action::make(permission: 'sort', url: '/sort', label: 'Sort menu', method: 'POST'),
         ];
     }
 
@@ -70,9 +70,20 @@ class BaseMenuModule extends BaseModule
         ];
     }
 
-    public static function table(\Mulaidarinull\Larascaff\Datatable\BaseDatatable $table)
+    public static function table(BaseDatatable $table): BaseDatatable
     {
-        $table
+        return $table
+            ->actions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
+                Action::make(
+                    permission: 'update-permissions',
+                    url: '/{{id}}/permissions',
+                    label: 'Permissions',
+                    icon: 'tabler-shield'
+                ),
+            ])
             ->customQuery(function (\Illuminate\Database\Eloquent\Builder $query) {
                 $query->with('mainMenu', 'permissions');
             })

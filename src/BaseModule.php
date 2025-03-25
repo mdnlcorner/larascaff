@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Info\Info;
-use Mulaidarinull\Larascaff\Concerns\ModuleAction;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
+use Mulaidarinull\Larascaff\Tables\Actions\Action;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 use Mulaidarinull\Larascaff\Traits\ParameterResolver;
@@ -90,7 +90,7 @@ abstract class BaseModule extends Controller
         $url = static::getUrl();
         // default table actions => read, update & delete
         $actions = collect([
-            ModuleAction::make(permission: 'create', url: '/create', label: 'Create', icon: 'tabler-plus'),
+            Action::make(permission: 'create', url: '/create', label: 'Create', icon: 'tabler-plus'),
         ])
             ->flatMap(fn ($item) => $item)
             ->map(function ($item) use ($url) {
@@ -119,41 +119,7 @@ abstract class BaseModule extends Controller
         return $actions;
     }
 
-    public static function getTableActions(bool $validatePermission = false)
-    {
-        $url = static::getUrl();
-        // default table actions => read, update & delete
-        $tableActions = collect([
-            ModuleAction::make(permission: 'read', url: '/{{id}}', label: 'View', icon: 'tabler-eye'),
-            ModuleAction::make(permission: 'update', url: '/{{id}}/edit', label: 'Edit', icon: 'tabler-edit', color: 'warning'),
-            ModuleAction::make(permission: 'delete', url: '/{{id}}', label: 'Delete', method: 'DELETE', icon: 'tabler-trash', color: 'danger'),
-        ])
-            ->flatMap(fn ($item) => $item)
-            ->map(function ($item) use ($url) {
-                $item['url'] = url($url.$item['url']);
-
-                return $item;
-            })->toArray();
-
-        // add custom table actions
-        if (method_exists(static::class, $method = 'tableActions')) {
-            $tableActions = [...$tableActions, ...collect(call_user_func([static::class, $method]))
-                ->flatMap(fn ($item) => $item)
-                ->map(function ($item) use ($url) {
-                    $item['url'] = url($url.$item['url']);
-
-                    return $item;
-                })->toArray()];
-        }
-
-        if ($validatePermission) {
-            return array_filter($tableActions, function ($permission) use ($url) {
-                return user()->can($permission.' '.$url);
-            }, ARRAY_FILTER_USE_KEY);
-        }
-
-        return $tableActions;
-    }
+    abstract public static function table(BaseDatatable $table): BaseDatatable;
 
     /**
      * Display a listing of the resource.

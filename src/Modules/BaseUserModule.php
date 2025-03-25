@@ -12,22 +12,18 @@ use Mulaidarinull\Larascaff\Components\Forms\Radio;
 use Mulaidarinull\Larascaff\Components\Forms\Select;
 use Mulaidarinull\Larascaff\Components\Forms\TextInput;
 use Mulaidarinull\Larascaff\Components\Layouts\Section;
-use Mulaidarinull\Larascaff\Concerns\ModuleAction;
 use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
+use Mulaidarinull\Larascaff\Tables\Actions\Action;
+use Mulaidarinull\Larascaff\Tables\Actions\DeleteAction;
+use Mulaidarinull\Larascaff\Tables\Actions\EditAction;
+use Mulaidarinull\Larascaff\Tables\Actions\ViewAction;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Column;
 
 class BaseUserModule extends BaseModule
 {
     protected static ?string $model = User::class;
-
-    public static function tableActions()
-    {
-        return [
-            ModuleAction::make(permission: 'update-permissions', url: '/{{id}}/permissions', label: 'Permissions', icon: 'tabler-shield'),
-        ];
-    }
 
     public function validationRules()
     {
@@ -137,9 +133,20 @@ class BaseUserModule extends BaseModule
         ];
     }
 
-    public static function table(BaseDatatable $table)
+    public static function table(BaseDatatable $table): BaseDatatable
     {
-        $table
+        return $table
+            ->actions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
+                Action::make(
+                    permission: 'update-permissions',
+                    url: '/{{id}}/permissions',
+                    label: 'Permissions',
+                    icon: 'tabler-shield'
+                ),
+            ])
             ->customizeColumn(function (EloquentDataTable $eloquentDataTable) {
                 $eloquentDataTable
                     ->editColumn('created_at', fn (User $user) => $user->created_at->format('d-m-Y H:i'))

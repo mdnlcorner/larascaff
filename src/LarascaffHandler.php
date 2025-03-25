@@ -48,6 +48,10 @@ class LarascaffHandler
                 $class = getFileNamespace($modules->getContents()).'\\'.$modules->getFilenameWithoutExtension();
 
                 $routeName = explode('/', $class::getUrl());
+                if (method_exists($class, 'table')) {
+                    // dd($class::table(new \Mulaidarinull\Larascaff\Datatable\BaseDatatable($class::getInstanceModel()->query(), $class::getUrl(), []))->getTableActions());
+                }
+
                 if (method_exists($class, 'routes')) {
                     $implodeRouteName = (implode('.', $routeName)).'.';
 
