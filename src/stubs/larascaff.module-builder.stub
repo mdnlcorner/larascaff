@@ -3,10 +3,16 @@
 namespace {{ namespace }};
 
 use {{ modelNamespace }};
+
 use Mulaidarinull\Larascaff\BaseModule;
-use Mulaidarinull\Larascaff\Components\Forms\Form;
-use Mulaidarinull\Larascaff\Components\Forms\{TextInput};
+
+use Mulaidarinull\Larascaff\Components\Forms;
+
 use Mulaidarinull\Larascaff\Enums\ModalSize;
+
+use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
+
+use Mulaidarinull\Larascaff\Tables;
 
 final class {{ class }} extends BaseModule
 {
@@ -14,16 +20,21 @@ final class {{ class }} extends BaseModule
     
     protected static ?ModalSize $modalSize = ModalSize::Md;
 
-    public static function formBuilder(Form $form): Form
+    public static function formBuilder(Forms\Form $form): Forms\Form
     {
         return $form->schema([
-            TextInput::make('name'),
+            Forms\TextInput::make('name'),
         ]);
     }
 
-    public static function table(\Mulaidarinull\Larascaff\Datatable\BaseDatatable $table)
+    public static function table(BaseDataTable $table): BaseDataTable
     {
-        $table
+        return $table
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
             ->customQuery(function (\Illuminate\Database\Eloquent\Builder $query) {
                 //
             })
@@ -37,7 +48,7 @@ final class {{ class }} extends BaseModule
                     })
                 ;
             })
-            ->columns(function (\Mulaidarinull\Larascaff\Datatable\HtmlBuilder $builder) {
+            ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
                 $builder->columnsWithActions([
                     \Yajra\DataTables\Html\Column::make('name'),
                     \Yajra\DataTables\Html\Column::make('created_at'),

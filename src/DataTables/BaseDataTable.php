@@ -1,13 +1,13 @@
 <?php
 
-namespace Mulaidarinull\Larascaff\Datatable;
+namespace Mulaidarinull\Larascaff\DataTables;
 
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
 
-class BaseDatatable extends DataTable
+class BaseDataTable extends DataTable
 {
     public QueryBuilder|Model|null $query = null;
 
@@ -107,7 +107,7 @@ class BaseDatatable extends DataTable
         return $this->query->newQuery();
     }
 
-    private function generateHtmlBuilder(): \Mulaidarinull\Larascaff\Datatable\HtmlBuilder
+    private function generateHtmlBuilder(): HtmlBuilder
     {
         return app(HtmlBuilder::class)
             ->parameters([

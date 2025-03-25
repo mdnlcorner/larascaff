@@ -9,7 +9,7 @@ use Mulaidarinull\Larascaff\BaseModule;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Forms\Select;
 use Mulaidarinull\Larascaff\Components\Forms\TextInput;
-use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
+use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Permission;
 use Mulaidarinull\Larascaff\Tables\Actions\DeleteAction;
@@ -41,7 +41,7 @@ class BasePermissionModule extends BaseModule
             ->customQuery(function (Builder $query) {
                 $query->with('menu');
             })
-            ->columns(function (\Mulaidarinull\Larascaff\Datatable\HtmlBuilder $builder) {
+            ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
                 $builder
                     ->columnsWithActions([
                         Column::make('name'),

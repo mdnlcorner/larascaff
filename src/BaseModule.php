@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Info\Info;
-use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
+use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Tables\Actions\Action;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
@@ -46,6 +46,10 @@ abstract class BaseModule extends Controller
     protected static ?Model $oldModelValue = null;
 
     protected static ?Builder $datatable = null;
+
+    abstract public static function table(BaseDataTable $table): BaseDataTable;
+
+    abstract public static function formBuilder(Form $form): Form;
 
     public static function getModel(): string
     {
@@ -119,8 +123,6 @@ abstract class BaseModule extends Controller
         return $actions;
     }
 
-    abstract public static function table(BaseDatatable $table): BaseDatatable;
-
     /**
      * Display a listing of the resource.
      */
@@ -172,7 +174,7 @@ abstract class BaseModule extends Controller
             }
             // ====== End Tabs ======
 
-            $datatable = new BaseDatatable(static::$datatable, static::getUrl());
+            $datatable = new BaseDataTable(static::$datatable, static::getUrl());
 
             if (method_exists($this, 'filterTable')) {
                 $filterTable = call_user_func([$this, 'filterTable']);

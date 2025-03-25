@@ -11,7 +11,7 @@ class MakePage extends BaseCommand implements PromptsForMissingInput
 {
     use HasMenuPermission;
 
-    protected $signature = 'larascaff:make-page
+    protected $signature = 'make:larascaff-page
     {name : The name of page}
     {--J|javascript : Add javascript file}
     ';

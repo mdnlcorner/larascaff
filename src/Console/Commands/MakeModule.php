@@ -14,14 +14,14 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
 {
     use HasMenuPermission;
 
-    protected $signature = 'larascaff:make-module
+    protected $signature = 'make:larascaff-module
     {name : The name of module}
     {table? : The name of table}
     {--M|model= : The name of Model, if not present will create using name of module}
-    {--N|notification : Determine that module has notification}
+    {--N|notification : Make module has notification}
     {--J|javascript : Add javascript file}
     {--migration : Add migration}
-    {--B|builder : Determine that Modul using formBuilder}
+    {--S|simple : Make module as simple module}
     ';
 
     protected $description = 'Create a module';
@@ -84,7 +84,7 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
             $this->makeJs();
         }
         $this->makeMenu(Pluralizer::plural($this->moduleName, null));
-        if (! $this->option('builder')) {
+        if ($this->option('simple')) {
             $this->makeView();
         }
         $this->makeModule();
@@ -121,7 +121,7 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
             '{{ modelVariable }}' => Pluralizer::singular($this->tableName),
         ];
 
-        $stubFile = $this->resolveStubPath('/../../stubs/'.($this->option('builder') ? 'larascaff.module-builder.stub' : 'larascaff.module.stub'));
+        $stubFile = $this->resolveStubPath('/../../stubs/'.(! $this->option('simple') ? 'larascaff.module-builder.stub' : 'larascaff.module.stub'));
         $file = $this->laravel->basePath('/app/Larascaff/Modules'.($this->path != '' ? '/'.$this->path : '')."/{$moduleClass}.php");
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, $replaces, $file, 'Module');

@@ -12,7 +12,7 @@ use Mulaidarinull\Larascaff\Components\Forms\Radio;
 use Mulaidarinull\Larascaff\Components\Forms\Select;
 use Mulaidarinull\Larascaff\Components\Forms\TextInput;
 use Mulaidarinull\Larascaff\Components\Layouts\Section;
-use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
+use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Tables\Actions\Action;
 use Mulaidarinull\Larascaff\Tables\Actions\DeleteAction;
@@ -133,7 +133,7 @@ class BaseUserModule extends BaseModule
         ];
     }
 
-    public static function table(BaseDatatable $table): BaseDatatable
+    public static function table(BaseDataTable $table): BaseDataTable
     {
         return $table
             ->actions([
@@ -152,7 +152,7 @@ class BaseUserModule extends BaseModule
                     ->editColumn('created_at', fn (User $user) => $user->created_at->format('d-m-Y H:i'))
                     ->editColumn('updated_at', fn (User $user) => $user->updated_at->format('d-m-Y H:i'));
             })
-            ->columns(function (\Mulaidarinull\Larascaff\Datatable\HtmlBuilder $builder) {
+            ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
                 $builder
                     ->columnsWithActions([
                         Column::make('name'),

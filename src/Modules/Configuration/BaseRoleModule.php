@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 use Mulaidarinull\Larascaff\BaseModule;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Forms\TextInput;
-use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
+use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Role;
 use Mulaidarinull\Larascaff\Tables\Actions\Action;

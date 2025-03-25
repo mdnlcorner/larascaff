@@ -11,7 +11,7 @@ use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Forms\Radio;
 use Mulaidarinull\Larascaff\Components\Forms\Select;
 use Mulaidarinull\Larascaff\Components\Forms\TextInput;
-use Mulaidarinull\Larascaff\Datatable\BaseDatatable;
+use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Tables\Actions\Action;
 use Mulaidarinull\Larascaff\Tables\Actions\DeleteAction;
@@ -74,7 +74,7 @@ class BaseMenuModule extends BaseModule
         ];
     }
 
-    public static function table(BaseDatatable $table): BaseDatatable
+    public static function table(BaseDataTable $table): BaseDataTable
     {
         return $table
             ->actions([
@@ -101,7 +101,7 @@ class BaseMenuModule extends BaseModule
                         })->implode(', ');
                     });
             })
-            ->columns(function (\Mulaidarinull\Larascaff\Datatable\HtmlBuilder $builder) {
+            ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
                 $builder
                     ->columnsWithActions([
                         Column::make('name'),
@@ -113,7 +113,7 @@ class BaseMenuModule extends BaseModule
             });
     }
 
-    public function formBuilder(Form $form): Form
+    public static function formBuilder(Form $form): Form
     {
         return $form->schema([
             TextInput::make('name')->required(),
