@@ -27,11 +27,13 @@ class Textarea extends Field
                 :label="$label" 
                 :placeholder="$placeholder" 
                 :rows="$rows" 
+                :value="$value"
             />
             HTML,
             [
                 'name' => $this->name,
                 'label' => $this->label,
+                'value' => $this->value,
                 'placeholder' => $this->placeholder,
                 'columnSpan' => $this->columnSpan,
                 'disabled' => $this->disabled,
