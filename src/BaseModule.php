@@ -132,6 +132,7 @@ abstract class BaseModule extends Controller
             'pageTitle' => static::getPageTitle(),
             'url' => Pluralizer::singular(static::getUrl()),
             'actions' => static::getActions(true),
+            'tableActions' => [],
         ];
 
         // ====== Widgets ======
@@ -183,7 +184,8 @@ abstract class BaseModule extends Controller
                 ]);
                 $datatable->filterTable($filterTable);
             }
-            call_user_func([$this, 'table'], $datatable);
+            $table = call_user_func([$this, 'table'], $datatable);
+            $data['tableActions'] = $table->getActions();
             $render = $datatable->render('larascaff::main-content', $data);
 
             return $render;
@@ -288,6 +290,9 @@ abstract class BaseModule extends Controller
      */
     public function show(string $id, Request $request)
     {
+        if (! $request->ajax()) {
+            return redirect()->to(static::getUrl().'?tableAction=read&tableActionId='.$id);
+        }
         $this->routeKeyNameValue = $id;
         $this->getRecord();
         try {

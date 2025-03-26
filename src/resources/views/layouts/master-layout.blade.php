@@ -38,7 +38,6 @@
         </script>
         <script type="module" src="{{ asset('larascaff/vendor/alpine.js') }}"></script>
         <script type="module" src="{{ asset('larascaff/js/bootstrap.js') }}" ></script>
-        <link rel="stylesheet" href="{{ asset('larascaff/js/bootstrap.css') }}">
         
         @larascaffStyles
         

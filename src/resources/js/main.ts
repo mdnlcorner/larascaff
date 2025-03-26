@@ -131,9 +131,9 @@ export function initActionByUrl() {
     if (params.get('action')) {
         const actions = $('[data-actions]').data('actions')
         let action = params.get('action') ?? '';
-
+        
         if (actions[action]) {
-            resolvedUrl = actions[action]['action']
+            resolvedUrl = actions[action]['url']
         }
     }
 
@@ -143,7 +143,8 @@ export function initActionByUrl() {
         let id = params.get('tableActionId') ?? '';
 
         if (actions[action]) {
-            resolvedUrl = actions[action]['action']
+            resolvedUrl = actions[action]['url']
+
             //@ts-ignore
             resolvedUrl = resolvedUrl.replaceAll('{{id}}', id);
         }
@@ -151,7 +152,7 @@ export function initActionByUrl() {
     if (resolvedUrl != '') {
         (new AjaxAction(resolvedUrl))
             .onSuccess(res => {
-                const handle = (new HandleFormSubmit())
+                (new HandleFormSubmit())
                     .reloadDatatable(window['datatableId'] ?? '')
                     .init();
             })

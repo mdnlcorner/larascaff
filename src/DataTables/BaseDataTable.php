@@ -53,6 +53,10 @@ class BaseDataTable extends DataTable
     {
         $this->tableActions = collect($actions)
             ->flatMap(fn ($item) => $item)
+            ->map(function ($item) {
+                $item['url'] = url($this->url. $item['url']);
+                return $item;
+            })
             ->filter(function ($item, $key) {
                 return user()->can($key.' '.$this->url);
             })
@@ -74,7 +78,7 @@ class BaseDataTable extends DataTable
                     $actions = [];
                     foreach ($this->tableActions as $action) {
                         if ($action['show']($model)) {
-                            $action['url'] = url($this->url.str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']));
+                            $action['url'] = str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']);
                             $actions[$action['permission']] = $action;
                         }
                     }
