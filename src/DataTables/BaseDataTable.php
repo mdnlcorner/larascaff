@@ -54,10 +54,15 @@ class BaseDataTable extends DataTable
         $this->tableActions = collect($actions)
             ->flatMap(fn ($item) => $item)
             ->map(function ($item) {
-                $item['url'] = url($this->url. $item['url']);
+                $item['url'] = url($this->url.$item['url']);
+
                 return $item;
             })
             ->filter(function ($item, $key) {
+                if (! user()) {
+                    return true;
+                }
+
                 return user()->can($key.' '.$this->url);
             })
             ->toArray();

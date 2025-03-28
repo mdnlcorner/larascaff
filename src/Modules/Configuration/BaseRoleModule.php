@@ -37,7 +37,7 @@ class BaseRoleModule extends BaseModule
         ];
     }
 
-    public static function routes()
+    public static function routes(): array
     {
         return [
             static::makeRoute(url: '{role}/copy-permissions', action: 'getPermissionsByRole', name: 'copy-permissions.edit'),

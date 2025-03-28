@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Mulaidarinull\Larascaff;
 
 use App\Http\Controllers\Controller;
@@ -47,9 +49,25 @@ abstract class BaseModule extends Controller
 
     protected static ?Builder $datatable = null;
 
-    abstract public static function table(BaseDataTable $table): BaseDataTable;
+    public static function routes(): array
+    {
+        return [];
+    }
 
-    abstract public static function formBuilder(Form $form): Form;
+    public static function table(BaseDataTable $table): BaseDataTable
+    {
+        return $table;
+    }
+
+    public static function infoList(Info $info): Info
+    {
+        return $info;
+    }
+
+    public static function formBuilder(Form $form): Form
+    {
+        return $form;
+    }
 
     public static function getModel(): string
     {
@@ -147,52 +165,48 @@ abstract class BaseModule extends Controller
         // ====== End Widgets ======
 
         // ====== Table ======
-        if (method_exists($this, 'table')) {
-            // ====== Tabs ======
-            if (method_exists($this, $method = 'tabs')) {
-                $tabs = collect(call_user_func([$this, $method]));
-                $data['tabs'] = $tabs;
-            }
-            static::$datatable = static::getInstanceModel()->query();
-            if (isset($data['tabs'])) {
-                $tabs = $data['tabs'];
-                if (! $request->has('activeTab')) {
+        // ====== Tabs ======
+        if (method_exists($this, $method = 'tabs')) {
+            $tabs = collect(call_user_func([$this, $method]));
+            $data['tabs'] = $tabs;
+        }
+        static::$datatable = static::getInstanceModel()->query();
+        if (isset($data['tabs'])) {
+            $tabs = $data['tabs'];
+            if (! $request->has('activeTab')) {
+                if (is_callable($tabs->first()->getQuery())) {
+                    call_user_func($tabs->first()->getQuery(), static::$datatable);
+                }
+            } else {
+                $tab = $tabs[$request->get('activeTab')] ?? null;
+                if ($tab) {
+                    if (is_callable($tab->getQuery())) {
+                        call_user_func($tab->getQuery(), static::$datatable);
+                    }
+                } else {
                     if (is_callable($tabs->first()->getQuery())) {
                         call_user_func($tabs->first()->getQuery(), static::$datatable);
                     }
-                } else {
-                    $tab = $tabs[$request->get('activeTab')] ?? null;
-                    if ($tab) {
-                        if (is_callable($tab->getQuery())) {
-                            call_user_func($tab->getQuery(), static::$datatable);
-                        }
-                    } else {
-                        if (is_callable($tabs->first()->getQuery())) {
-                            call_user_func($tabs->first()->getQuery(), static::$datatable);
-                        }
-                    }
                 }
             }
-            // ====== End Tabs ======
-
-            $datatable = new BaseDataTable(static::$datatable, static::getUrl());
-
-            if (method_exists($this, 'filterTable')) {
-                $filterTable = call_user_func([$this, 'filterTable']);
-                $data['filterTable'] = view('larascaff::filter', [
-                    'filterTable' => $filterTable,
-                ]);
-                $datatable->filterTable($filterTable);
-            }
-            $table = call_user_func([$this, 'table'], $datatable);
-            $data['tableActions'] = $table->getActions();
-            $render = $datatable->render('larascaff::main-content', $data);
-
-            return $render;
         }
-        // ====== End Table ======
+        // ====== End Tabs ======
 
-        return view('larascaff::main-content', $data);
+        $datatable = new BaseDataTable(static::$datatable, static::getUrl());
+
+        if (method_exists($this, 'filterTable')) {
+            $filterTable = call_user_func([$this, 'filterTable']);
+            $data['filterTable'] = view('larascaff::filter', [
+                'filterTable' => $filterTable,
+            ]);
+            $datatable->filterTable($filterTable);
+        }
+        $table = call_user_func([$this, 'table'], $datatable);
+        $data['tableActions'] = $table->getActions();
+        $render = $datatable->render('larascaff::main-content', $data);
+
+        return $render;
+        // ====== End Table ======
     }
 
     public static function getModalTitle()
@@ -250,11 +264,10 @@ abstract class BaseModule extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
+        $this->transformFormBuilder($request, static::formBuilder(new Form));
         $this->initValidation($request);
-        $this->transformFormBuilder($request);
-        $request->validate(static::$validations['validations'] ?? [], static::$validations['messages'] ?? []);
         DB::beginTransaction();
         try {
             // run hook before store
@@ -328,8 +341,6 @@ abstract class BaseModule extends Controller
         } catch (\Throwable $th) {
             return responseError($th);
         }
-
-        return response()->json([]);
     }
 
     public function getRecord(): Model
@@ -405,18 +416,18 @@ abstract class BaseModule extends Controller
                 static::$validations['messages'][$key] = $message;
             }
         }
+        $request->validate(static::$validations['validations'] ?? [], static::$validations['messages'] ?? []);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
         $this->routeKeyNameValue = $id;
         $this->getRecord();
+        $this->transformFormBuilder($request, static::formBuilder(new Form));
         $this->initValidation($request);
-        $this->transformFormBuilder($request);
-        $request->validate(static::$validations['validations'] ?? [], static::$validations['messages'] ?? []);
         DB::beginTransaction();
         try {
             // run hook before udpate
@@ -448,7 +459,7 @@ abstract class BaseModule extends Controller
         }
     }
 
-    protected function transformFormBuilder(Request $request)
+    protected function transformFormBuilder(Request $request, Form $form)
     {
         if (method_exists($this, $method = 'formBuilder')) {
             setRecord(static::getInstanceModel());

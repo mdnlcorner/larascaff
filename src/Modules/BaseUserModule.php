@@ -124,7 +124,7 @@ class BaseUserModule extends BaseModule
         ];
     }
 
-    public static function routes()
+    public static function routes(): array
     {
         return [
             static::makeRoute(url: '{user}/copy-permissions', action: 'getPermissionsByUser', name: 'copy-permissions.edit'),

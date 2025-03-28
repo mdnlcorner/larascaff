@@ -5,10 +5,39 @@ namespace Mulaidarinull\Larascaff\Components\Forms;
 use Mulaidarinull\Larascaff\Components\Concerns\HasColumnSpan;
 use Mulaidarinull\Larascaff\Components\Concerns\HasComponent;
 use Mulaidarinull\Larascaff\Components\Concerns\HasModule;
+use Mulaidarinull\Larascaff\Enums\ModalSize;
 
 class Form
 {
     use HasColumnSpan, HasComponent, HasModule;
+
+    protected ?string $title = null;
+
+    protected ?ModalSize $modalSize = ModalSize::Md;
+
+    public function title(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function modalSize(ModalSize $modalSize): static
+    {
+        $this->modalSize = $modalSize;
+
+        return $this;
+    }
+
+    public function getModalSize(): string
+    {
+        return $this->modalSize->value;
+    }
 
     public function render()
     {
