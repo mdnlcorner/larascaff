@@ -45,7 +45,7 @@ class LarascaffConfig
     /**
      * Path location of your brand logo
      */
-    public function brandLogo(Closure|string $logo)
+    public function brandLogo(Closure | string $logo)
     {
         $this->logo = $logo;
 
@@ -57,7 +57,7 @@ class LarascaffConfig
         return $this->logo;
     }
 
-    public function brandName(Closure|string|\Illuminate\Contracts\View\View $brandName)
+    public function brandName(Closure | string | \Illuminate\Contracts\View\View $brandName)
     {
         $this->brandName = $brandName;
 
@@ -69,7 +69,7 @@ class LarascaffConfig
         return $this->brandName;
     }
 
-    public function brandHeigh(Closure|string $height)
+    public function brandHeigh(Closure | string $height)
     {
         $this->brandHeigh = $height;
 
@@ -93,7 +93,7 @@ class LarascaffConfig
         return $this->logo;
     }
 
-    public function footer(Closure|string|\Illuminate\Contracts\View\View $footer)
+    public function footer(Closure | string | \Illuminate\Contracts\View\View $footer)
     {
         $this->footer = $footer;
 

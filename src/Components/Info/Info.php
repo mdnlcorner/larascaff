@@ -8,11 +8,12 @@ use Mulaidarinull\Larascaff\Components\Concerns\HasComponent;
 
 class Info
 {
-    use HasColumnSpan, HasComponent;
+    use HasColumnSpan;
+    use HasComponent;
 
     protected ?string $label = '';
 
-    protected string|array $placeholder = '';
+    protected string | array $placeholder = '';
 
     protected bool $show = true;
 
@@ -25,7 +26,7 @@ class Info
         return $this;
     }
 
-    public function show(bool|Closure $show = true)
+    public function show(bool | Closure $show = true)
     {
         if (is_callable($show)) {
             $this->show = $show(getRecord());
@@ -50,7 +51,7 @@ class Info
         return $static;
     }
 
-    public function name(string|array $name)
+    public function name(string | array $name)
     {
         $this->name = $name;
 
@@ -69,7 +70,7 @@ class Info
         return $this;
     }
 
-    public function placeholder(string|array $name)
+    public function placeholder(string | array $name)
     {
         $this->placeholder = $name;
 

@@ -10,7 +10,10 @@ use Mulaidarinull\Larascaff\Components\Concerns\HasRelationship;
 
 class Fieldset
 {
-    use HasColumnSpan, HasComponent, HasModule, HasRelationship;
+    use HasColumnSpan;
+    use HasComponent;
+    use HasModule;
+    use HasRelationship;
 
     public function __construct()
     {

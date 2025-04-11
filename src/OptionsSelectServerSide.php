@@ -24,6 +24,7 @@ class OptionsSelectServerSide
                 ->select($this->columnValue, $this->columnLabel)
                 ->when($request->filled('modifyQuery'), function (Builder $query) {
                     $moduleName = explode('@', $this->request->get('modifyQuery'));
+
                     try {
                         $module = $moduleName[0];
                         $name = $moduleName[1];

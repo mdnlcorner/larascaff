@@ -22,6 +22,7 @@ trait ParameterResolver
                 if ($className == get_class($except)) {
                     $parameters[] = $except;
                     $found = true;
+
                     break;
                 }
             }

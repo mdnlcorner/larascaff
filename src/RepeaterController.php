@@ -9,7 +9,7 @@ class RepeaterController
 {
     public function __invoke(Request $request)
     {
-        $class = (new ('\\'.$request->post('module')));
+        $class = (new ('\\' . $request->post('module')));
         setRecord($class->getModel());
         foreach ($class->formBuilder(new Form)->getComponents() as $repeater) {
             if ($repeater instanceof \Mulaidarinull\Larascaff\Components\Layouts\Repeater) {

@@ -9,7 +9,9 @@ use Mulaidarinull\Larascaff\Enums\ModalSize;
 
 class Form
 {
-    use HasColumnSpan, HasComponent, HasModule;
+    use HasColumnSpan;
+    use HasComponent;
+    use HasModule;
 
     protected ?string $title = null;
 

@@ -10,7 +10,10 @@ use Mulaidarinull\Larascaff\Components\Concerns\HasRelationship;
 
 class Repeater
 {
-    use HasCollapsible, HasColumnSpan, HasComponent, HasRelationship;
+    use HasCollapsible;
+    use HasColumnSpan;
+    use HasComponent;
+    use HasRelationship;
 
     protected ?string $description = null;
 

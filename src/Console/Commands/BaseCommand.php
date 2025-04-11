@@ -37,7 +37,7 @@ class BaseCommand extends Command
         // has main menu
         if (count($this->pathList)) {
             for ($i = 0; $i < count($this->pathList); $i++) {
-                $url .= ($url ? '/' : '').Str::kebab($this->pathList[$i]);
+                $url .= ($url ? '/' : '') . Str::kebab($this->pathList[$i]);
                 $mainMenu = Menu::query()->where('url', $url)->first();
                 if (! $mainMenu) {
                     $mainMenu = Menu::query()->create([
@@ -48,7 +48,7 @@ class BaseCommand extends Command
                     $this->attachMenupermission($mainMenu, ['read'], ['ADMINISTRATOR']);
                 }
 
-                $urlSubmenu = $url.'/'.Pluralizer::plural(Str::kebab($this->pathList[$i + 1] ?? $name));
+                $urlSubmenu = $url . '/' . Pluralizer::plural(Str::kebab($this->pathList[$i + 1] ?? $name));
 
                 $isExist = $mainMenu->subMenus()->where('url', $urlSubmenu)->first();
                 if (! $isExist) {
@@ -60,7 +60,7 @@ class BaseCommand extends Command
                 }
             }
         } else {
-            $url .= ($url ? '/' : '').Str::kebab($name);
+            $url .= ($url ? '/' : '') . Str::kebab($name);
             $isExist = Menu::query()->where('url', $url)->first();
             if (! $isExist) {
                 $menu = Menu::query()->create([
@@ -92,7 +92,7 @@ class BaseCommand extends Command
     {
         return $this->fileSystem->exists($customPath = $this->laravel->basePath(trim($stub, '/')))
             ? $customPath
-            : __DIR__.$stub;
+            : __DIR__ . $stub;
     }
 
     protected function makeDirectory($path)

@@ -12,7 +12,7 @@ trait HasValidation
             $this->validations['validations'][$this->name][] = $validation;
         }
         foreach ($messages as $key => $message) {
-            $this->validations['messages'][$this->name.'.'.$key] = $message;
+            $this->validations['messages'][$this->name . '.' . $key] = $message;
         }
 
         return $this;

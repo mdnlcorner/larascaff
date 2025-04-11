@@ -11,7 +11,11 @@ use Mulaidarinull\Larascaff\Components\Concerns\HasRelationship;
 
 class Section
 {
-    use HasCollapsible, HasColumnSpan, HasComponent, HasModule, HasRelationship;
+    use HasCollapsible;
+    use HasColumnSpan;
+    use HasComponent;
+    use HasModule;
+    use HasRelationship;
 
     protected ?string $description = null;
 
