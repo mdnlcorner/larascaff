@@ -7,17 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Mulaidarinull\Larascaff\BaseModule;
-use Mulaidarinull\Larascaff\Components\Forms\Form;
-use Mulaidarinull\Larascaff\Components\Forms\Radio;
-use Mulaidarinull\Larascaff\Components\Forms\Select;
-use Mulaidarinull\Larascaff\Components\Forms\TextInput;
+use Mulaidarinull\Larascaff\Components\Forms;
 use Mulaidarinull\Larascaff\Components\Layouts\Section;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
-use Mulaidarinull\Larascaff\Tables\Actions\Action;
-use Mulaidarinull\Larascaff\Tables\Actions\DeleteAction;
-use Mulaidarinull\Larascaff\Tables\Actions\EditAction;
-use Mulaidarinull\Larascaff\Tables\Actions\ViewAction;
+use Mulaidarinull\Larascaff\Tables;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Column;
 
@@ -81,20 +75,20 @@ class BaseUserModule extends BaseModule
         return responseSuccess();
     }
 
-    public static function formBuilder(Form $form): Form
+    public static function formBuilder(Forms\Form $form): Forms\Form
     {
         return $form->schema([
-            TextInput::make('name'),
-            TextInput::make('email')->prependIcon('tabler-mail'),
+            Forms\TextInput::make('name'),
+            Forms\TextInput::make('email')->prependIcon('tabler-mail'),
             Section::make('Credentials')
                 ->collapsible()
                 ->description('Secure your account with strong password combination!')
                 ->schema([
-                    TextInput::make('password')->password()->revealable(),
-                    TextInput::make('password_confirmation')->password()->revealable(),
+                    Forms\TextInput::make('password')->password()->revealable(),
+                    Forms\TextInput::make('password_confirmation')->password()->revealable(),
                 ]),
-            Radio::make('gender')->options(['Male' => 'Male', 'Female' => 'Female']),
-            Select::make('roles')
+            Forms\Radio::make('gender')->options(['Male' => 'Male', 'Female' => 'Female']),
+            Forms\Select::make('roles')
                 ->label('Roles')
                 ->searchable()
                 ->placeholder('Choose Roles')
@@ -137,10 +131,10 @@ class BaseUserModule extends BaseModule
     {
         return $table
             ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
-                Action::make(
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make(
                     permission: 'update-permissions',
                     url: '/{{id}}/permissions',
                     label: 'Permissions',

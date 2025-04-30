@@ -6,26 +6,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Mulaidarinull\Larascaff\BaseModule;
-use Mulaidarinull\Larascaff\Components\Forms\Form;
-use Mulaidarinull\Larascaff\Components\Forms\TextInput;
+use Mulaidarinull\Larascaff\Components\Forms;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Role;
-use Mulaidarinull\Larascaff\Tables\Actions\Action;
-use Mulaidarinull\Larascaff\Tables\Actions\DeleteAction;
-use Mulaidarinull\Larascaff\Tables\Actions\EditAction;
-use Mulaidarinull\Larascaff\Tables\Actions\ViewAction;
+use Mulaidarinull\Larascaff\Tables;
 use Yajra\DataTables\Html\Column;
 
 class BaseRoleModule extends BaseModule
 {
     protected static ?string $model = Role::class;
 
-    public static function formBuilder(Form $form): Form
+    public static function formBuilder(Forms\Form $form): Forms\Form
     {
         return $form->schema([
-            TextInput::make('name'),
-            TextInput::make('guard_name'),
+            Forms\TextInput::make('name'),
+            Forms\TextInput::make('guard_name'),
         ]);
     }
 
@@ -50,10 +46,10 @@ class BaseRoleModule extends BaseModule
     {
         return $table
             ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
-                Action::make(
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make(
                     permission: 'update-permissions',
                     url: '/{{id}}/permissions',
                     label: 'Permissions',

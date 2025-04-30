@@ -14,7 +14,7 @@ use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Info\Info;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
-use Mulaidarinull\Larascaff\Tables\Actions\Action;
+use Mulaidarinull\Larascaff\Action;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 use Mulaidarinull\Larascaff\Traits\ParameterResolver;
