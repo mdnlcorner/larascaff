@@ -13,6 +13,8 @@ class LarascaffConfig
 
     protected $logo;
 
+    public $count = 0;
+
     protected $brandName;
 
     protected $brandHeigh = '2.7rem';
@@ -23,10 +25,8 @@ class LarascaffConfig
 
     public static function make(): static
     {
-        if (! static::$instance) {
-            static::$instance = app(static::class);
-        }
-
+        static::$instance = app(static::class);
+        static::$instance->count = static::$instance->count + 1;
         return static::$instance;
     }
 

@@ -204,10 +204,8 @@ abstract class BaseModule extends Controller
         }
         $table = call_user_func([$this, 'table'], $datatable);
         $data['tableActions'] = $table->getActions();
-        $render = $datatable->render('larascaff::main-content', $data);
 
-        return $render;
-        // ====== End Table ======
+        return $datatable->render('larascaff::main-content', $data);
     }
 
     public static function getModalTitle()
@@ -464,9 +462,8 @@ abstract class BaseModule extends Controller
     protected function transformFormBuilder(Request $request, Form $form)
     {
         setRecord(static::getInstanceModel());
-        $parameters = $this->resolveParameters($method, []);
 
-        $forms = call_user_func_array([$this, $method], $parameters);
+        $forms = static::formBuilder(new Form);
 
         foreach ($forms->getComponents() as $form) {
             if (method_exists($form, 'getValidations')) {
@@ -532,9 +529,8 @@ abstract class BaseModule extends Controller
     protected function handleFormBuilder(Request $request)
     {
         setRecord(static::getInstanceModel());
-        $parameters = $this->resolveParameters($method, []);
 
-        $forms = call_user_func_array([$this, $method], $parameters);
+        $forms = static::formBuilder(new Form);
 
         foreach ($forms->getComponents() as $form) {
             $this->handleMedia($request, $form, static::getInstanceModel());
