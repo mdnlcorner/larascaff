@@ -18,7 +18,7 @@ class Select extends Field
 
     protected ?int $limit = null;
 
-    protected string | Model | null $serverSide = null;
+    protected string|Model|null $serverSide = null;
 
     protected ?string $dependValue = null;
 
@@ -34,7 +34,7 @@ class Select extends Field
 
     protected ?string $columnValue = null;
 
-    protected \Closure | string | null $modifyQuery = null;
+    protected \Closure|string|null $modifyQuery = null;
 
     protected ?string $relationship = null;
 
@@ -133,7 +133,7 @@ class Select extends Field
         return $this;
     }
 
-    public function getModifyQuery(): \Closure | string | null
+    public function getModifyQuery(): \Closure|string|null
     {
         return $this->modifyQuery;
     }
@@ -223,7 +223,7 @@ class Select extends Field
 
         if ($this->modifyQuery) {
             if (method_exists($this, 'getModule')) {
-                $this->modifyQuery = $this->getModule() . '@' . $this->name;
+                $this->modifyQuery = $this->getModule().'@'.$this->name;
             }
         }
 

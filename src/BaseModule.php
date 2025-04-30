@@ -14,7 +14,6 @@ use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Info\Info;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
-use Mulaidarinull\Larascaff\Action;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 use Mulaidarinull\Larascaff\Traits\ParameterResolver;
@@ -27,7 +26,7 @@ abstract class BaseModule extends Controller
 
     protected static ?string $model = null;
 
-    protected static Model | Builder | null $instanceModel = null;
+    protected static Model|Builder|null $instanceModel = null;
 
     protected static ?string $url = null;
 
@@ -79,7 +78,7 @@ abstract class BaseModule extends Controller
             ->prepend('App\\Models');
     }
 
-    public static function getInstanceModel(): Model | Builder
+    public static function getInstanceModel(): Model|Builder
     {
         if (! static::$instanceModel) {
             $model = static::getModel();
@@ -118,7 +117,7 @@ abstract class BaseModule extends Controller
         ])
             ->flatMap(fn ($item) => $item)
             ->map(function ($item) use ($url) {
-                $item['url'] = url($url . $item['url']);
+                $item['url'] = url($url.$item['url']);
 
                 return $item;
             })->toArray();
@@ -128,7 +127,7 @@ abstract class BaseModule extends Controller
             $actions = [...$actions, ...collect(call_user_func([static::class, $method]))
                 ->flatMap(fn ($item) => $item)
                 ->map(function ($item) use ($url) {
-                    $item['url'] = url($url . $item['url']);
+                    $item['url'] = url($url.$item['url']);
 
                     return $item;
                 })->toArray()];
@@ -136,7 +135,7 @@ abstract class BaseModule extends Controller
 
         if ($validatePermission) {
             return array_filter($actions, function ($permission) use ($url) {
-                return user()->can($permission . ' ' . $url);
+                return user()->can($permission.' '.$url);
             }, ARRAY_FILTER_USE_KEY);
         }
 
@@ -216,7 +215,7 @@ abstract class BaseModule extends Controller
         $title = static::$modalTitle;
         if (! $title) {
             if (static::getInstanceModel()) {
-                $title = 'Form ' . ucwords(str_replace('_', ' ', static::getInstanceModel()->getTable()));
+                $title = 'Form '.ucwords(str_replace('_', ' ', static::getInstanceModel()->getTable()));
             }
         }
 
@@ -229,7 +228,7 @@ abstract class BaseModule extends Controller
     public function create(Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to(static::getUrl() . '?action=create');
+            return redirect()->to(static::getUrl().'?action=create');
         }
 
         try {
@@ -248,17 +247,14 @@ abstract class BaseModule extends Controller
                 call_user_func_array([$this, $method], $parameters);
             }
 
-            if (method_exists($this, $method = 'formBuilder')) {
-                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form])]);
-            } else {
-                $view = view(static::$viewAction, static::$viewData);
-            }
-
-            return $this->form($view, [
-                'size' => static::$modalSize,
-                'title' => static::getModalTitle(),
-                ...static::$viewData,
-            ]);
+            return $this->form(
+                view('larascaff::form-builder', ['form' => static::formBuilder(new Form)]),
+                [
+                    'size' => static::$modalSize,
+                    'title' => static::getModalTitle(),
+                    ...static::$viewData,
+                ]
+            );
         } catch (\Throwable $th) {
             return responseError($th);
         }
@@ -308,7 +304,7 @@ abstract class BaseModule extends Controller
     public function show(string $id, Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to(static::getUrl() . '?tableAction=read&tableActionId=' . $id);
+            return redirect()->to(static::getUrl().'?tableAction=read&tableActionId='.$id);
         }
         $this->routeKeyNameValue = $id;
         $this->getRecord();
@@ -330,12 +326,14 @@ abstract class BaseModule extends Controller
 
             setRecord(static::getInstanceModel());
 
-            if (method_exists($this, $method = 'infoList')) {
-                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Info])]);
-            } elseif (method_exists($this, $method = 'formBuilder')) {
-                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form])]);
+            $info = static::infoList(new Info);
+            if ($info->getComponents()) {
+                $view = view(
+                    'larascaff::form-builder',
+                    ['form' => $info]
+                );
             } else {
-                $view = view(static::$viewShow, static::$viewData);
+                $view = view('larascaff::form-builder', ['form' => static::formBuilder(new Form)]);
             }
 
             return $this->form($view, [
@@ -364,14 +362,14 @@ abstract class BaseModule extends Controller
     public function edit(string $id, Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to(static::getUrl() . '?tableAction=update&tableActionId=' . $id);
+            return redirect()->to(static::getUrl().'?tableAction=update&tableActionId='.$id);
         }
         $this->routeKeyNameValue = $id;
         $this->getRecord();
 
         try {
             $this->addDataToview([
-                'action' => url(static::getUrl() . '/' . static::getInstanceModel()->{static::getInstanceModel()->getRouteKeyName()}),
+                'action' => url(static::getUrl().'/'.static::getInstanceModel()->{static::getInstanceModel()->getRouteKeyName()}),
                 'method' => 'PUT',
             ]);
 
@@ -387,17 +385,14 @@ abstract class BaseModule extends Controller
 
             setRecord(static::getInstanceModel());
 
-            if (method_exists($this, $method = 'formBuilder')) {
-                $view = view('larascaff::form-builder', ['form' => call_user_func_array([$this, $method], [new Form])]);
-            } else {
-                $view = view(static::$viewAction, static::$viewData);
-            }
-
-            return $this->form($view, [
-                'size' => static::$modalSize,
-                'title' => static::getModalTitle(),
-                ...static::$viewData,
-            ]);
+            return $this->form(
+                view('larascaff::form-builder', ['form' => static::formBuilder(new Form)]),
+                [
+                    'size' => static::$modalSize,
+                    'title' => static::getModalTitle(),
+                    ...static::$viewData,
+                ]
+            );
         } catch (\Throwable $th) {
             return responseError($th);
         }
@@ -468,53 +463,51 @@ abstract class BaseModule extends Controller
 
     protected function transformFormBuilder(Request $request, Form $form)
     {
-        if (method_exists($this, $method = 'formBuilder')) {
-            setRecord(static::getInstanceModel());
-            $parameters = $this->resolveParameters($method, []);
+        setRecord(static::getInstanceModel());
+        $parameters = $this->resolveParameters($method, []);
 
-            $forms = call_user_func_array([$this, $method], $parameters);
+        $forms = call_user_func_array([$this, $method], $parameters);
 
-            foreach ($forms->getComponents() as $form) {
-                if (method_exists($form, 'getValidations')) {
-                    foreach ($form->getValidations()['validations'] ?? [] as $key => $validation) {
-                        static::$validations['validations'][$key] = $validation;
-                    }
-                    foreach ($form->getValidations()['messages'] ?? [] as $key => $validation) {
-                        static::$validations['messages'][$key] = $validation;
-                    }
+        foreach ($forms->getComponents() as $form) {
+            if (method_exists($form, 'getValidations')) {
+                foreach ($form->getValidations()['validations'] ?? [] as $key => $validation) {
+                    static::$validations['validations'][$key] = $validation;
                 }
-
-                if (method_exists($form, 'numberFormat')) {
-                    if ($form->getNumberFormat()) {
-                        $request->merge([$form->getName() => removeNumberFormat($request->{$form->getName()})]);
-                    }
+                foreach ($form->getValidations()['messages'] ?? [] as $key => $validation) {
+                    static::$validations['messages'][$key] = $validation;
                 }
+            }
 
-                if (method_exists($form, 'getComponents')) {
-                    $relationship = $form->getRelationship();
+            if (method_exists($form, 'numberFormat')) {
+                if ($form->getNumberFormat()) {
+                    $request->merge([$form->getName() => removeNumberFormat($request->{$form->getName()})]);
+                }
+            }
 
-                    foreach ($form->getComponents() as $component) {
-                        if (method_exists($component, 'numberFormat')) {
-                            if ($component->getNumberFormat()) {
-                                $request->merge([$component->getName() => removeNumberFormat($request->{$component->getName()})]);
-                            }
+            if (method_exists($form, 'getComponents')) {
+                $relationship = $form->getRelationship();
+
+                foreach ($form->getComponents() as $component) {
+                    if (method_exists($component, 'numberFormat')) {
+                        if ($component->getNumberFormat()) {
+                            $request->merge([$component->getName() => removeNumberFormat($request->{$component->getName()})]);
                         }
-                        if (method_exists($component, 'getValidations')) {
-                            if ($relationship) {
-                                if (count($component->getValidations()) && ! static::getInstanceModel()->{$relationship}() instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
-                                    foreach ($component->getValidations()['validations'] ?? [] as $key => $validation) {
-                                        static::$validations['validations'][$key] = $validation;
-                                        // static::$validations['validations'][$relationship. '.'.$key.'.*'] = $validation;
-                                    }
+                    }
+                    if (method_exists($component, 'getValidations')) {
+                        if ($relationship) {
+                            if (count($component->getValidations()) && ! static::getInstanceModel()->{$relationship}() instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
+                                foreach ($component->getValidations()['validations'] ?? [] as $key => $validation) {
+                                    static::$validations['validations'][$key] = $validation;
+                                    // static::$validations['validations'][$relationship. '.'.$key.'.*'] = $validation;
                                 }
-                            } else {
-                                if (count($component->getValidations())) {
-                                    foreach ($component->getValidations()['validations'] ?? [] as $key => $validation) {
-                                        static::$validations['validations'][$key] = $validation;
-                                    }
-                                    foreach ($component->getValidations()['messages'] ?? [] as $key => $validation) {
-                                        static::$validations['messages'][$key] = $validation;
-                                    }
+                            }
+                        } else {
+                            if (count($component->getValidations())) {
+                                foreach ($component->getValidations()['validations'] ?? [] as $key => $validation) {
+                                    static::$validations['validations'][$key] = $validation;
+                                }
+                                foreach ($component->getValidations()['messages'] ?? [] as $key => $validation) {
+                                    static::$validations['messages'][$key] = $validation;
                                 }
                             }
                         }
@@ -538,72 +531,70 @@ abstract class BaseModule extends Controller
 
     protected function handleFormBuilder(Request $request)
     {
-        if (method_exists($this, $method = 'formBuilder')) {
-            setRecord(static::getInstanceModel());
-            $parameters = $this->resolveParameters($method, []);
+        setRecord(static::getInstanceModel());
+        $parameters = $this->resolveParameters($method, []);
 
-            $forms = call_user_func_array([$this, $method], $parameters);
+        $forms = call_user_func_array([$this, $method], $parameters);
 
-            foreach ($forms->getComponents() as $form) {
-                $this->handleMedia($request, $form, static::getInstanceModel());
-                // handle relationship input
-                if ($form->getRelationship()) {
-                    // form input that has sub components
-                    if (method_exists($form, 'getComponents') && $form->getComponents()) {
-                        $relationships = [];
-                        $relationModel = static::getInstanceModel()->{$form->getRelationship()}();
+        foreach ($forms->getComponents() as $form) {
+            $this->handleMedia($request, $form, static::getInstanceModel());
+            // handle relationship input
+            if ($form->getRelationship()) {
+                // form input that has sub components
+                if (method_exists($form, 'getComponents') && $form->getComponents()) {
+                    $relationships = [];
+                    $relationModel = static::getInstanceModel()->{$form->getRelationship()}();
 
-                        foreach ($form->getComponents() as $component) {
-                            $relationships[$form->getRelationship()][] = $component->getName();
-                        }
-                        $components[$form->getRelationship()] = $form;
+                    foreach ($form->getComponents() as $component) {
+                        $relationships[$form->getRelationship()][] = $component->getName();
+                    }
+                    $components[$form->getRelationship()] = $form;
 
-                        foreach ($relationships as $relationName => $relationship) {
-                            // update or create
-                            if (
-                                $relationModel instanceof \Illuminate\Database\Eloquent\Relations\MorphOne ||
-                                $relationModel instanceof \Illuminate\Database\Eloquent\Relations\HasOne
-                            ) {
-                                foreach ($relationship as $item) {
-                                    $relationInput[$item] = $request->input($item);
-                                }
-                                // if already exist, update
-                                if (static::getInstanceModel()->{$relationName}) {
-                                    static::getInstanceModel()->{$relationName}->fill($relationInput)->save();
-                                } else {
-                                    // store new record
-                                    static::getInstanceModel()->{$relationName}()->create($relationInput);
-                                }
-                            } elseif ($relationModel instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
-                                $inputs = [];
-                                $related = (static::getInstanceModel()->{$relationName}()->getRelated());
-
-                                for ($i = 0; $i < count($request->{$relationName}[$relationship[0]]); $i++) {
-                                    $data = [];
-                                    foreach ($request->{$relationName} as $name => $value) {
-                                        $data[$name] = $value[$i];
-                                    }
-                                    $inputs[] = new $related($data);
-                                }
-
-                                static::getInstanceModel()->{$relationName}()->saveMany($inputs);
-                            }
-                        }
-                    } else {
-                        $relationship = static::getInstanceModel()->{$form->getRelationship()}();
+                    foreach ($relationships as $relationName => $relationship) {
+                        // update or create
                         if (
-                            $relationship instanceof \Illuminate\Database\Eloquent\Relations\MorphToMany ||
-                            $relationship instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany
+                            $relationModel instanceof \Illuminate\Database\Eloquent\Relations\MorphOne ||
+                            $relationModel instanceof \Illuminate\Database\Eloquent\Relations\HasOne
                         ) {
-                            $relationship->sync($request->{str_replace('[]', '', $form->getName())});
+                            foreach ($relationship as $item) {
+                                $relationInput[$item] = $request->input($item);
+                            }
+                            // if already exist, update
+                            if (static::getInstanceModel()->{$relationName}) {
+                                static::getInstanceModel()->{$relationName}->fill($relationInput)->save();
+                            } else {
+                                // store new record
+                                static::getInstanceModel()->{$relationName}()->create($relationInput);
+                            }
+                        } elseif ($relationModel instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
+                            $inputs = [];
+                            $related = (static::getInstanceModel()->{$relationName}()->getRelated());
+
+                            for ($i = 0; $i < count($request->{$relationName}[$relationship[0]]); $i++) {
+                                $data = [];
+                                foreach ($request->{$relationName} as $name => $value) {
+                                    $data[$name] = $value[$i];
+                                }
+                                $inputs[] = new $related($data);
+                            }
+
+                            static::getInstanceModel()->{$relationName}()->saveMany($inputs);
                         }
                     }
                 } else {
-                    // inside other component
-                    if (method_exists($form, 'getComponents') && $form->getComponents()) {
-                        foreach ($form->getComponents() as $component) {
-                            $this->handleMedia($request, $component, static::getInstanceModel());
-                        }
+                    $relationship = static::getInstanceModel()->{$form->getRelationship()}();
+                    if (
+                        $relationship instanceof \Illuminate\Database\Eloquent\Relations\MorphToMany ||
+                        $relationship instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany
+                    ) {
+                        $relationship->sync($request->{str_replace('[]', '', $form->getName())});
+                    }
+                }
+            } else {
+                // inside other component
+                if (method_exists($form, 'getComponents') && $form->getComponents()) {
+                    foreach ($form->getComponents() as $component) {
+                        $this->handleMedia($request, $component, static::getInstanceModel());
                     }
                 }
             }
@@ -629,16 +620,14 @@ abstract class BaseModule extends Controller
             static::getInstanceModel()->delete();
 
             // delete media
-            if (method_exists($this, $method = 'formBuilder')) {
-                setRecord(static::getInstanceModel());
-                $parameters = $this->resolveParameters($method, []);
+            setRecord(static::getInstanceModel());
+            $parameters = $this->resolveParameters($method, []);
 
-                $forms = call_user_func_array([$this, $method], $parameters);
+            $forms = call_user_func_array([$this, $method], $parameters);
 
-                foreach ($forms->getComponents() as $form) {
-                    if ($form instanceof \Mulaidarinull\Larascaff\Components\Forms\Uploader) {
-                        static::getInstanceModel()->deleteMedia();
-                    }
+            foreach ($forms->getComponents() as $form) {
+                if ($form instanceof \Mulaidarinull\Larascaff\Components\Forms\Uploader) {
+                    static::getInstanceModel()->deleteMedia();
                 }
             }
 
@@ -674,10 +663,10 @@ abstract class BaseModule extends Controller
             $url = Pluralizer::plural($url);
         }
 
-        return (getPrefix() ? getPrefix() . '/' : '') . $url;
+        return (getPrefix() ? getPrefix().'/' : '').$url;
     }
 
-    public static function makeRoute($url, string | \Closure | array | null $action = null, $method = 'get', $name = null)
+    public static function makeRoute($url, string|\Closure|array|null $action = null, $method = 'get', $name = null)
     {
         return compact('method', 'action', 'url', 'name');
     }

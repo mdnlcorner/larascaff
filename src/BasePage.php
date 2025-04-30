@@ -53,7 +53,7 @@ abstract class BasePage extends Controller
             $url = Pluralizer::plural($url);
         }
 
-        return (getPrefix() ? getPrefix() . '/' : '') . $url;
+        return (getPrefix() ? getPrefix().'/' : '').$url;
     }
 
     public static function getView()
@@ -65,7 +65,7 @@ abstract class BasePage extends Controller
             array_shift($pages);
             $pages[count($pages) - 1] = substr($pages[count($pages) - 1], 0, strlen($pages[count($pages) - 1]) - 4);
             $pages = strtolower(implode('.', $pages));
-            $view = 'pages.' . $pages;
+            $view = 'pages.'.$pages;
         }
 
         return $view;
@@ -97,7 +97,7 @@ abstract class BasePage extends Controller
         return view('larascaff::main-content', $data);
     }
 
-    public static function makeRoute($url, string | callable | array | null $action = null, $method = 'get', $name = null)
+    public static function makeRoute($url, string|callable|array|null $action = null, $method = 'get', $name = null)
     {
         return compact('method', 'action', 'url', 'name');
     }
