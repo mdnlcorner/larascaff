@@ -64,7 +64,6 @@ class Install extends BaseCommand
         $this->filesystem->copyDirectory(__DIR__.'/../../stubs/resources', base_path('resources'));
         $this->filesystem->copyDirectory(__DIR__.'/../../stubs/Requests', app_path('Http/Requests'));
         $this->filesystem->copyDirectory(__DIR__.'/../../stubs/Larascaff', app_path('Larascaff'));
-        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/routes', base_path('routes'));
         $this->filesystem->copyDirectory(__DIR__.'/../../stubs/seeders', database_path('seeders'));
         $this->filesystem->copyDirectory(__DIR__.'/../../stubs/rootFile', base_path(''));
 

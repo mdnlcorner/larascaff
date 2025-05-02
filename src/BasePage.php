@@ -4,6 +4,7 @@ namespace Mulaidarinull\Larascaff;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
@@ -95,6 +96,25 @@ abstract class BasePage extends Controller
         }
 
         return view('larascaff::main-content', $data);
+    }
+
+    public static function registerRoutes()
+    {
+        $routeName = explode('/', static::getUrl());
+        $implodeRouteName = (implode('.', $routeName)).'.';
+
+        foreach (static::routes() as $route) {
+            $url = static::getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
+            $action = is_string($route['action']) ? [static::class, $route['action']] : $route['action'];
+            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName.$route['name'] : null);
+        }
+
+        Route::get(static::getUrl(), [static::class, 'index'])->name(implode('.', explode('/', static::getUrl())));
+    }
+
+    public static function routes(): array
+    {
+        return [];
     }
 
     public static function makeRoute($url, string|callable|array|null $action = null, $method = 'get', $name = null)

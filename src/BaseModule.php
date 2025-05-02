@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Info\Info;
@@ -660,6 +661,24 @@ abstract class BaseModule extends Controller
         }
 
         return (getPrefix() ? getPrefix().'/' : '').$url;
+    }
+
+    public static function registerRoutes()
+    {
+        $routeName = explode('/', static::getUrl());
+
+        $implodeRouteName = (implode('.', $routeName)).'.';
+
+        foreach (static::routes() as $route) {
+            $url = static::getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
+            $action = is_string($route['action']) ? [static::class, $route['action']] : $route['action'];
+            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName.$route['name'] : null);
+        }
+
+        array_pop($routeName);
+        Route::name(implode('.', $routeName).(count($routeName) ? '.' : ''))->group(function () {
+            Route::resource(static::getUrl(), static::class);
+        });
     }
 
     public static function makeRoute($url, string|\Closure|array|null $action = null, $method = 'get', $name = null)

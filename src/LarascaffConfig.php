@@ -27,6 +27,7 @@ class LarascaffConfig
     {
         static::$instance = app(static::class);
         static::$instance->count = static::$instance->count + 1;
+
         return static::$instance;
     }
 
