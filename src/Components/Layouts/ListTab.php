@@ -9,13 +9,13 @@ class ListTab
 {
     protected ?\Closure $query = null;
 
-    protected string | int | float | \Closure | null $badge = null;
+    protected string|int|float|\Closure|null $badge = null;
 
-    protected string | \Closure | ColorVariant | null $badgeColor = null;
+    protected string|\Closure|ColorVariant|null $badgeColor = null;
 
-    protected string | \Closure | null $badgeIcon = null;
+    protected string|\Closure|null $badgeIcon = null;
 
-    protected string | \Closure | IconPosition | null $badgeIconPosition = null;
+    protected string|\Closure|IconPosition|null $badgeIconPosition = null;
 
     public static function make(): static
     {
@@ -29,19 +29,19 @@ class ListTab
         return is_callable($prop) ? $prop() : $prop;
     }
 
-    public function badge(string | int | float | \Closure | null $badge): static
+    public function badge(string|int|float|\Closure|null $badge): static
     {
         $this->badge = $badge;
 
         return $this;
     }
 
-    public function getBadge(): string | int | float | null
+    public function getBadge(): string|int|float|null
     {
         return $this->resolve($this->badge);
     }
 
-    public function badgeIcon(string | \Closure | null $badgeIcon): static
+    public function badgeIcon(string|\Closure|null $badgeIcon): static
     {
         $this->badgeIcon = $badgeIcon;
 
@@ -53,7 +53,7 @@ class ListTab
         return $this->resolve($this->badgeIcon);
     }
 
-    public function badgeColor(string | \Closure | ColorVariant | null $badgeColor): static
+    public function badgeColor(string|\Closure|ColorVariant|null $badgeColor): static
     {
         $this->badgeColor = $badgeColor;
 
@@ -70,7 +70,7 @@ class ListTab
         return $prop;
     }
 
-    public function badgeIconPosition(string | \Closure | IconPosition | null $badgeIconPosition): static
+    public function badgeIconPosition(string|\Closure|IconPosition|null $badgeIconPosition): static
     {
         $this->badgeIconPosition = $badgeIconPosition;
 

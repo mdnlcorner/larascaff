@@ -10,7 +10,7 @@ trait HasField
 
     protected ?string $placeholder = null;
 
-    protected string | int | array | null $value = null;
+    protected string|int|array|null $value = null;
 
     protected bool $disabled = false;
 
@@ -78,7 +78,7 @@ trait HasField
         return $this->placeholder;
     }
 
-    public function getValue(): string | int | array | null
+    public function getValue(): string|int|array|null
     {
         return $this->value;
     }

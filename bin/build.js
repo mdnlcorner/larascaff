@@ -87,7 +87,7 @@ components.forEach(component => {
     compile({
         ...defaultOptions,
         entryPoints: [
-            `./src/resources/js/components/${component}/index.ts`,
+            `./resources/js/components/${component}/index.ts`,
         ],
         outfile: `./dist/components/${component}.js`,
     })
@@ -99,7 +99,7 @@ vendors.forEach(vendor => {
     compile({
         ...defaultOptions,
         entryPoints: [
-            `./src/resources/js/vendor/${vendor}/index.ts`,
+            `./resources/js/vendor/${vendor}/index.ts`,
         ],
         outfile: `./dist/vendor/${vendor}.js`,
     })
@@ -108,7 +108,7 @@ vendors.forEach(vendor => {
 compile({
     ...defaultOptions,
     entryPoints: [
-        `./src/resources/scss/app.scss`,
+        `./resources/scss/app.scss`,
     ],
     outfile: `./dist/css/app.css`,
 })
@@ -116,7 +116,7 @@ compile({
 compile({
     ...defaultOptions,
     entryPoints: [
-        `./src/resources/js/bootstrap.ts`,
+        `./resources/js/bootstrap.ts`,
     ],
     outfile: `./dist/js/bootstrap.js`,
 })

@@ -6,17 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
+use Mulaidarinull\Larascaff\Action;
 use Mulaidarinull\Larascaff\BaseModule;
-use Mulaidarinull\Larascaff\Components\Forms\Form;
-use Mulaidarinull\Larascaff\Components\Forms\Radio;
-use Mulaidarinull\Larascaff\Components\Forms\Select;
-use Mulaidarinull\Larascaff\Components\Forms\TextInput;
+use Mulaidarinull\Larascaff\Components\Forms;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
-use Mulaidarinull\Larascaff\Tables\Actions\Action;
-use Mulaidarinull\Larascaff\Tables\Actions\DeleteAction;
-use Mulaidarinull\Larascaff\Tables\Actions\EditAction;
-use Mulaidarinull\Larascaff\Tables\Actions\ViewAction;
+use Mulaidarinull\Larascaff\Tables;
 use Yajra\DataTables\Html\Column;
 
 class BaseMenuModule extends BaseModule
@@ -78,10 +73,10 @@ class BaseMenuModule extends BaseModule
     {
         return $table
             ->actions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
-                Action::make(
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make(
                     permission: 'update-permissions',
                     url: '/{{id}}/permissions',
                     label: 'Permissions',
@@ -113,20 +108,20 @@ class BaseMenuModule extends BaseModule
             });
     }
 
-    public static function formBuilder(Form $form): Form
+    public static function formBuilder(Forms\Form $form): Forms\Form
     {
         return $form->schema([
-            TextInput::make('name')->required(),
-            TextInput::make('url')->required(),
-            TextInput::make('icon'),
-            TextInput::make('category'),
-            TextInput::make('orders'),
-            Select::make('main_menu_id')
+            Forms\TextInput::make('name')->required(),
+            Forms\TextInput::make('url')->required(),
+            Forms\TextInput::make('icon'),
+            Forms\TextInput::make('category'),
+            Forms\TextInput::make('orders'),
+            Forms\Select::make('main_menu_id')
                 ->relationship('mainMenu', 'name')
                 ->searchable()
                 ->placeholder('Choose Main Menu')
                 ->modifyQuery(fn ($query) => $query->active()),
-            Radio::make('active')->options(['Y' => 1, 'N' => 0]),
+            Forms\Radio::make('active')->options(['Y' => 1, 'N' => 0]),
         ]);
     }
 
