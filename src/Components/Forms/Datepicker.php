@@ -35,7 +35,7 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
                 $expFormat = explode($separator, $format);
                 $formatPhp = '';
                 foreach ($expFormat as $i) {
-                    $formatPhp .= ($formatPhp ? $separator.$map[$i] : $map[$i]);
+                    $formatPhp .= ($formatPhp ? $separator . $map[$i] : $map[$i]);
                 }
                 $this->formatPhp = $formatPhp;
             }

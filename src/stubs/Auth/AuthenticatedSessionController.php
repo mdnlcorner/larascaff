@@ -17,7 +17,7 @@ final class AuthenticatedSessionController extends Controller
     {
         $this->prefix = getPrefix();
         if ($this->prefix != '') {
-            $this->prefix = $this->prefix.'/';
+            $this->prefix = $this->prefix . '/';
         }
     }
 
@@ -38,7 +38,7 @@ final class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route(str_replace('/', '.', $this->prefix).'dashboard', absolute: false));
+        return redirect()->intended(route(str_replace('/', '.', $this->prefix) . 'dashboard', absolute: false));
     }
 
     /**

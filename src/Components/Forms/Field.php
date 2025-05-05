@@ -14,7 +14,7 @@ class Field
     use HasModule;
     use HasValidation;
 
-    protected string|array $name = '';
+    protected string | array $name = '';
 
     public static function make($name): static
     {
@@ -25,14 +25,14 @@ class Field
         return $static;
     }
 
-    public function name(string|array $name): static
+    public function name(string | array $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function getName(): string|array
+    public function getName(): string | array
     {
         return $this->name;
     }

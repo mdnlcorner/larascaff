@@ -6,26 +6,27 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\ProfileController;
-use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-$prefix = getPrefix();
-Route::prefix($prefix)->group(function () {
+Route::prefix(larascaffConfig()->getPrefix())->group(function () {
     Route::middleware('guest')->group(function () {
-        Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
-        Route::post('register', [RegisteredUserController::class, 'store']);
         Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
         Route::post('/', [AuthenticatedSessionController::class, 'store']);
-        Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
-        Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
-        Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
-        Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
+        if (larascaffConfig()->hasRegistration()) {
+            Route::get(larascaffConfig()->getRegistrationUrl(), larascaffConfig()->getRegistrationCreateAction())->name('register');
+            Route::post(larascaffConfig()->getRegistrationUrl(), LarascaffConfig()->getRegistrationStoreAction());
+        }
+        if (larascaffConfig()->hasPasswordReset()) {
+            Route::get(larascaffConfig()->getPasswordResetUrl(), larascaffConfig()->getPasswordResetCreateAction())->name('password.request');
+            Route::post(larascaffConfig()->getPasswordResetUrl(), larascaffConfig()->getPasswordResetStoreAction())->name('password.email');
+            Route::get(larascaffConfig()->getNewPasswordUrl() . '/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+            Route::post(larascaffConfig()->getNewPasswordUrl(), [NewPasswordController::class, 'store'])->name('password.store');
+        }
     });
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware(larascaffConfig()->getAuthMiddleware())->group(function () {
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::patch('profile-avatar', [ProfileController::class, 'avatar'])->name('profile.avatar');

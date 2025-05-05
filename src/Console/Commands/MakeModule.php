@@ -73,11 +73,11 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
         $class = array_pop($this->pathList);
         $this->modelClass = ucfirst(isset($model) ? array_pop($model) : $class);
         $this->tableName = $this->argument('table') ?? Str::snake(Pluralizer::plural($this->modelClass));
-        $this->namespaceModel = 'App\\Models'.(count($model ?? $this->pathList) ? '\\' : '').implode('\\', $model ?? $this->pathList);
+        $this->namespaceModel = 'App\\Models' . (count($model ?? $this->pathList) ? '\\' : '') . implode('\\', $model ?? $this->pathList);
         $this->path = implode('/', $this->pathList);
         $this->pathModel = implode('/', $model ?? $this->pathList);
         $this->moduleName = $class;
-        $this->view = strtolower(($this->path != '' ? $this->path.'/' : '')."{$this->moduleName}");
+        $this->view = strtolower(($this->path != '' ? $this->path . '/' : '') . "{$this->moduleName}");
 
         $this->makeModel();
         if ($this->option('javascript')) {
@@ -94,35 +94,35 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
     {
 
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.form.stub');
-        $file = $this->laravel->basePath('/resources/views/pages/'."{$this->view}-form.blade.php");
+        $file = $this->laravel->basePath('/resources/views/pages/' . "{$this->view}-form.blade.php");
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, [], $file, 'View');
     }
 
     public function makeJs()
     {
-        $this->js = strtolower(($this->path != '' ? $this->path.'/' : '')."{$this->moduleName}");
+        $this->js = strtolower(($this->path != '' ? $this->path . '/' : '') . "{$this->moduleName}");
 
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.js.stub');
-        $file = $this->laravel->basePath('/resources/js/pages/'."{$this->js}.js");
+        $file = $this->laravel->basePath('/resources/js/pages/' . "{$this->js}.js");
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, [], $file, 'Javascript');
     }
 
     public function makeModule()
     {
-        $moduleClass = $this->moduleName.'Module';
+        $moduleClass = $this->moduleName . 'Module';
         $replaces = [
-            '{{ namespace }}' => 'App\\Larascaff\\Modules'.(count($this->pathList) ? '\\' : '').implode('\\', $this->pathList),
-            '{{ modelNamespace }}' => $this->namespaceModel.'\\'.$this->modelClass,
+            '{{ namespace }}' => 'App\\Larascaff\\Modules' . (count($this->pathList) ? '\\' : '') . implode('\\', $this->pathList),
+            '{{ modelNamespace }}' => $this->namespaceModel . '\\' . $this->modelClass,
             '{{ class }}' => $moduleClass,
             '{{ view }}' => str_replace('/', '.', $this->view),
             '{{ model }}' => $this->modelClass,
             '{{ modelVariable }}' => Pluralizer::singular($this->tableName),
         ];
 
-        $stubFile = $this->resolveStubPath('/../../stubs/'.(! $this->option('simple') ? 'larascaff.module-builder.stub' : 'larascaff.module.stub'));
-        $file = $this->laravel->basePath('/app/Larascaff/Modules'.($this->path != '' ? '/'.$this->path : '')."/{$moduleClass}.php");
+        $stubFile = $this->resolveStubPath('/../../stubs/' . (! $this->option('simple') ? 'larascaff.module-builder.stub' : 'larascaff.module.stub'));
+        $file = $this->laravel->basePath('/app/Larascaff/Modules' . ($this->path != '' ? '/' . $this->path : '') . "/{$moduleClass}.php");
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, $replaces, $file, 'Module');
     }
@@ -133,12 +133,12 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
             '{{ namespace }}' => $this->namespaceModel,
             '{{ class }}' => $this->modelClass,
             '{{ table }}' => $this->tableName,
-            '{{ useNotificationTrait }}' => $this->option('notification') ? "\n"."use Mulaidarinull\Larascaff\Traits\HasNotification;" : '',
+            '{{ useNotificationTrait }}' => $this->option('notification') ? "\n" . "use Mulaidarinull\Larascaff\Traits\HasNotification;" : '',
             '{{ notificationTrait }}' => $this->option('notification') ? ', HasNotification' : '',
         ];
 
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.model.stub');
-        $file = $this->laravel->basePath('app/Models'.($this->pathModel != '' ? '/'.$this->pathModel : '')."/{$this->modelClass}.php");
+        $file = $this->laravel->basePath('app/Models' . ($this->pathModel != '' ? '/' . $this->pathModel : '') . "/{$this->modelClass}.php");
         $this->makeDirectory(dirname($file));
         if ($this->fileSystem->exists($file)) {
             if (! confirm('Model already exist, using existing model or abort')) {
@@ -151,7 +151,7 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
         }
         $this->saveStub($stubFile, $replaces, $file, 'Model');
         if ($this->option('migration')) {
-            $this->call('make:migration', ['name' => 'create'.Pluralizer::plural($this->moduleName, null).'_table']);
+            $this->call('make:migration', ['name' => 'create' . Pluralizer::plural($this->moduleName, null) . '_table']);
         }
     }
 }

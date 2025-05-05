@@ -25,18 +25,22 @@
                     label="Enter your password" />
                 <div class="flex justify-between">
                     <x-larascaff::forms.checkbox name="remember" label="Remember me" />
-                    <a href="{{ route('password.request') }}" class="flex justify-end w-full text-sm">Forget
+                    @if (larascaffConfig()->hasPasswordReset())
+                    <a href="{{ route('password.request') }}" class="flex justify-end w-full text-sm underline text-primary">Forgot
                         password</a>
+                    @endif
                 </div>
             </div>
             <x-larascaff::button onclick="setTimeout(() => {
             this.disabled = true
             }, 0)"
                 type="submit" class="w-full mt-4">Login</x-larascaff::button>
+            @if (larascaffConfig()->hasRegistration())
             <div class="mt-6 text-sm text-center">
                 <span>Don't have account? </span> <a href="{{ route('register') }}"
                     class="underline text-primary">Create account</a>
             </div>
+            @endif
         </form>
     </div>
     <div class="relative flex items-center justify-center pt-4 pb-8">
