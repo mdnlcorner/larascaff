@@ -665,18 +665,17 @@ abstract class BaseModule extends Controller
 
     public static function registerRoutes()
     {
-        $routeName = explode('/', static::getUrl());
-
-        $implodeRouteName = (implode('.', $routeName)).'.';
+        $urlArray = explode('/', static::getUrl());
+        $routeName = (implode('.', $urlArray)).'.';
 
         foreach (static::routes() as $route) {
             $url = static::getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
             $action = is_string($route['action']) ? [static::class, $route['action']] : $route['action'];
-            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName.$route['name'] : null);
+            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $routeName.$route['name'] : null);
         }
 
-        array_pop($routeName);
-        Route::name(implode('.', $routeName).(count($routeName) ? '.' : ''))->group(function () {
+        array_pop($urlArray);
+        Route::name(implode('.', $urlArray).(count($urlArray) ? '.' : ''))->group(function () {
             Route::resource(static::getUrl(), static::class);
         });
     }
