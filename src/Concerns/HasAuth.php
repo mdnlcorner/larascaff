@@ -73,7 +73,7 @@ trait HasAuth
     {
         $this->hasLogin = true;
 
-        $this->loginForm = $url ?? $this->loginForm;
+        $this->loginUrl = $url ?? $this->loginUrl;
 
         $this->loginForm = $form ?? fn () => view('larascaff::auth.login');
 
