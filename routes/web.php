@@ -9,8 +9,8 @@ use Mulaidarinull\Larascaff\RepeaterController;
 use Mulaidarinull\Larascaff\TempUpload;
 use Mulaidarinull\Larascaff\Uploader;
 
-Route::middleware('web')->group(function () {
-    Route::middleware('auth')->group(function () {
+Route::middleware(larascaffConfig()->getMiddleware())->group(function () {
+    Route::middleware(larascaffConfig()->getAuthMiddleware())->group(function () {
         Route::get('notifications/{notification}', [NotificationRoute::class, 'show'])->name('notifications');
         Route::post('temp-upload', TempUpload::class)->middleware('signed')->name('temp-upload');
         Route::post('uploader', Uploader::class)->middleware('signed')->name('uploader');

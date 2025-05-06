@@ -27,7 +27,7 @@ abstract class BaseModule extends Controller
 
     protected static ?string $model = null;
 
-    protected static Model|Builder|null $instanceModel = null;
+    protected static Model | Builder | null $instanceModel = null;
 
     protected static ?string $url = null;
 
@@ -79,7 +79,7 @@ abstract class BaseModule extends Controller
             ->prepend('App\\Models');
     }
 
-    public static function getInstanceModel(): Model|Builder
+    public static function getInstanceModel(): Model | Builder
     {
         if (! static::$instanceModel) {
             $model = static::getModel();
@@ -118,7 +118,7 @@ abstract class BaseModule extends Controller
         ])
             ->flatMap(fn ($item) => $item)
             ->map(function ($item) use ($url) {
-                $item['url'] = url($url.$item['url']);
+                $item['url'] = url($url . $item['url']);
 
                 return $item;
             })->toArray();
@@ -128,7 +128,7 @@ abstract class BaseModule extends Controller
             $actions = [...$actions, ...collect(call_user_func([static::class, $method]))
                 ->flatMap(fn ($item) => $item)
                 ->map(function ($item) use ($url) {
-                    $item['url'] = url($url.$item['url']);
+                    $item['url'] = url($url . $item['url']);
 
                     return $item;
                 })->toArray()];
@@ -136,7 +136,7 @@ abstract class BaseModule extends Controller
 
         if ($validatePermission) {
             return array_filter($actions, function ($permission) use ($url) {
-                return user()->can($permission.' '.$url);
+                return user()->can($permission . ' ' . $url);
             }, ARRAY_FILTER_USE_KEY);
         }
 
@@ -214,7 +214,7 @@ abstract class BaseModule extends Controller
         $title = static::$modalTitle;
         if (! $title) {
             if (static::getInstanceModel()) {
-                $title = 'Form '.ucwords(str_replace('_', ' ', static::getInstanceModel()->getTable()));
+                $title = 'Form ' . ucwords(str_replace('_', ' ', static::getInstanceModel()->getTable()));
             }
         }
 
@@ -227,7 +227,7 @@ abstract class BaseModule extends Controller
     public function create(Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to(static::getUrl().'?action=create');
+            return redirect()->to(static::getUrl() . '?action=create');
         }
 
         try {
@@ -303,7 +303,7 @@ abstract class BaseModule extends Controller
     public function show(string $id, Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to(static::getUrl().'?tableAction=read&tableActionId='.$id);
+            return redirect()->to(static::getUrl() . '?tableAction=read&tableActionId=' . $id);
         }
         $this->routeKeyNameValue = $id;
         $this->getRecord();
@@ -361,14 +361,14 @@ abstract class BaseModule extends Controller
     public function edit(string $id, Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to(static::getUrl().'?tableAction=update&tableActionId='.$id);
+            return redirect()->to(static::getUrl() . '?tableAction=update&tableActionId=' . $id);
         }
         $this->routeKeyNameValue = $id;
         $this->getRecord();
 
         try {
             $this->addDataToview([
-                'action' => url(static::getUrl().'/'.static::getInstanceModel()->{static::getInstanceModel()->getRouteKeyName()}),
+                'action' => url(static::getUrl() . '/' . static::getInstanceModel()->{static::getInstanceModel()->getRouteKeyName()}),
                 'method' => 'PUT',
             ]);
 
@@ -660,27 +660,28 @@ abstract class BaseModule extends Controller
             $url = Pluralizer::plural($url);
         }
 
-        return (getPrefix() ? getPrefix().'/' : '').$url;
+        return (getPrefix() ? getPrefix() . '/' : '') . $url;
     }
 
     public static function registerRoutes()
     {
-        $urlArray = explode('/', static::getUrl());
-        $routeName = (implode('.', $urlArray)).'.';
+        $routeName = explode('/', static::getUrl());
+
+        $implodeRouteName = (implode('.', $routeName)) . '.';
 
         foreach (static::routes() as $route) {
-            $url = static::getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
+            $url = static::getUrl() . (str_starts_with($route['url'], '/') ? $route['url'] : '/' . $route['url']);
             $action = is_string($route['action']) ? [static::class, $route['action']] : $route['action'];
-            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $routeName.$route['name'] : null);
+            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName . $route['name'] : null);
         }
 
-        array_pop($urlArray);
-        Route::name(implode('.', $urlArray).(count($urlArray) ? '.' : ''))->group(function () {
+        array_pop($routeName);
+        Route::name(implode('.', $routeName) . (count($routeName) ? '.' : ''))->group(function () {
             Route::resource(static::getUrl(), static::class);
         });
     }
 
-    public static function makeRoute($url, string|\Closure|array|null $action = null, $method = 'get', $name = null)
+    public static function makeRoute($url, string | \Closure | array | null $action = null, $method = 'get', $name = null)
     {
         return compact('method', 'action', 'url', 'name');
     }

@@ -61,14 +61,14 @@ class BaseUserModule extends BaseModule
         return $this->form($view, [
             'method' => 'PUT',
             'title' => 'Permission User',
-            'action' => route($prefix.'users.permissions.update', $user->{$user->getRouteKeyName()}),
+            'action' => route($prefix . 'users.permissions.update', $user->{$user->getRouteKeyName()}),
             'size' => 'lg',
         ]);
     }
 
     public function updatePermissions(Request $request, User $user)
     {
-        Gate::authorize('update-permissions '.static::getUrl());
+        Gate::authorize('update-permissions ' . static::getUrl());
 
         $user->syncPermissions($request->permissions);
 
