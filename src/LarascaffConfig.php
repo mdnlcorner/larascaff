@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff;
 
+use Illuminate\Contracts\View\View;
 use Mulaidarinull\Larascaff\Concerns\HasAuth;
 use Mulaidarinull\Larascaff\Concerns\HasBrand;
 use Mulaidarinull\Larascaff\Concerns\HasMiddleware;
@@ -13,11 +14,11 @@ class LarascaffConfig
     use HasBrand;
     use HasMiddleware;
 
-    protected ?string $prefix = null;
+    protected string $prefix = '';
 
     protected static ?LarascaffConfig $instance = null;
 
-    protected $footer;
+    protected \Closure | string | View | null $footer = null;
 
     protected $favicon;
 
@@ -35,24 +36,20 @@ class LarascaffConfig
         return $this;
     }
 
-    public function getPrefix(): ?string
+    public function getPrefix(): string
     {
         return $this->prefix;
     }
 
-    public function footer(\Closure | string | \Illuminate\Contracts\View\View $footer): static
+    public function footer(\Closure | string | View $footer): static
     {
-        $this->footer = $footer;
+        $this->footer = $footer ?? view('larascaff::footer');
 
         return $this;
     }
 
     public function getFooter()
     {
-        if (! $this->footer) {
-            return view('larascaff::footer');
-        }
-
         return $this->footer;
     }
 

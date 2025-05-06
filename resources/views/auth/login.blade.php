@@ -2,7 +2,7 @@
     @php
         $config = app(\Mulaidarinull\Larascaff\LarascaffConfig::class);
     @endphp
-    <a href="{{ url(getPrefix()) }}" class="mb-6 text-center">
+    <a href="{{ route('login') }}" class="mb-6 text-center">
         @if (is_callable($config->renderBrand()))
             {{ $config->renderBrand()() }}
         @else

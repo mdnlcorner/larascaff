@@ -3,11 +3,32 @@
 namespace Mulaidarinull\Larascaff\Concerns;
 
 use Illuminate\Http\Request;
-use Mulaidarinull\Larascaff\Auth;
 use Illuminate\Support\Str;
+use Mulaidarinull\Larascaff\Auth;
 
 trait HasAuth
 {
+    protected bool $hasLogin = true;
+
+    protected string $loginUrl = '/login';
+
+    /**
+     * @var \Closure | string | array<class-string, string> | null
+     */
+    protected \Closure | string | array | null $loginForm = null;
+
+    /**
+     * @var \Closure | string | array<class-string, string> | null
+     */
+    protected \Closure | string | array | null $loginAction = null;
+
+    protected string $logoutUrl = '/logout';
+
+    /**
+     * @var \Closure | string | array<class-string, string> | null
+     */
+    protected \Closure | string | array | null $logoutAction = [Auth\AuthenticatedSessionController::class, 'destroy'];
+
     protected bool $hasRegistration = false;
 
     protected string $registrationUrl = 'register';
@@ -15,7 +36,7 @@ trait HasAuth
     /**
      * @var \Closure | string | array<class-string, string> | null
      */
-    protected \Closure | string | array | null $registrationForm;
+    protected \Closure | string | array | null $registrationForm = null;
 
     /**
      * @var \Closure | string | array<class-string, string> | null
@@ -47,6 +68,56 @@ trait HasAuth
      * @var \Closure | string | array<class-string, string> | null
      */
     protected \Closure | string | array | null $newPasswordAction = null;
+
+    public function login(?string $url = null, \Closure | array | string | null $form = null, \Closure | array | string | null $action = null): static
+    {
+        $this->hasLogin = true;
+
+        $this->loginForm = $url ?? $this->loginForm;
+
+        $this->loginForm = $form ?? fn () => view('larascaff::auth.login');
+
+        $this->loginAction = $action ?? [Auth\AuthenticatedSessionController::class, 'store'];
+
+        return $this;
+    }
+
+    public function logout(?string $url, \Closure | array | string | null $action)
+    {
+        $this->logoutUrl = $url ?? $this->logoutUrl;
+
+        $this->logoutAction = $action ?? $this->logoutAction;
+    }
+
+    public function getLogoutUrl(): string
+    {
+        return Str::start($this->logoutUrl, '/');
+    }
+
+    public function getLogoutAction(): \Closure | string | array
+    {
+        return $this->logoutAction;
+    }
+
+    public function hasLogin(): bool
+    {
+        return $this->hasLogin;
+    }
+
+    public function getLoginUrl(): string
+    {
+        return Str::start($this->loginUrl, '/');
+    }
+
+    public function getLoginForm(): \Closure | string | array
+    {
+        return $this->loginForm;
+    }
+
+    public function getLoginAction(): \Closure | string | array
+    {
+        return $this->loginAction;
+    }
 
     public function registration(?string $url = null, \Closure | array | string | null $form = null, \Closure | array | string | null $action = null): static
     {
@@ -81,7 +152,7 @@ trait HasAuth
         return $this->registrationAction;
     }
 
-    public function passwordReset(?string $passwordResetUrl = null, \Closure | string | array | null $passwordResetForm = null, \Closure | string | array | null $passwordResetAction = null, ?string $newPasswordUrl = null, \Closure | string | array | null $newPasswordForm = null, \Closure | string | array | null $newPasswordAction = null ): static
+    public function passwordReset(?string $passwordResetUrl = null, \Closure | string | array | null $passwordResetForm = null, \Closure | string | array | null $passwordResetAction = null, ?string $newPasswordUrl = null, \Closure | string | array | null $newPasswordForm = null, \Closure | string | array | null $newPasswordAction = null): static
     {
         $this->hasPasswordReset = true;
 
