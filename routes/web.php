@@ -21,16 +21,16 @@ Route::middleware(larascaffConfig()->getMiddleware())->group(function () {
         // Pages route
         File::ensureDirectoryExists(app_path('Larascaff/Pages'));
         foreach (File::allFiles(app_path('Larascaff/Pages')) as $page) {
-            $class = 'App\\Larascaff\\Pages\\'.(str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $page->getRelativePathname()));
+            $class = 'App\\Larascaff\\Pages\\' . (str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $page->getRelativePathname()));
             $class::registerRoutes();
         }
 
         // Modules route
         File::ensureDirectoryExists(app_path('Larascaff/Modules'));
         foreach (File::allFiles(app_path('Larascaff/Modules')) as $module) {
-            $class = 'App\\Larascaff\\Modules\\'.(str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $module->getRelativePathname()));
+            $class = 'App\\Larascaff\\Modules\\' . (str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $module->getRelativePathname()));
             $class::registerRoutes();
         }
     });
-    require __DIR__.'/auth.php';
+    require __DIR__ . '/auth.php';
 });

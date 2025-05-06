@@ -2,7 +2,9 @@
 
 namespace Mulaidarinull\Larascaff\Concerns;
 
+use Illuminate\Http\Request;
 use Mulaidarinull\Larascaff\Auth;
+use Illuminate\Support\Str;
 
 trait HasAuth
 {
@@ -10,90 +12,92 @@ trait HasAuth
 
     protected string $registrationUrl = 'register';
 
-    protected string | array $registrationCreateAction = [Auth\RegisteredUserController::class, 'create'];
+    /**
+     * @var \Closure | string | array<class-string, string> | null
+     */
+    protected \Closure | string | array | null $registrationForm;
 
-    protected string | array $registrationStoreAction = [Auth\RegisteredUserController::class, 'store'];
+    /**
+     * @var \Closure | string | array<class-string, string> | null
+     */
+    protected \Closure | string | array | null $registrationAction = null;
 
     protected bool $hasPasswordReset = false;
 
     protected string $passwordResetUrl = 'forgot-password';
 
-    protected string | array $passwordResetCreateAction = [Auth\PasswordResetLinkController::class, 'create'];
+    /**
+     * @var \Closure | string | array<class-string, string> | null
+     */
+    protected \Closure | string | array | null $passwordResetForm = null;
 
-    protected string | array $passwordResetStoreAction = [Auth\PasswordResetLinkController::class, 'store'];
+    /**
+     * @var \Closure | string | array<class-string, string> | null
+     */
+    protected \Closure | string | array | null $passwordResetAction = null;
 
     protected string $newPasswordUrl = 'reset-password';
+
+    /**
+     * @var \Closure | string | array<class-string, string> | null
+     */
+    protected \Closure | string | array | null $newPasswordForm = null;
+
+    /**
+     * @var \Closure | string | array<class-string, string> | null
+     */
+    protected \Closure | string | array | null $newPasswordAction = null;
+
+    public function registration(?string $url = null, \Closure | array | string | null $form = null, \Closure | array | string | null $action = null): static
+    {
+        $this->hasRegistration = true;
+
+        $this->registrationUrl = $url ?? $this->registrationUrl;
+
+        $this->registrationForm = $form ?? fn () => view('larascaff::auth.register');
+
+        $this->registrationAction = $action ?? [Auth\RegisteredUserController::class, 'store'];
+
+        return $this;
+    }
 
     public function hasRegistration(): bool
     {
         return $this->hasRegistration;
     }
 
-    public function registrationUrl($registrationUrl): static
-    {
-        $this->registrationUrl = $registrationUrl;
-
-        return $this;
-    }
-
     public function getRegistrationUrl(): string
     {
-        return $this->registrationUrl;
+        return Str::start($this->registrationUrl, '/');
     }
 
-    public function registration(): static
+    public function getRegistrationForm(): \Closure | string | array
     {
-        $this->hasRegistration = true;
+        return $this->registrationForm;
+    }
+
+    public function getRegistrationAction(): \Closure | string | array
+    {
+        return $this->registrationAction;
+    }
+
+    public function passwordReset(?string $passwordResetUrl = null, \Closure | string | array | null $passwordResetForm = null, \Closure | string | array | null $passwordResetAction = null, ?string $newPasswordUrl = null, \Closure | string | array | null $newPasswordForm = null, \Closure | string | array | null $newPasswordAction = null ): static
+    {
+        $this->hasPasswordReset = true;
+
+        $this->passwordResetUrl = $passwordResetUrl ?? $this->passwordResetUrl;
+
+        $this->passwordResetForm = $passwordResetForm ?? fn () => view('larascaff::auth.forgot-password');
+
+        $this->passwordResetAction = $passwordResetAction ?? [Auth\PasswordResetLinkController::class, 'store'];
+
+        $this->newPasswordUrl = $newPasswordUrl ?? $this->newPasswordUrl;
+
+        $this->newPasswordForm = $newPasswordForm ?? fn (Request $request) => view('larascaff::auth.reset-password', ['request' => $request]);
+
+        $this->newPasswordAction = $newPasswordAction ?? [Auth\NewPasswordController::class, 'store'];
 
         return $this;
-    }
-
-    public function registrationCreateAction(string | array $action): static
-    {
-        $this->registrationCreateAction = $action;
-
-        return $this;
-    }
-
-    public function getRegistrationCreateAction(): string | array
-    {
-        return $this->registrationCreateAction;
-    }
-
-    public function registrationStoreAction(string | array $action): static
-    {
-        $this->registrationStoreAction = $action;
-
-        return $this;
-    }
-
-    public function getRegistrationStoreAction(): string | array
-    {
-        return $this->registrationStoreAction;
-    }
-
-    public function passwordResetCreateAction(string | array $action): static
-    {
-        $this->passwordResetCreateAction = $action;
-
-        return $this;
-    }
-
-    public function getPasswordResetCreateAction(): string | array
-    {
-        return $this->passwordResetCreateAction;
-    }
-
-    public function passwordResetStoreAction(string | array $action): static
-    {
-        $this->passwordResetStoreAction = $action;
-
-        return $this;
-    }
-
-    public function getPasswordResetStoreAction(): string | array
-    {
-        return $this->passwordResetStoreAction;
     }
 
     public function hasPasswordReset(): bool
@@ -101,34 +105,33 @@ trait HasAuth
         return $this->hasPasswordReset;
     }
 
-    public function passwordReset(): static
-    {
-        $this->hasPasswordReset = true;
-
-        return $this;
-    }
-
-    public function passwordResetUrl($passwordResetUrl): static
-    {
-        $this->passwordResetUrl = $passwordResetUrl;
-
-        return $this;
-    }
-
     public function getPasswordResetUrl(): string
     {
-        return \Illuminate\Support\Str::start($this->passwordResetUrl, '/');
+        return Str::start($this->passwordResetUrl, '/');
     }
 
-    public function newPasswordUrl($newPasswordUrl): static
+    public function getPasswordResetForm(): \Closure | string | array
     {
-        $this->newPasswordUrl = $newPasswordUrl;
+        return $this->passwordResetForm;
+    }
 
-        return $this;
+    public function getPasswordResetAction(): \Closure | string | array
+    {
+        return $this->passwordResetAction;
     }
 
     public function getNewPasswordUrl(): string
     {
-        return $this->newPasswordUrl;
+        return Str::start($this->newPasswordUrl, '/');
+    }
+
+    public function getNewPasswordForm(): \Closure | string | array
+    {
+        return $this->newPasswordForm;
+    }
+
+    public function getNewPasswordAction(): \Closure | string | array
+    {
+        return $this->newPasswordAction;
     }
 }

@@ -15,14 +15,14 @@ Route::prefix(larascaffConfig()->getPrefix())->group(function () {
         Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
         Route::post('/', [AuthenticatedSessionController::class, 'store']);
         if (larascaffConfig()->hasRegistration()) {
-            Route::get(larascaffConfig()->getRegistrationUrl(), larascaffConfig()->getRegistrationCreateAction())->name('register');
-            Route::post(larascaffConfig()->getRegistrationUrl(), LarascaffConfig()->getRegistrationStoreAction());
+            Route::get(larascaffConfig()->getRegistrationUrl(), larascaffConfig()->getRegistrationForm())->name('register');
+            Route::post(larascaffConfig()->getRegistrationUrl(), LarascaffConfig()->getRegistrationAction());
         }
         if (larascaffConfig()->hasPasswordReset()) {
-            Route::get(larascaffConfig()->getPasswordResetUrl(), larascaffConfig()->getPasswordResetCreateAction())->name('password.request');
-            Route::post(larascaffConfig()->getPasswordResetUrl(), larascaffConfig()->getPasswordResetStoreAction())->name('password.email');
-            Route::get(larascaffConfig()->getNewPasswordUrl() . '/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
-            Route::post(larascaffConfig()->getNewPasswordUrl(), [NewPasswordController::class, 'store'])->name('password.store');
+            Route::get(larascaffConfig()->getPasswordResetUrl(), larascaffConfig()->getPasswordResetForm())->name('password.request');
+            Route::post(larascaffConfig()->getPasswordResetUrl(), larascaffConfig()->getPasswordResetAction())->name('password.email');
+            Route::get(larascaffConfig()->getNewPasswordUrl() . '/{token}', larascaffConfig()->getNewPasswordForm())->name('password.reset');
+            Route::post(larascaffConfig()->getNewPasswordUrl(), larascaffConfig()->getNewPasswordAction())->name('password.store');
         }
     });
 
