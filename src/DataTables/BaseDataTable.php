@@ -9,11 +9,11 @@ use Yajra\DataTables\Services\DataTable;
 
 class BaseDataTable extends DataTable
 {
-    public QueryBuilder|Model|null $query = null;
+    public QueryBuilder | Model | null $query = null;
 
     public ?EloquentDataTable $eloquentTable = null;
 
-    public function __construct(protected Model|QueryBuilder $model, protected string $url, protected array $tableActions = [])
+    public function __construct(protected Model | QueryBuilder $model, protected string $url, protected array $tableActions = [])
     {
         $this->model = $this->query = $model;
         $this->url = $url;
@@ -54,7 +54,7 @@ class BaseDataTable extends DataTable
         $this->tableActions = collect($actions)
             ->flatMap(fn ($item) => $item)
             ->map(function ($item) {
-                $item['url'] = url($this->url.$item['url']);
+                $item['url'] = url($this->url . $item['url']);
 
                 return $item;
             })
@@ -63,7 +63,7 @@ class BaseDataTable extends DataTable
                     return true;
                 }
 
-                return user()->can($key.' '.$this->url);
+                return user()->can($key . ' ' . $this->url);
             })
             ->toArray();
 
@@ -145,7 +145,7 @@ class BaseDataTable extends DataTable
     public function columns($cb): static
     {
         $model = explode('Models\\', get_class($this->model->getModel()));
-        $this->htmlBuilder = $this->generateHtmlBuilder()->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))).'-table');
+        $this->htmlBuilder = $this->generateHtmlBuilder()->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
         $cb($this->htmlBuilder);
 
         return $this;
@@ -164,6 +164,6 @@ class BaseDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return '_'.date('YmdHis');
+        return '_' . date('YmdHis');
     }
 }

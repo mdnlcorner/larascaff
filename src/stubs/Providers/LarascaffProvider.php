@@ -3,9 +3,9 @@
 namespace App\Providers;
 
 use Mulaidarinull\Larascaff\LarascaffConfig;
-use Mulaidarinull\Larascaff\Providers\LarascaffProvider;
+use Mulaidarinull\Larascaff\Providers\LarascaffProvider as Provider;
 
-class LarascaffServiceProvider extends LarascaffProvider
+class LarascaffProvider extends Provider
 {
     public function config(LarascaffConfig $config)
     {
