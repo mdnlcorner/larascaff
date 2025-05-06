@@ -20,11 +20,11 @@ class LarascaffConfig
 
     protected \Closure | string | View | null $footer = null;
 
-    protected $favicon;
+    protected \Closure | string | null $favicon = null;
 
     public static function make(): static
     {
-        static::$instance = app(static::class);
+        static::$instance = app()->make(static::class);
 
         return static::$instance;
     }
@@ -43,26 +43,26 @@ class LarascaffConfig
 
     public function footer(\Closure | string | View $footer): static
     {
-        $this->footer = $footer ?? view('larascaff::footer');
+        $this->footer = is_callable($footer) ? call_user_func($footer) : $footer;
 
         return $this;
     }
 
     public function getFooter()
     {
-        return $this->footer;
+        return $this->footer ?? view('larascaff::footer');
     }
 
-    public function favicon(string $favicon): static
+    public function favicon(string $url): static
     {
-        $this->favicon = $favicon;
+        $this->favicon = $url;
 
         return $this;
     }
 
     public function getFavicon()
     {
-        return $this->favicon;
+        return $this->favicon ?? url('favicon.ico');
     }
 
     public function colors(array $colors): static

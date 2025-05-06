@@ -46,14 +46,14 @@ class Install extends BaseCommand
         );
         // copy an d set service providers
         $this->saveStub(
-            $this->resolveStubPath('/../../stubs/Providers/LarascaffServiceProvider.php'),
+            $this->resolveStubPath('/../../stubs/Providers/LarascaffProvider.php'),
             [
                 '{{ prefix }}' => $prefix,
             ],
-            app_path('Providers/LarascaffServiceProvider.php')
+            app_path('Providers/LarascaffProvider.php')
         );
 
-        $this->components->info('Copying asset file');
+        $this->components->info('Copying asset files..');
 
         $this->filesystem->copy(__DIR__ . '/../../stubs/bootstrap/providers.php', base_path('bootstrap/providers.php'));
         $this->filesystem->copy(__DIR__ . '/../../stubs/UserFactory.php', database_path('factories/UserFactory.php'));
