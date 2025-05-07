@@ -2,6 +2,6 @@
 
 namespace Mulaidarinull\Larascaff\Tables\Actions;
 
-use Mulaidarinull\Larascaff\Action as LarascaffAction;
+use Mulaidarinull\Larascaff\Actions\Action as BaseAction;
 
-class Action extends LarascaffAction {}
+class Action extends BaseAction {}

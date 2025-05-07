@@ -2,11 +2,13 @@
 
 namespace Mulaidarinull\Larascaff\Components\Layouts;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Mulaidarinull\Larascaff\Components\Concerns\HasCollapsible;
 use Mulaidarinull\Larascaff\Components\Concerns\HasColumnSpan;
 use Mulaidarinull\Larascaff\Components\Concerns\HasComponent;
 use Mulaidarinull\Larascaff\Components\Concerns\HasRelationship;
+use Mulaidarinull\Larascaff\Components\Forms\Form;
 
 class Repeater
 {
@@ -76,6 +78,29 @@ class Repeater
     public function getBeforeStore()
     {
         return $this->beforeStore;
+    }
+
+    public function repeaterHandler(Request $request)
+    {
+        $class = (new ('\\' . $request->post('module')));
+        setRecord($class->getModel());
+        foreach ($class->formBuilder(new Form)->getComponents() as $repeater) {
+            if ($repeater instanceof \Mulaidarinull\Larascaff\Components\Layouts\Repeater) {
+                $validations = [];
+                $validationMessages = [];
+                foreach ($repeater->getComponents() as $component) {
+                    foreach ($component->getValidations()['validations'] ?? [] as $key => $validation) {
+                        $validations[$key] = $validation;
+                    }
+                    foreach ($component->getValidations()['messages'] ?? [] as $key => $validation) {
+                        $validationMessages[$key] = $validation;
+                    }
+                }
+                $validated = $request->validate($validations, $validationMessages);
+
+                return $repeater->getHandleAddRows()($validated);
+            }
+        }
     }
 
     public function view()

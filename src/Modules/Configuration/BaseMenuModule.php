@@ -6,15 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
-use Mulaidarinull\Larascaff\Action;
-use Mulaidarinull\Larascaff\BaseModule;
+use Mulaidarinull\Larascaff\Actions\Action;
 use Mulaidarinull\Larascaff\Components\Forms;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
+use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Tables;
 use Yajra\DataTables\Html\Column;
 
-class BaseMenuModule extends BaseModule
+class BaseMenuModule extends Module
 {
     /**
      * @var Illuminate\Database\Eloquent\Model|string
@@ -25,7 +25,7 @@ class BaseMenuModule extends BaseModule
 
     protected static ?string $viewAction = 'larascaff::pages.menu-form';
 
-    public static function actions()
+    public static function actions(): array
     {
         return [
             Action::make(permission: 'sort', url: '/sort', label: 'Sort menu', method: 'POST'),

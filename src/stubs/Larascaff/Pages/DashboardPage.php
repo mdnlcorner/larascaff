@@ -2,9 +2,9 @@
 
 namespace App\Larascaff\Pages;
 
-use Mulaidarinull\Larascaff\BasePage;
+use Mulaidarinull\Larascaff\Pages\Page;
 
-final class DashboardPage extends BasePage
+final class DashboardPage extends Page
 {
     protected static ?string $view = 'larascaff::pages.dashboard';
 

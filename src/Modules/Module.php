@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mulaidarinull\Larascaff;
+namespace Mulaidarinull\Larascaff\Modules;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
+use Mulaidarinull\Larascaff\Actions\CreateAction;
 use Mulaidarinull\Larascaff\Components\Forms\Form;
 use Mulaidarinull\Larascaff\Components\Info\Info;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
@@ -19,7 +20,7 @@ use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 use Mulaidarinull\Larascaff\Traits\ParameterResolver;
 
-abstract class BaseModule extends Controller
+abstract class Module extends Controller
 {
     use HasMenuPermission;
     use HasPermission;
@@ -27,7 +28,7 @@ abstract class BaseModule extends Controller
 
     protected static ?string $model = null;
 
-    protected static Model|Builder|null $instanceModel = null;
+    protected static Model | Builder | null $instanceModel = null;
 
     protected static ?string $url = null;
 
@@ -71,6 +72,16 @@ abstract class BaseModule extends Controller
         return $form;
     }
 
+    public static function actions(): array
+    {
+        return [];
+    }
+
+    public static function tabs(): array
+    {
+        return [];
+    }
+
     public static function getModel(): string
     {
         return static::$model ?? (string) str(static::class)
@@ -79,7 +90,7 @@ abstract class BaseModule extends Controller
             ->prepend('App\\Models');
     }
 
-    public static function getInstanceModel(): Model|Builder
+    public static function getInstanceModel(): Model | Builder
     {
         if (! static::$instanceModel) {
             $model = static::getModel();
@@ -112,31 +123,21 @@ abstract class BaseModule extends Controller
     public static function getActions(bool $validatePermission = false)
     {
         $url = static::getUrl();
-        // default table actions => read, update & delete
+
         $actions = collect([
-            Action::make(permission: 'create', url: '/create', label: 'Create', icon: 'tabler-plus'),
+            CreateAction::make(),
+            ...static::actions()
         ])
-            ->flatMap(fn ($item) => $item)
+            ->flatMap(fn($item) => $item)
             ->map(function ($item) use ($url) {
-                $item['url'] = url($url.$item['url']);
+                $item['url'] = url($url . $item['url']);
 
                 return $item;
             })->toArray();
 
-        // add custom table actions
-        if (method_exists(static::class, $method = 'actions')) {
-            $actions = [...$actions, ...collect(call_user_func([static::class, $method]))
-                ->flatMap(fn ($item) => $item)
-                ->map(function ($item) use ($url) {
-                    $item['url'] = url($url.$item['url']);
-
-                    return $item;
-                })->toArray()];
-        }
-
         if ($validatePermission) {
             return array_filter($actions, function ($permission) use ($url) {
-                return user()->can($permission.' '.$url);
+                return user()->can($permission . ' ' . $url);
             }, ARRAY_FILTER_USE_KEY);
         }
 
@@ -166,15 +167,13 @@ abstract class BaseModule extends Controller
         }
         // ====== End Widgets ======
 
-        // ====== Table ======
-        // ====== Tabs ======
-        if (method_exists($this, $method = 'tabs')) {
-            $tabs = collect(call_user_func([$this, $method]));
+        $tabs = collect(static::tabs());
+        if ($tabs->count()) {
             $data['tabs'] = $tabs;
         }
+
         static::$datatable = static::getInstanceModel()->query();
         if (isset($data['tabs'])) {
-            $tabs = $data['tabs'];
             if (! $request->has('activeTab')) {
                 if (is_callable($tabs->first()->getQuery())) {
                     call_user_func($tabs->first()->getQuery(), static::$datatable);
@@ -192,7 +191,6 @@ abstract class BaseModule extends Controller
                 }
             }
         }
-        // ====== End Tabs ======
 
         $datatable = new BaseDataTable(static::$datatable, static::getUrl());
 
@@ -214,7 +212,7 @@ abstract class BaseModule extends Controller
         $title = static::$modalTitle;
         if (! $title) {
             if (static::getInstanceModel()) {
-                $title = 'Form '.ucwords(str_replace('_', ' ', static::getInstanceModel()->getTable()));
+                $title = 'Form ' . ucwords(str_replace('_', ' ', static::getInstanceModel()->getTable()));
             }
         }
 
@@ -227,7 +225,7 @@ abstract class BaseModule extends Controller
     public function create(Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to(static::getUrl().'?action=create');
+            return redirect()->to(static::getUrl() . '?action=create');
         }
 
         try {
@@ -303,7 +301,7 @@ abstract class BaseModule extends Controller
     public function show(string $id, Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to(static::getUrl().'?tableAction=read&tableActionId='.$id);
+            return redirect()->to(static::getUrl() . '?tableAction=read&tableActionId=' . $id);
         }
         $this->routeKeyNameValue = $id;
         $this->getRecord();
@@ -361,14 +359,14 @@ abstract class BaseModule extends Controller
     public function edit(string $id, Request $request)
     {
         if (! $request->ajax()) {
-            return redirect()->to(static::getUrl().'?tableAction=update&tableActionId='.$id);
+            return redirect()->to(static::getUrl() . '?tableAction=update&tableActionId=' . $id);
         }
         $this->routeKeyNameValue = $id;
         $this->getRecord();
 
         try {
             $this->addDataToview([
-                'action' => url(static::getUrl().'/'.static::getInstanceModel()->{static::getInstanceModel()->getRouteKeyName()}),
+                'action' => url(static::getUrl() . '/' . static::getInstanceModel()->{static::getInstanceModel()->getRouteKeyName()}),
                 'method' => 'PUT',
             ]);
 
@@ -660,27 +658,28 @@ abstract class BaseModule extends Controller
             $url = Pluralizer::plural($url);
         }
 
-        return (getPrefix() ? getPrefix().'/' : '').$url;
+        return (getPrefix() ? getPrefix() . '/' : '') . $url;
     }
 
     public static function registerRoutes()
     {
-        $urlArray = explode('/', static::getUrl());
-        $routeName = (implode('.', $urlArray)).'.';
+        $routeName = explode('/', static::getUrl());
+
+        $implodeRouteName = (implode('.', $routeName)) . '.';
 
         foreach (static::routes() as $route) {
-            $url = static::getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
+            $url = static::getUrl() . (str_starts_with($route['url'], '/') ? $route['url'] : '/' . $route['url']);
             $action = is_string($route['action']) ? [static::class, $route['action']] : $route['action'];
-            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $routeName.$route['name'] : null);
+            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName . $route['name'] : null);
         }
 
-        array_pop($urlArray);
-        Route::name(implode('.', $urlArray).(count($urlArray) ? '.' : ''))->group(function () {
+        array_pop($routeName);
+        Route::name(implode('.', $routeName) . (count($routeName) ? '.' : ''))->group(function () {
             Route::resource(static::getUrl(), static::class);
         });
     }
 
-    public static function makeRoute($url, string|\Closure|array|null $action = null, $method = 'get', $name = null)
+    public static function makeRoute($url, string | \Closure | array | null $action = null, $method = 'get', $name = null)
     {
         return compact('method', 'action', 'url', 'name');
     }

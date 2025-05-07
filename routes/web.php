@@ -2,21 +2,20 @@
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
-use Mulaidarinull\Larascaff\ModuleAction;
+use Mulaidarinull\Larascaff\Actions\Action;
+use Mulaidarinull\Larascaff\Components\Forms\Select;
+use Mulaidarinull\Larascaff\Components\Forms\Uploader;
+use Mulaidarinull\Larascaff\Components\Layouts\Repeater;
 use Mulaidarinull\Larascaff\Notifications\NotificationRoute;
-use Mulaidarinull\Larascaff\OptionsSelectServerSide;
-use Mulaidarinull\Larascaff\RepeaterController;
-use Mulaidarinull\Larascaff\TempUpload;
-use Mulaidarinull\Larascaff\Uploader;
 
-Route::middleware('web')->group(function () {
-    Route::middleware('auth')->group(function () {
+Route::middleware(larascaffConfig()->getMiddleware())->group(function () {
+    Route::middleware(larascaffConfig()->getAuthMiddleware())->group(function () {
         Route::get('notifications/{notification}', [NotificationRoute::class, 'show'])->name('notifications');
-        Route::post('temp-upload', TempUpload::class)->middleware('signed')->name('temp-upload');
-        Route::post('uploader', Uploader::class)->middleware('signed')->name('uploader');
-        Route::get('options', OptionsSelectServerSide::class);
-        Route::post('repeater-items', RepeaterController::class);
-        Route::post('module-action', ModuleAction::class);
+        Route::post('temp-upload', [Uploader::class, 'tempUploadHandler'])->middleware('signed')->name('temp-upload');
+        // Route::post('uploader', [Uploader::class, 'handleUpload'])->middleware('signed')->name('uploader');
+        Route::get('options', [Select::class, 'serverSideOptionsHandler']);
+        Route::post('repeater-items', [Repeater::class, 'repeaterHandler']);
+        Route::post('module-action', [Action::class, 'actionHandler']);
 
         // Pages route
         File::ensureDirectoryExists(app_path('Larascaff/Pages'));

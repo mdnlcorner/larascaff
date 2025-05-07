@@ -1,12 +1,13 @@
 <?php
 
-namespace Mulaidarinull\Larascaff;
+namespace Mulaidarinull\Larascaff\Actions;
 
+use Illuminate\Http\Request;
 use Mulaidarinull\Larascaff\Enums\ColorVariant;
 
 class Action
 {
-    public static function make(string $permission, string $url, ?string $label = null, string $method = 'GET', \Closure|null|bool $show = null, bool $ajax = true, bool $targetBlank = false, ?string $icon = null, string|ColorVariant|null $color = null)
+    public static function make(string $permission, string $url, ?string $label = null, ?string $method = 'GET', \Closure | null | bool $show = null, bool $ajax = true, bool $targetBlank = false, ?string $icon = null, string | ColorVariant | null $color = null)
     {
         if (is_bool($show)) {
             $show = fn () => $show;
@@ -29,5 +30,18 @@ class Action
         ];
 
         return $actions;
+    }
+
+    public function actionHandler(Request $request)
+    {
+        if ($request->ajax()) {
+            $request->validate(['module' => 'required', 'method' => 'required']);
+            if (! class_exists($request->module)) {
+                return responseError('Class not exist');
+            }
+
+            return $request->module::{$request->method}($request);
+        }
+        abort(404);
     }
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     @php
-        $config = app(\Mulaidarinull\Larascaff\LarascaffConfig::class);
+        $config = larascaffConfig();
     @endphp
     <head>
         <meta charset="utf-8">
@@ -58,7 +58,7 @@
                 </div>
                 <footer class="w-full bg-card">
                     <div class="px-4 py-5 text-sm bottom-1">
-                        {{ is_callable($config->getFooter()) ? $config->getFooter()() : $config->getFooter() }}
+                        {{ $config->getFooter() }}
                     </div>
                 </footer>
             </div>

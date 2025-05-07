@@ -1,6 +1,5 @@
 <?php
 
-use App\Providers\LarascaffServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Mulaidarinull\Larascaff\LarascaffConfig;
@@ -17,15 +16,16 @@ if (! function_exists('responseSuccess')) {
         ]);
     }
 }
+
 if (! function_exists('responseError')) {
-    function responseError(string|\Exception $th)
+    function responseError(string | \Exception $th)
     {
         $message = 'Terjadi kesalahan, silahkan coba beberapa saat lagi';
         $data = null;
         if ($th instanceof \Exception) {
             $message = $th->getMessage();
             if (config('app.debug')) {
-                $message .= ' in line '.$th->getLine().' at '.$th->getFile();
+                $message .= ' in line ' . $th->getLine() . ' at ' . $th->getFile();
                 $data = $th->getTrace();
             }
         } else {
@@ -88,11 +88,14 @@ if (! function_exists('getRecord')) {
 if (! function_exists('getPrefix')) {
     function getPrefix()
     {
-        if (app(LarascaffConfig::class)->getPrefix() == null && app()->runningInConsole()) {
-            (new LarascaffServiceProvider(app()))->config(app(LarascaffConfig::class));
-        }
-
         return app(LarascaffConfig::class)->getPrefix();
+    }
+}
+
+if (! function_exists('larascaffConfig')) {
+    function larascaffConfig()
+    {
+        return app(LarascaffConfig::class);
     }
 }
 
@@ -133,7 +136,7 @@ if (! function_exists('convertDate')) {
 }
 
 if (! function_exists('user')) {
-    function user($key = null): string|int|null|\App\Models\User
+    function user($key = null): string | int | null | \App\Models\User
     {
         if ($key) {
             return request()->user()?->{$key};
@@ -144,7 +147,7 @@ if (! function_exists('user')) {
 }
 
 if (! function_exists('setupApplication')) {
-    function setupApplication($key = null): SetupAplication|string|array
+    function setupApplication($key = null): SetupAplication | string | array
     {
         if (! Cache::has('setupApplication')) {
             Cache::forever('setupApplication', SetupAplication::first());
@@ -163,7 +166,7 @@ if (! function_exists('numbering')) {
     {
         $model = $model->select(\Illuminate\Support\Facades\DB::raw("MAX($column) as $column"))->where("$column", 'like', "%{$format}%")->orderByDesc('id')->first();
 
-        return $format.sprintf("%0{$length}s", ((int) substr($model->{$column}, strlen($format), $length)) + 1);
+        return $format . sprintf("%0{$length}s", ((int) substr($model->{$column}, strlen($format), $length)) + 1);
     }
 }
 
@@ -188,21 +191,5 @@ if (! function_exists('removeNumberFormat')) {
 
             return str_replace(',', '', $number);
         }
-    }
-}
-
-if (! function_exists('notifications')) {
-    function notifications()
-    {
-        return user()->unreadNotifications;
-    }
-}
-
-if (! function_exists('hmin')) {
-    function hmin($min = 7, $format = 'Y-m-d')
-    {
-        $min += 1;
-
-        return date_create("+{$min} days")->format($format);
     }
 }

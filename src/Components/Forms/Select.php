@@ -2,7 +2,9 @@
 
 namespace Mulaidarinull\Larascaff\Components\Forms;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Mulaidarinull\Larascaff\Components\Concerns\HasRelationship;
 
@@ -18,7 +20,7 @@ class Select extends Field
 
     protected ?int $limit = null;
 
-    protected string|Model|null $serverSide = null;
+    protected string | Model | null $serverSide = null;
 
     protected ?string $dependValue = null;
 
@@ -34,7 +36,7 @@ class Select extends Field
 
     protected ?string $columnValue = null;
 
-    protected \Closure|string|null $modifyQuery = null;
+    protected \Closure | string | null $modifyQuery = null;
 
     protected ?string $relationship = null;
 
@@ -126,6 +128,92 @@ class Select extends Field
 
     }
 
+    public function serverSideOptionsHandler(Request $request)
+    {
+        $this->columnValue = $request->get('columnValue') ?? 'id';
+        $this->columnLabel = $request->get('columnLabel') ?? 'name';
+
+        try {
+            $data = $request->get('serverSide')::query()
+                ->select($this->columnValue, $this->columnLabel)
+                ->when($request->filled('modifyQuery'), function (Builder $query) use ($request) {
+                    $moduleName = explode('@', $request->get('modifyQuery'));
+
+                    try {
+                        $module = $moduleName[0];
+                        $name = $moduleName[1];
+                        setRecord($module::getInstanceModel());
+                        foreach ($module::formBuilder(new \Mulaidarinull\Larascaff\Components\Forms\Form)->getComponents() as $component) {
+                            if (method_exists($component, 'getComponents')) {
+                                foreach ($component->getComponents() as $childComp) {
+                                    if ($childComp->getName() == $name) {
+                                        $childComp->getModifyQuery()($query);
+                                    }
+                                }
+                            } elseif ($component->getName() == $name) {
+                                $component->getModifyQuery()($query);
+                            }
+                        }
+                    } catch (\Throwable $th) {
+                        throw new \Exception($th->getMessage());
+                    }
+                })
+                ->when($request->filled('value') && ! $request->filled('search'), function (Builder $query) use ($request) {
+                    // multipe select
+                    if (str_contains($request->get('value'), ',')) {
+                        $value = explode(',', $request->get('value'));
+
+                        return $query->whereNotIn($this->columnValue, $value);
+                    }
+                    $query->where($this->columnValue, '!=', $request->get('value'));
+                })
+                ->when($request->filled('dependValue') && $request->filled('dependColumn'), function (Builder $query) use ($request) {
+                    $query->where($request->get('dependColumn'), $request->get('dependValue'));
+                })
+                ->when($request->filled('search'), function ($query) use ($request) {
+                    $query->where($this->columnLabel, 'like', "%{$request->get('search')}%");
+                })
+                ->take($request->limit ? ($request->limit > 100 ? 100 : $request->limit) : 20)
+                ->get()
+                ->map(function ($item) {
+                    $res = [
+                        'label' => $item->{$this->columnLabel},
+                        'value' => $item->{$this->columnValue},
+                    ];
+
+                    return $res;
+                });
+
+            if ($request->filled('value') && ! $request->filled('search')) {
+                // multiple select
+                if (str_contains($request->get('value'), ',')) {
+                    $value = explode(',', $request->get('value'));
+                    $getData = $request->get('serverSide')::query()->whereIn($this->columnValue, $value)->get();
+                    foreach ($getData as $item) {
+                        $data->prepend([
+                            'label' => $item->{$this->columnLabel},
+                            'value' => $item->{$this->columnValue},
+                            'selected' => 'true',
+                        ]);
+                    }
+                } else {
+                    $getData = $request->get('serverSide')::query()->where($this->columnValue, $request->get('value'))->first();
+                    if ($getData) {
+                        $data->prepend([
+                            'label' => $getData->{$this->columnLabel},
+                            'value' => $getData->{$this->columnValue},
+                            'selected' => 'true',
+                        ]);
+                    }
+                }
+            }
+
+            return response()->json($data);
+        } catch (\Throwable $th) {
+            return responseError($th);
+        }
+    }
+
     public function modifyQuery(\Closure $cb): static
     {
         $this->modifyQuery = $cb;
@@ -133,7 +221,7 @@ class Select extends Field
         return $this;
     }
 
-    public function getModifyQuery(): \Closure|string|null
+    public function getModifyQuery(): \Closure | string | null
     {
         return $this->modifyQuery;
     }
@@ -223,7 +311,7 @@ class Select extends Field
 
         if ($this->modifyQuery) {
             if (method_exists($this, 'getModule')) {
-                $this->modifyQuery = $this->getModule().'@'.$this->name;
+                $this->modifyQuery = $this->getModule() . '@' . $this->name;
             }
         }
 

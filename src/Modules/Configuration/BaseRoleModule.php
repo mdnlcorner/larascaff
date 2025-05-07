@@ -5,15 +5,15 @@ namespace Mulaidarinull\Larascaff\Modules\Configuration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
-use Mulaidarinull\Larascaff\BaseModule;
 use Mulaidarinull\Larascaff\Components\Forms;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Role;
+use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Tables;
 use Yajra\DataTables\Html\Column;
 
-class BaseRoleModule extends BaseModule
+class BaseRoleModule extends Module
 {
     protected static ?string $model = Role::class;
 
@@ -95,14 +95,14 @@ class BaseRoleModule extends BaseModule
         return $this->form($view, [
             'method' => 'PUT',
             'title' => 'Permission Role',
-            'action' => route($prefix.'configuration.roles.permissions.update', $role->{$role->getRouteKeyName()}),
+            'action' => route($prefix . 'configuration.roles.permissions.update', $role->{$role->getRouteKeyName()}),
             'size' => 'lg',
         ]);
     }
 
     public function updatePermissions(Request $request, Role $role)
     {
-        Gate::authorize('update-permissions '.static::getUrl());
+        Gate::authorize('update-permissions ' . static::getUrl());
 
         $role->syncPermissions($request->permissions);
 

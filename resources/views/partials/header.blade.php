@@ -69,7 +69,7 @@
 
             <!-- Notification Dropdown Starts -->
             @php
-                $notifications = notifications()
+                $notifications = user()->notifications()
             @endphp
             <button data-dropdown-toggle data-dropdown-placement="bottom-end"
                 class="relative flex items-center justify-center mt-1 transition-colors duration-150 rounded-full focus:outline-none text-muted-foreground hover:text-primary">

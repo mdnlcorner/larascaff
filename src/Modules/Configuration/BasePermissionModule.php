@@ -5,15 +5,15 @@ namespace Mulaidarinull\Larascaff\Modules\Configuration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Mulaidarinull\Larascaff\BaseModule;
 use Mulaidarinull\Larascaff\Components\Forms;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Permission;
+use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Tables;
 use Yajra\DataTables\Html\Column;
 
-class BasePermissionModule extends BaseModule
+class BasePermissionModule extends Module
 {
     protected static ?string $model = Permission::class;
 

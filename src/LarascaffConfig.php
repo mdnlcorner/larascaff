@@ -2,127 +2,70 @@
 
 namespace Mulaidarinull\Larascaff;
 
-use Closure;
+use Illuminate\Contracts\View\View;
+use Mulaidarinull\Larascaff\Concerns\HasAuth;
+use Mulaidarinull\Larascaff\Concerns\HasBrand;
+use Mulaidarinull\Larascaff\Concerns\HasMiddleware;
 use Mulaidarinull\Larascaff\Facades\LarascaffColor;
 
 class LarascaffConfig
 {
-    protected ?string $prefix = null;
+    use HasAuth;
+    use HasBrand;
+    use HasMiddleware;
 
-    protected static $instance = null;
+    protected string $prefix = '';
 
-    protected $logo;
+    protected static ?LarascaffConfig $instance = null;
 
-    public $count = 0;
+    protected \Closure | string | View | null $footer = null;
 
-    protected $brandName;
-
-    protected $brandHeigh = '2.7rem';
-
-    protected $footer;
-
-    protected $favicon;
+    protected \Closure | string | null $favicon = null;
 
     public static function make(): static
     {
-        static::$instance = app(static::class);
-        static::$instance->count = static::$instance->count + 1;
+        static::$instance = app()->make(static::class);
 
         return static::$instance;
     }
 
-    public function prefix(string $prefix): self
+    public function prefix(string $prefix): static
     {
         $this->prefix = $prefix;
 
         return $this;
     }
 
-    public function getPrefix()
+    public function getPrefix(): string
     {
         return $this->prefix;
     }
 
-    /**
-     * Path location of your brand logo
-     */
-    public function brandLogo(Closure|string $logo)
+    public function footer(\Closure | string | View $footer): static
     {
-        $this->logo = $logo;
-
-        return $this;
-    }
-
-    public function getBrandLogo()
-    {
-        return $this->logo;
-    }
-
-    public function brandName(Closure|string|\Illuminate\Contracts\View\View $brandName)
-    {
-        $this->brandName = $brandName;
-
-        return $this;
-    }
-
-    public function getBrandName()
-    {
-        return $this->brandName;
-    }
-
-    public function brandHeigh(Closure|string $height)
-    {
-        $this->brandHeigh = $height;
-
-        return $this;
-    }
-
-    public function getBrandHeight()
-    {
-        return $this->brandHeigh;
-    }
-
-    public function renderBrand()
-    {
-        if ($this->brandName) {
-            return $this->brandName;
-        }
-        if (! $this->logo) {
-            return fn () => view('larascaff::logo');
-        }
-
-        return $this->logo;
-    }
-
-    public function footer(Closure|string|\Illuminate\Contracts\View\View $footer)
-    {
-        $this->footer = $footer;
+        $this->footer = is_callable($footer) ? call_user_func($footer) : $footer;
 
         return $this;
     }
 
     public function getFooter()
     {
-        if (! $this->footer) {
-            return view('larascaff::footer');
-        }
-
-        return $this->footer;
+        return $this->footer ?? view('larascaff::footer');
     }
 
-    public function favicon(string $favicon)
+    public function favicon(string $url): static
     {
-        $this->favicon = $favicon;
+        $this->favicon = $url;
 
         return $this;
     }
 
     public function getFavicon()
     {
-        return $this->favicon;
+        return $this->favicon ?? url('favicon.ico');
     }
 
-    public function colors(array $colors)
+    public function colors(array $colors): static
     {
         LarascaffColor::register($colors);
 

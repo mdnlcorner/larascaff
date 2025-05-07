@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
-use Mulaidarinull\Larascaff\BaseModule;
 use Mulaidarinull\Larascaff\Components\Forms;
 use Mulaidarinull\Larascaff\Components\Layouts\Section;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
@@ -15,7 +14,7 @@ use Mulaidarinull\Larascaff\Tables;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Column;
 
-class BaseUserModule extends BaseModule
+class BaseUserModule extends Module
 {
     protected static ?string $model = User::class;
 
@@ -61,14 +60,14 @@ class BaseUserModule extends BaseModule
         return $this->form($view, [
             'method' => 'PUT',
             'title' => 'Permission User',
-            'action' => route($prefix.'users.permissions.update', $user->{$user->getRouteKeyName()}),
+            'action' => route($prefix . 'users.permissions.update', $user->{$user->getRouteKeyName()}),
             'size' => 'lg',
         ]);
     }
 
     public function updatePermissions(Request $request, User $user)
     {
-        Gate::authorize('update-permissions '.static::getUrl());
+        Gate::authorize('update-permissions ' . static::getUrl());
 
         $user->syncPermissions($request->permissions);
 

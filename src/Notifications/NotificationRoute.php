@@ -14,6 +14,6 @@ class NotificationRoute
             $notification->save();
         }
 
-        return redirect($model->routeNotification()."?tableAction={$notification->data['action']}&tableActionId=".$model->{$model->getRouteKeyName()});
+        return redirect($model->routeNotification() . "?tableAction={$notification->data['action']}&tableActionId=" . $model->{$model->getRouteKeyName()});
     }
 }
