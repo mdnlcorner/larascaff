@@ -17,7 +17,6 @@ class BaseDataTable extends DataTable
     {
         $this->model = $this->query = $model;
         $this->url = $url;
-        // $this->tableActions = $tableActions;
         $this->tableActions = [];
     }
 

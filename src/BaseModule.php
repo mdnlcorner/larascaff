@@ -71,6 +71,16 @@ abstract class BaseModule extends Controller
         return $form;
     }
 
+    public static function actions(): array
+    {
+        return [];
+    }
+
+    public static function tabs(): array
+    {
+        return [];
+    }
+
     public static function getModel(): string
     {
         return static::$model ?? (string) str(static::class)
@@ -112,27 +122,15 @@ abstract class BaseModule extends Controller
     public static function getActions(bool $validatePermission = false)
     {
         $url = static::getUrl();
-        // default table actions => read, update & delete
+
         $actions = collect([
-            Action::make(permission: 'create', url: '/create', label: 'Create', icon: 'tabler-plus'),
-        ])
+            Action::make(permission: 'create', url: '/create', label: 'Create', icon: 'tabler-plus'), ...static::actions()])
             ->flatMap(fn ($item) => $item)
             ->map(function ($item) use ($url) {
                 $item['url'] = url($url . $item['url']);
 
                 return $item;
             })->toArray();
-
-        // add custom table actions
-        if (method_exists(static::class, $method = 'actions')) {
-            $actions = [...$actions, ...collect(call_user_func([static::class, $method]))
-                ->flatMap(fn ($item) => $item)
-                ->map(function ($item) use ($url) {
-                    $item['url'] = url($url . $item['url']);
-
-                    return $item;
-                })->toArray()];
-        }
 
         if ($validatePermission) {
             return array_filter($actions, function ($permission) use ($url) {
@@ -166,15 +164,13 @@ abstract class BaseModule extends Controller
         }
         // ====== End Widgets ======
 
-        // ====== Table ======
-        // ====== Tabs ======
-        if (method_exists($this, $method = 'tabs')) {
-            $tabs = collect(call_user_func([$this, $method]));
+        $tabs = collect(static::tabs());
+        if ($tabs->count()) {
             $data['tabs'] = $tabs;
         }
+        
         static::$datatable = static::getInstanceModel()->query();
         if (isset($data['tabs'])) {
-            $tabs = $data['tabs'];
             if (! $request->has('activeTab')) {
                 if (is_callable($tabs->first()->getQuery())) {
                     call_user_func($tabs->first()->getQuery(), static::$datatable);
@@ -192,7 +188,6 @@ abstract class BaseModule extends Controller
                 }
             }
         }
-        // ====== End Tabs ======
 
         $datatable = new BaseDataTable(static::$datatable, static::getUrl());
 

@@ -25,7 +25,7 @@ class BaseMenuModule extends BaseModule
 
     protected static ?string $viewAction = 'larascaff::pages.menu-form';
 
-    public static function actions()
+    public static function actions(): array
     {
         return [
             Action::make(permission: 'sort', url: '/sort', label: 'Sort menu', method: 'POST'),

@@ -9,6 +9,7 @@ class LarascaffProvider extends Provider
 {
     public function config(LarascaffConfig $config)
     {
-        $config->prefix('{{ prefix }}');
+        $config->prefix('{{ prefix }}')
+            ->login();
     }
 }
