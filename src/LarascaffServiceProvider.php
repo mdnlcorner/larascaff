@@ -28,25 +28,15 @@ class LarascaffServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->scoped(
-            LarascaffHandler::class,
-            fn () => new LarascaffHandler
-        );
+        $this->app->singleton('larascaff', fn () => new LarascaffHandler);
 
-        $this->app->scoped(
-            ColorManager::class,
-            fn () => new ColorManager
-        );
+        $this->app->singleton('larascaff.color', fn () => new ColorManager);
 
-        $this->app->singleton(
-            Record::class,
-            fn () => new Record
-        );
+        $this->app->singleton('larascaff.asset', fn () => new AssetManager);
 
-        $this->app->singleton(
-            LarascaffConfig::class,
-            fn () => new LarascaffConfig
-        );
+        $this->app->singleton(Record::class);
+
+        $this->app->singleton(LarascaffConfig::class);
 
         $this->mergeConfigFrom(
             __DIR__ . '/../config/larascaff.php',

@@ -3,10 +3,11 @@
 namespace Mulaidarinull\Larascaff\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Mulaidarinull\Larascaff\LarascaffHandler;
 
 /**
  * @method static \Illuminate\View\View content(array $data = [], array $mergeData=[])
+ *
+ * @see \Mulaidarinull\Larascaff\LarascaffHandler
  */
 class Larascaff extends Facade
 {
@@ -17,6 +18,6 @@ class Larascaff extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return LarascaffHandler::class;
+        return 'larascaff';
     }
 }

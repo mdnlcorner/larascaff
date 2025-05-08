@@ -3,10 +3,11 @@
 namespace Mulaidarinull\Larascaff\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Mulaidarinull\Larascaff\AssetManager;
 
 /**
- * @method static \Mulaidarinull\Larascaff\AssetManager renderStyle(array $data = [], array $mergeData=[])
+ * @method static \Illuminate\View\View renderStyles(array $data = [], array $mergeData=[])
+ *
+ * @see \Mulaidarinull\Larascaff\AssetManager
  */
 class LarascaffAsset extends Facade
 {
@@ -17,6 +18,6 @@ class LarascaffAsset extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return AssetManager::class;
+        return 'larascaff.asset';
     }
 }

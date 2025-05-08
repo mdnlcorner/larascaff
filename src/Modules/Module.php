@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Mulaidarinull\Larascaff\Modules;
 
 use App\Http\Controllers\Controller;
@@ -84,10 +82,11 @@ abstract class Module extends Controller
 
     public static function getModel(): string
     {
-        return static::$model ?? (string) str(static::class)
+        return static::$model ?? str(static::class)
+            ->after('App\\Larascaff\\Modules')
             ->beforeLast('Module')
-            ->replace('App\\Larascaff\\Modules', '')
-            ->prepend('App\\Models');
+            ->prepend('App\\Models')
+            ->toString();
     }
 
     public static function getInstanceModel(): Model | Builder
@@ -102,7 +101,7 @@ abstract class Module extends Controller
 
     public static function makeMenu()
     {
-        return static::handleMakeMenu();
+        return static::makeMenuHandler();
     }
 
     public static function getPageTitle()
@@ -126,9 +125,9 @@ abstract class Module extends Controller
 
         $actions = collect([
             CreateAction::make(),
-            ...static::actions()
+            ...static::actions(),
         ])
-            ->flatMap(fn($item) => $item)
+            ->flatMap(fn ($item) => $item)
             ->map(function ($item) use ($url) {
                 $item['url'] = url($url . $item['url']);
 
@@ -144,9 +143,6 @@ abstract class Module extends Controller
         return $actions;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $data = [
@@ -219,9 +215,6 @@ abstract class Module extends Controller
         return $title;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(Request $request)
     {
         if (! $request->ajax()) {
@@ -234,13 +227,13 @@ abstract class Module extends Controller
                 'action' => url(static::getUrl()),
             ]);
 
-            // run hook before create
             if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
+            // run hook before create
             if (method_exists($this, $method = 'beforeCreate')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -257,19 +250,16 @@ abstract class Module extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $this->transformFormBuilder($request, static::formBuilder(new Form));
+        $this->formBuilderHandler($request, static::formBuilder(new Form));
         $this->initValidation($request);
         DB::beginTransaction();
 
         try {
             // run hook before store
             if (method_exists($this, $method = 'beforeStore')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -277,11 +267,11 @@ abstract class Module extends Controller
             static::getInstanceModel()->save();
 
             // handle form builder input
-            $this->handleFormBuilder($request);
+            $this->formBuilderResolver($request);
 
             // run hook after store
             if (method_exists($this, $method = 'afterStore')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -295,9 +285,6 @@ abstract class Module extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id, Request $request)
     {
         if (! $request->ajax()) {
@@ -313,11 +300,11 @@ abstract class Module extends Controller
 
             // run hook before show
             if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
             if (method_exists($this, $method = 'beforeShow')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -353,9 +340,6 @@ abstract class Module extends Controller
         return static::$instanceModel;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id, Request $request)
     {
         if (! $request->ajax()) {
@@ -372,11 +356,11 @@ abstract class Module extends Controller
 
             // run hook before edit
             if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
             if (method_exists($this, $method = 'beforeEdit')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -417,21 +401,18 @@ abstract class Module extends Controller
         $request->validate(static::$validations['validations'] ?? [], static::$validations['messages'] ?? []);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
         $this->routeKeyNameValue = $id;
         $this->getRecord();
-        $this->transformFormBuilder($request, static::formBuilder(new Form));
+        $this->formBuilderHandler($request, static::formBuilder(new Form));
         $this->initValidation($request);
         DB::beginTransaction();
 
         try {
             // run hook before udpate
             if (method_exists($this, $method = 'beforeUpdate')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -440,11 +421,11 @@ abstract class Module extends Controller
             static::getInstanceModel()->save();
 
             // handle form builder
-            $this->handleFormBuilder($request);
+            $this->formBuilderResolver($request);
 
             // run hook after update
             if (method_exists($this, $method = 'afterUpdate')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -458,7 +439,7 @@ abstract class Module extends Controller
         }
     }
 
-    protected function transformFormBuilder(Request $request, Form $form)
+    protected function formBuilderHandler(Request $request, Form $form)
     {
         setRecord(static::getInstanceModel());
 
@@ -513,7 +494,7 @@ abstract class Module extends Controller
         }
     }
 
-    private function handleMedia(Request $request, $form, $model)
+    private function mediaHandler(Request $request, $form, $model)
     {
         if ($form instanceof \Mulaidarinull\Larascaff\Components\Forms\Uploader) {
             if ((in_array('PUT', $request->route()->methods()) || in_array('PATCH', $request->route()->methods()))) {
@@ -525,14 +506,14 @@ abstract class Module extends Controller
         }
     }
 
-    protected function handleFormBuilder(Request $request)
+    protected function formBuilderResolver(Request $request)
     {
         setRecord(static::getInstanceModel());
 
         $forms = static::formBuilder(new Form);
 
         foreach ($forms->getComponents() as $form) {
-            $this->handleMedia($request, $form, static::getInstanceModel());
+            $this->mediaHandler($request, $form, static::getInstanceModel());
             // handle relationship input
             if ($form->getRelationship()) {
                 // form input that has sub components
@@ -589,16 +570,13 @@ abstract class Module extends Controller
                 // inside other component
                 if (method_exists($form, 'getComponents') && $form->getComponents()) {
                     foreach ($form->getComponents() as $component) {
-                        $this->handleMedia($request, $component, static::getInstanceModel());
+                        $this->mediaHandler($request, $component, static::getInstanceModel());
                     }
                 }
             }
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Request $request, string $id)
     {
         $this->routeKeyNameValue = $id;
@@ -608,7 +586,7 @@ abstract class Module extends Controller
         try {
             // run hook before delete
             if (method_exists($this, $method = 'beforeDelete')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -628,7 +606,7 @@ abstract class Module extends Controller
 
             // run hook after delete
             if (method_exists($this, $method = 'afterDelete')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
                 call_user_func_array([$this, $method], $parameters);
             }
             DB::commit();
@@ -650,15 +628,13 @@ abstract class Module extends Controller
     {
         $url = static::$url;
         if (! $url) {
-            $url = substr(static::class, strlen('App\\Larascaff\\Modules\\'));
-            $url = substr($url, 0, strlen($url) - 6);
-            $url = implode('/', array_map(function ($item) {
-                return \Illuminate\Support\Str::kebab($item);
-            }, explode('\\', $url)));
+            $url = str(static::class)->after('App\\Larascaff\\Modules\\')->beforeLast('Module')->explode('\\')
+                ->map(fn ($item) => str($item)->kebab())
+                ->implode('/');
             $url = Pluralizer::plural($url);
         }
 
-        return (getPrefix() ? getPrefix() . '/' : '') . $url;
+        return str(getPrefix())->finish('/') . $url;
     }
 
     public static function registerRoutes()

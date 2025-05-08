@@ -5,6 +5,7 @@ namespace Mulaidarinull\Larascaff\Traits;
 use Mulaidarinull\Larascaff\BasePage;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Permission;
+use Mulaidarinull\Larascaff\Pages\Page;
 
 trait HasMenuPermission
 {
@@ -14,7 +15,7 @@ trait HasMenuPermission
 
     protected static ?string $menuCategory = '';
 
-    public static function handleMakeMenu()
+    public static function makeMenuHandler()
     {
         $prefix = getPrefix();
 
@@ -40,7 +41,7 @@ trait HasMenuPermission
 
     public static function getPermissions()
     {
-        if (method_exists(static::class, 'permissions') && is_subclass_of(static::class, BasePage::class)) {
+        if (method_exists(static::class, 'permissions') && is_subclass_of(static::class, Page::class)) {
             return call_user_func([static::class, 'permissions']);
         }
 

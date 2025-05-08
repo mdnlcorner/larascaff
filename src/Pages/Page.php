@@ -46,15 +46,13 @@ abstract class Page extends Controller
     {
         $url = static::$url;
         if (! $url) {
-            $url = substr(get_called_class(), strlen('App\\Larascaff\\Pages\\'));
-            $url = substr($url, 0, strlen($url) - 4);
-            $url = implode('/', array_map(function ($item) {
-                return \Illuminate\Support\Str::kebab($item);
-            }, explode('\\', $url)));
+            $url = str(static::class)->after('App\\Larascaff\\Pages\\')->beforeLast('Module')->explode('\\')
+                ->map(fn ($item) => str($item)->kebab())
+                ->implode('/');
             $url = Pluralizer::plural($url);
         }
 
-        return (getPrefix() ? getPrefix() . '/' : '') . $url;
+        return str(getPrefix())->finish('/') . $url;
     }
 
     public static function getView()
