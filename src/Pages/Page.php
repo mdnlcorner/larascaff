@@ -22,6 +22,8 @@ abstract class Page extends Controller
 
     protected static ?string $pageTitle = null;
 
+    final const NAMESPACE = 'App\\Larascaff\\Pages\\';
+
     public static function makeMenu()
     {
         return static::makeMenuHandler();
@@ -46,7 +48,7 @@ abstract class Page extends Controller
     {
         $url = static::$url;
         if (! $url) {
-            $url = str(static::class)->after('App\\Larascaff\\Pages\\')->beforeLast('Module')->explode('\\')
+            $url = str(static::class)->after(static::NAMESPACE)->beforeLast('Module')->explode('\\')
                 ->map(fn ($item) => str($item)->kebab())
                 ->implode('/');
             $url = Pluralizer::plural($url);
@@ -59,12 +61,8 @@ abstract class Page extends Controller
     {
         $view = static::$view;
         if (! $view) {
-            $class = get_called_class();
-            $pages = explode('App\\Larascaff\\Pages\\', $class);
-            array_shift($pages);
-            $pages[count($pages) - 1] = substr($pages[count($pages) - 1], 0, strlen($pages[count($pages) - 1]) - 4);
-            $pages = strtolower(implode('.', $pages));
-            $view = 'pages.' . $pages;
+            $view = str(static::class)->after(static::NAMESPACE)->beforeLast('Page')->lower()
+                ->replace('\\', '.')->prepend('pages.')->toString();
         }
 
         return $view;
