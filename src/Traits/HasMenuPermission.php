@@ -2,7 +2,6 @@
 
 namespace Mulaidarinull\Larascaff\Traits;
 
-use Mulaidarinull\Larascaff\BasePage;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Permission;
 use Mulaidarinull\Larascaff\Pages\Page;

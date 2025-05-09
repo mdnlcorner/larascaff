@@ -2,10 +2,10 @@
 
 namespace Mulaidarinull\Larascaff\Forms\Components;
 
+use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasColumnSpan;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasComponent;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
-use Mulaidarinull\Larascaff\Enums\ModalSize;
 
 class Form
 {
