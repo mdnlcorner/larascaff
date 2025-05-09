@@ -2,9 +2,9 @@
 
 namespace {{ namespace }};
 
-use Mulaidarinull\Larascaff\BasePage;
+use Mulaidarinull\Larascaff\Pages\Page;
 
-final class {{ class }} extends BasePage
+final class {{ class }} extends Page
 {
     protected static string $view = '{{ view }}';
     

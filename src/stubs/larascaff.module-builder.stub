@@ -4,17 +4,15 @@ namespace {{ namespace }};
 
 use {{ modelNamespace }};
 
-use Mulaidarinull\Larascaff\BaseModule;
+use Mulaidarinull\Larascaff\Enums\ModalSize;
 
 use Mulaidarinull\Larascaff\Components\Forms;
 
-use Mulaidarinull\Larascaff\Enums\ModalSize;
-
-use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
+use Mulaidarinull\Larascaff\Modules\Module;
 
 use Mulaidarinull\Larascaff\Tables;
 
-final class {{ class }} extends BaseModule
+final class {{ class }} extends Modules\Module
 {
     protected static ?string $model = {{ model }}::class;
     
@@ -27,7 +25,7 @@ final class {{ class }} extends BaseModule
         ]);
     }
 
-    public static function table(BaseDataTable $table): BaseDataTable
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->actions([
@@ -38,7 +36,7 @@ final class {{ class }} extends BaseModule
             ->customQuery(function (\Illuminate\Database\Eloquent\Builder $query) {
                 //
             })
-            ->customizeColumn(function (\Yajra\DataTables\EloquentDataTable $eloquentDataTable) {
+            ->customizeColumn(function (Tables\EloquentTable $eloquentDataTable) {
                 $eloquentDataTable
                     ->editColumn('created_at', function ({{ model }} ${{ modelVariable }}) {
                         return ${{ modelVariable }}->created_at?->format('d-m-Y H:i');
@@ -48,11 +46,11 @@ final class {{ class }} extends BaseModule
                     })
                 ;
             })
-            ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
+            ->columns(function (Tables\HtmlBuilder $builder) {
                 $builder->columnsWithActions([
-                    \Yajra\DataTables\Html\Column::make('name'),
-                    \Yajra\DataTables\Html\Column::make('created_at'),
-                    \Yajra\DataTables\Html\Column::make('updated_at'),
+                    Tables\Column::make('name'),
+                    Tables\Column::make('created_at'),
+                    Tables\Column::make('updated_at'),
                 ]);
             });
     }

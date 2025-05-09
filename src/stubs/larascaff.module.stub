@@ -6,6 +6,7 @@ use {{ modelNamespace }};
 use Mulaidarinull\Larascaff\BaseModule;
 use Illuminate\Http\Request;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
+use Mulaidarinull\Larascaff\Tables;
 
 final class {{ class }} extends BaseModule
 {

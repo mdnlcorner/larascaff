@@ -1,17 +1,16 @@
 <?php
 
-namespace Mulaidarinull\Larascaff\DataTables;
+namespace Mulaidarinull\Larascaff\Tables;
 
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
-use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
 
-class BaseDataTable extends DataTable
+class Table extends DataTable
 {
     public QueryBuilder | Model | null $query = null;
 
-    public ?EloquentDataTable $eloquentTable = null;
+    public ?EloquentTable $eloquentTable = null;
 
     public function __construct(protected Model | QueryBuilder $model, protected string $url, protected array $tableActions = [])
     {
@@ -20,7 +19,7 @@ class BaseDataTable extends DataTable
         $this->tableActions = [];
     }
 
-    public function dataTable(): EloquentDataTable
+    public function dataTable(): EloquentTable
     {
         $this->generateTable();
 
@@ -77,7 +76,7 @@ class BaseDataTable extends DataTable
     protected function generateTable()
     {
         if (! $this->eloquentTable) {
-            $this->eloquentTable = (new EloquentDataTable($this->query))->addIndexColumn()
+            $this->eloquentTable = (new EloquentTable($this->query))->addIndexColumn()
                 ->addColumn('action', function (Model $model) {
                     $actions = [];
                     foreach ($this->tableActions as $action) {

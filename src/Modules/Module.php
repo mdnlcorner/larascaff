@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Actions\CreateAction;
-use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Info\Components\Info;
+use Mulaidarinull\Larascaff\Tables\Table;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 use Mulaidarinull\Larascaff\Traits\ParameterResolver;
@@ -55,7 +55,7 @@ abstract class Module extends Controller
         return [];
     }
 
-    public static function table(BaseDataTable $table): BaseDataTable
+    public static function table(Table $table): Table
     {
         return $table;
     }
@@ -188,7 +188,7 @@ abstract class Module extends Controller
             }
         }
 
-        $datatable = new BaseDataTable(static::$datatable, static::getUrl());
+        $datatable = new Table(static::$datatable, static::getUrl());
 
         if (method_exists($this, 'filterTable')) {
             $filterTable = call_user_func([$this, 'filterTable']);

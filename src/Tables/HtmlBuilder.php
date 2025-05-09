@@ -1,6 +1,6 @@
 <?php
 
-namespace Mulaidarinull\Larascaff\DataTables;
+namespace Mulaidarinull\Larascaff\Tables;
 
 use Yajra\DataTables\Html\Builder;
 use Yajra\DataTables\Html\Column;
