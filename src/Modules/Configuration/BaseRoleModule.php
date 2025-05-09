@@ -5,13 +5,11 @@ namespace Mulaidarinull\Larascaff\Modules\Configuration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
-use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Role;
 use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Tables;
-use Yajra\DataTables\Html\Column;
 
 class BaseRoleModule extends Module
 {
@@ -42,7 +40,7 @@ class BaseRoleModule extends Module
         ];
     }
 
-    public static function table(BaseDatatable $table): BaseDatatable
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->actions([
@@ -56,10 +54,10 @@ class BaseRoleModule extends Module
                     icon: 'tabler-shield'
                 ),
             ])
-            ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
+            ->columns(function (Tables\HtmlBuilder $builder) {
                 $builder
                     ->columnsWithActions([
-                        Column::make('name'),
+                        Tables\Column::make('name'),
                     ]);
             });
     }

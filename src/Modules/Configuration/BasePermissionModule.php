@@ -5,13 +5,11 @@ namespace Mulaidarinull\Larascaff\Modules\Configuration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Permission;
 use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Tables;
-use Yajra\DataTables\Html\Column;
 
 class BasePermissionModule extends Module
 {
@@ -26,7 +24,7 @@ class BasePermissionModule extends Module
         ];
     }
 
-    public static function table(BaseDatatable $table): BaseDatatable
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->actions([
@@ -37,11 +35,11 @@ class BasePermissionModule extends Module
             ->customQuery(function (Builder $query) {
                 $query->with('menu');
             })
-            ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
+            ->columns(function (Tables\HtmlBuilder $builder) {
                 $builder
                     ->columnsWithActions([
-                        Column::make('name'),
-                        Column::make('menu.name')->name('menu.name')->title('Menu'),
+                        Tables\Column::make('name'),
+                        Tables\Column::make('menu.name')->name('menu.name')->title('Menu'),
                     ]);
             });
     }

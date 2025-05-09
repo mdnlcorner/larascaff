@@ -7,12 +7,10 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\Actions\Action;
-use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Tables;
-use Yajra\DataTables\Html\Column;
 
 class BaseMenuModule extends Module
 {
@@ -69,7 +67,7 @@ class BaseMenuModule extends Module
         ];
     }
 
-    public static function table(BaseDataTable $table): BaseDataTable
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->actions([
@@ -86,7 +84,7 @@ class BaseMenuModule extends Module
             ->customQuery(function (\Illuminate\Database\Eloquent\Builder $query) {
                 $query->with('mainMenu', 'permissions');
             })
-            ->customizeColumn(function (\Yajra\DataTables\EloquentDataTable $eloquentDataTable) {
+            ->customizeColumn(function (Tables\EloquentTable $eloquentDataTable) {
                 $eloquentDataTable
                     ->addColumn('permission', function (Menu $menu) {
                         return $menu->permissions->pluck('name')->map(function ($item) {
@@ -96,14 +94,14 @@ class BaseMenuModule extends Module
                         })->implode(', ');
                     });
             })
-            ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
+            ->columns(function (Tables\HtmlBuilder $builder) {
                 $builder
                     ->columnsWithActions([
-                        Column::make('name'),
-                        Column::make('url'),
-                        Column::make('category'),
-                        Column::make('icon'),
-                        Column::make('permission')->searchable(false)->orderable(false),
+                        Tables\Column::make('name'),
+                        Tables\Column::make('url'),
+                        Tables\Column::make('category'),
+                        Tables\Column::make('icon'),
+                        Tables\Column::make('permission')->searchable(false)->orderable(false),
                     ]);
             });
     }

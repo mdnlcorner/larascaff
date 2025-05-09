@@ -7,12 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Mulaidarinull\Larascaff\Components\Layouts\Section;
-use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Tables;
 use Yajra\DataTables\EloquentDataTable;
-use Yajra\DataTables\Html\Column;
 
 class BaseUserModule extends Module
 {
@@ -126,7 +124,7 @@ class BaseUserModule extends Module
         ];
     }
 
-    public static function table(BaseDataTable $table): BaseDataTable
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->actions([
@@ -148,11 +146,11 @@ class BaseUserModule extends Module
             ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
                 $builder
                     ->columnsWithActions([
-                        Column::make('name'),
-                        Column::make('email'),
-                        Column::make('gender'),
-                        Column::make('created_at'),
-                        Column::make('updated_at'),
+                        Tables\Column::make('name'),
+                        Tables\Column::make('email'),
+                        Tables\Column::make('gender'),
+                        Tables\Column::make('created_at'),
+                        Tables\Column::make('updated_at'),
                     ]);
             });
     }
