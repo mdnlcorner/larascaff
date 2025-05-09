@@ -154,7 +154,7 @@ abstract class Module extends Controller
 
         // ====== Widgets ======
         if (method_exists($this, $method = 'widgets')) {
-            $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+            $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
             $widgets = call_user_func_array([$this, $method], $parameters);
 
             $data['widgets'] = view('larascaff::widget', [
@@ -228,12 +228,12 @@ abstract class Module extends Controller
             ]);
 
             if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
             // run hook before create
             if (method_exists($this, $method = 'beforeCreate')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -259,7 +259,7 @@ abstract class Module extends Controller
         try {
             // run hook before store
             if (method_exists($this, $method = 'beforeStore')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -271,7 +271,7 @@ abstract class Module extends Controller
 
             // run hook after store
             if (method_exists($this, $method = 'afterStore')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -299,11 +299,11 @@ abstract class Module extends Controller
 
             // run hook before show
             if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
             if (method_exists($this, $method = 'beforeShow')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -351,11 +351,11 @@ abstract class Module extends Controller
 
             // run hook before edit
             if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
             if (method_exists($this, $method = 'beforeEdit')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -406,7 +406,7 @@ abstract class Module extends Controller
         try {
             // run hook before udpate
             if (method_exists($this, $method = 'beforeUpdate')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
@@ -419,7 +419,7 @@ abstract class Module extends Controller
 
             // run hook after update
             if (method_exists($this, $method = 'afterUpdate')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel()]);
+                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
                 call_user_func_array([$this, $method], $parameters);
             }
 
