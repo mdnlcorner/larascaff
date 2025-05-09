@@ -5,7 +5,7 @@ namespace Mulaidarinull\Larascaff\Modules\Configuration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
-use Mulaidarinull\Larascaff\Components\Forms;
+use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Role;
@@ -17,11 +17,11 @@ class BaseRoleModule extends Module
 {
     protected static ?string $model = Role::class;
 
-    public static function formBuilder(Forms\Form $form): Forms\Form
+    public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form
     {
         return $form->schema([
-            Forms\TextInput::make('name'),
-            Forms\TextInput::make('guard_name'),
+            Forms\Components\TextInput::make('name'),
+            Forms\Components\TextInput::make('guard_name'),
         ]);
     }
 

@@ -5,7 +5,7 @@ namespace Mulaidarinull\Larascaff\Modules\Configuration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Mulaidarinull\Larascaff\Components\Forms;
+use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Permission;
@@ -46,12 +46,12 @@ class BasePermissionModule extends Module
             });
     }
 
-    public static function formBuilder(Forms\Form $form): Forms\Form
+    public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form
     {
         return $form->schema([
-            Forms\TextInput::make('name'),
-            Forms\TextInput::make('guard_name'),
-            Forms\Select::make('menu_id')
+            Forms\Components\TextInput::make('name'),
+            Forms\Components\TextInput::make('guard_name'),
+            Forms\Components\Select::make('menu_id')
                 ->label('Menu')
                 ->searchable()
                 ->placeholder('Choose Menu')

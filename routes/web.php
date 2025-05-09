@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Mulaidarinull\Larascaff\Actions\Action;
-use Mulaidarinull\Larascaff\Components\Forms\Select;
-use Mulaidarinull\Larascaff\Components\Forms\Uploader;
-use Mulaidarinull\Larascaff\Components\Layouts\Repeater;
+use Mulaidarinull\Larascaff\Forms\Components\Select;
+use Mulaidarinull\Larascaff\Forms\Components\Uploader;
+use Mulaidarinull\Larascaff\Forms\Components\Repeater;
 use Mulaidarinull\Larascaff\Notifications\NotificationRoute;
 
 Route::middleware(larascaffConfig()->getMiddleware())->group(function () {

@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
-use Mulaidarinull\Larascaff\Components\Forms;
+use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Components\Layouts\Section;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
@@ -74,20 +74,20 @@ class BaseUserModule extends Module
         return responseSuccess();
     }
 
-    public static function formBuilder(Forms\Form $form): Forms\Form
+    public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form
     {
         return $form->schema([
-            Forms\TextInput::make('name'),
-            Forms\TextInput::make('email')->prependIcon('tabler-mail'),
+            Forms\Components\TextInput::make('name'),
+            Forms\Components\TextInput::make('email')->prependIcon('tabler-mail'),
             Section::make('Credentials')
                 ->collapsible()
                 ->description('Secure your account with strong password combination!')
                 ->schema([
-                    Forms\TextInput::make('password')->password()->revealable(),
-                    Forms\TextInput::make('password_confirmation')->password()->revealable(),
+                    Forms\Components\TextInput::make('password')->password()->revealable(),
+                    Forms\Components\TextInput::make('password_confirmation')->password()->revealable(),
                 ]),
-            Forms\Radio::make('gender')->options(['Male' => 'Male', 'Female' => 'Female']),
-            Forms\Select::make('roles')
+            Forms\Components\Radio::make('gender')->options(['Male' => 'Male', 'Female' => 'Female']),
+            Forms\Components\Select::make('roles')
                 ->label('Roles')
                 ->searchable()
                 ->placeholder('Choose Roles')

@@ -24,7 +24,7 @@ abstract class Page extends Controller
 
     public static function makeMenu()
     {
-        return static::handleMakeMenu();
+        return static::makeMenuHandler();
     }
 
     public static function getPageTitle()

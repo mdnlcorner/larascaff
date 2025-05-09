@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Actions\CreateAction;
-use Mulaidarinull\Larascaff\Components\Forms\Form;
-use Mulaidarinull\Larascaff\Components\Info\Info;
+use Mulaidarinull\Larascaff\Forms\Components\Form;
+use Mulaidarinull\Larascaff\Info\Components\Info;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
@@ -44,11 +44,11 @@ abstract class Module extends Controller
 
     protected static array $validations = [];
 
-    private ?string $routeKeyNameValue = null;
-
     protected static ?Model $oldModelValue = null;
 
     protected static ?Builder $datatable = null;
+
+    final const NAMESPACE = 'App\\Larascaff\\Modules\\';
 
     public static function routes(): array
     {
@@ -83,7 +83,7 @@ abstract class Module extends Controller
     public static function getModel(): string
     {
         return static::$model ?? str(static::class)
-            ->after('App\\Larascaff\\Modules')
+            ->after(static::NAMESPACE)
             ->beforeLast('Module')
             ->prepend('App\\Models')
             ->toString();
@@ -252,7 +252,7 @@ abstract class Module extends Controller
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $this->formBuilderHandler($request, static::formBuilder(new Form));
+        $this->formBuilderTranslation($request, static::formBuilder(new Form));
         $this->initValidation($request);
         DB::beginTransaction();
 
@@ -290,8 +290,7 @@ abstract class Module extends Controller
         if (! $request->ajax()) {
             return redirect()->to(static::getUrl() . '?tableAction=read&tableActionId=' . $id);
         }
-        $this->routeKeyNameValue = $id;
-        $this->getRecord();
+        $this->getRecord($id);
 
         try {
             $this->addDataToview([
@@ -330,12 +329,9 @@ abstract class Module extends Controller
         }
     }
 
-    public function getRecord(): Model
+    public function getRecord($id): Model
     {
-        if (! $this->routeKeyNameValue) {
-            throw new \Exception('routeKeyNameValue must be filled');
-        }
-        static::$instanceModel = static::getInstanceModel()->query()->where(static::getInstanceModel()->getRouteKeyName(), $this->routeKeyNameValue)->firstOrFail();
+        static::$instanceModel = static::getInstanceModel()->query()->where(static::getInstanceModel()->getRouteKeyName(), $id)->firstOrFail();
 
         return static::$instanceModel;
     }
@@ -345,8 +341,7 @@ abstract class Module extends Controller
         if (! $request->ajax()) {
             return redirect()->to(static::getUrl() . '?tableAction=update&tableActionId=' . $id);
         }
-        $this->routeKeyNameValue = $id;
-        $this->getRecord();
+        $this->getRecord($id);
 
         try {
             $this->addDataToview([
@@ -384,7 +379,7 @@ abstract class Module extends Controller
         return view('larascaff::form', ['slot' => $view, ...$formConfig]);
     }
 
-    private function initValidation(Request $request)
+    protected function initValidation(Request $request)
     {
         if (method_exists($this, 'validationRules')) {
             $messages = [];
@@ -403,9 +398,8 @@ abstract class Module extends Controller
 
     public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
-        $this->routeKeyNameValue = $id;
-        $this->getRecord();
-        $this->formBuilderHandler($request, static::formBuilder(new Form));
+        $this->getRecord($id);
+        $this->formBuilderTranslation($request, static::formBuilder(new Form));
         $this->initValidation($request);
         DB::beginTransaction();
 
@@ -439,7 +433,7 @@ abstract class Module extends Controller
         }
     }
 
-    protected function formBuilderHandler(Request $request, Form $form)
+    protected function formBuilderTranslation(Request $request, Form $form)
     {
         setRecord(static::getInstanceModel());
 
@@ -494,7 +488,7 @@ abstract class Module extends Controller
         }
     }
 
-    private function mediaHandler(Request $request, $form, $model)
+    protected function mediaHandler(Request $request, $form, $model)
     {
         if ($form instanceof \Mulaidarinull\Larascaff\Components\Forms\Uploader) {
             if ((in_array('PUT', $request->route()->methods()) || in_array('PATCH', $request->route()->methods()))) {
@@ -577,10 +571,9 @@ abstract class Module extends Controller
         }
     }
 
-    public function destroy(Request $request, string $id)
+    public function destroy(string $id)
     {
-        $this->routeKeyNameValue = $id;
-        $this->getRecord();
+        $this->getRecord($id);
         DB::beginTransaction();
 
         try {
@@ -628,7 +621,7 @@ abstract class Module extends Controller
     {
         $url = static::$url;
         if (! $url) {
-            $url = str(static::class)->after('App\\Larascaff\\Modules\\')->beforeLast('Module')->explode('\\')
+            $url = str(static::class)->after(static::NAMESPACE)->beforeLast('Module')->explode('\\')
                 ->map(fn ($item) => str($item)->kebab())
                 ->implode('/');
             $url = Pluralizer::plural($url);

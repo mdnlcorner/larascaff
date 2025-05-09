@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\Actions\Action;
-use Mulaidarinull\Larascaff\Components\Forms;
+use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\DataTables\BaseDataTable;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Modules\Module;
@@ -108,20 +108,20 @@ class BaseMenuModule extends Module
             });
     }
 
-    public static function formBuilder(Forms\Form $form): Forms\Form
+    public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form
     {
         return $form->schema([
-            Forms\TextInput::make('name')->required(),
-            Forms\TextInput::make('url')->required(),
-            Forms\TextInput::make('icon'),
-            Forms\TextInput::make('category'),
-            Forms\TextInput::make('orders'),
-            Forms\Select::make('main_menu_id')
+            Forms\Components\TextInput::make('name')->required(),
+            Forms\Components\TextInput::make('url')->required(),
+            Forms\Components\TextInput::make('icon'),
+            Forms\Components\TextInput::make('category'),
+            Forms\Components\TextInput::make('orders'),
+            Forms\Components\Select::make('main_menu_id')
                 ->relationship('mainMenu', 'name')
                 ->searchable()
                 ->placeholder('Choose Main Menu')
                 ->modifyQuery(fn ($query) => $query->active()),
-            Forms\Radio::make('active')->options(['Y' => 1, 'N' => 0]),
+            Forms\Components\Radio::make('active')->options(['Y' => 1, 'N' => 0]),
         ]);
     }
 
