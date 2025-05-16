@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\Actions\Action;
+use Mulaidarinull\Larascaff\Enums\ColorVariant;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Modules\Module;
@@ -19,14 +20,10 @@ class BaseMenuModule extends Module
      */
     protected static ?string $model = Menu::class;
 
-    protected static ?string $viewShow = 'larascaff::pages.menu-form';
-
-    protected static ?string $viewAction = 'larascaff::pages.menu-form';
-
     public static function actions(): array
     {
         return [
-            Action::make(permission: 'sort', url: '/sort', label: 'Sort menu', method: 'POST'),
+            Action::make('sort')->permission('sort')->path('sort')->label('Sort menu')->color(ColorVariant::Info)->method('post'),
         ];
     }
 
@@ -74,12 +71,6 @@ class BaseMenuModule extends Module
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make(
-                    permission: 'update-permissions',
-                    url: '/{{id}}/permissions',
-                    label: 'Permissions',
-                    icon: 'tabler-shield'
-                ),
             ])
             ->customQuery(function (\Illuminate\Database\Eloquent\Builder $query) {
                 $query->with('mainMenu', 'permissions');

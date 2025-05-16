@@ -131,19 +131,18 @@ class BaseUserModule extends Module
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make(
-                    permission: 'update-permissions',
-                    url: '/{{id}}/permissions',
-                    label: 'Permissions',
-                    icon: 'tabler-shield'
-                ),
+                Tables\Actions\Action::make('permissions')
+                    ->label('Permission')
+                    ->path('{{id}}/permissions')
+                    ->permission('update-permissions')
+                    ->icon('tabler-shield'),
             ])
             ->customizeColumn(function (EloquentDataTable $eloquentDataTable) {
                 $eloquentDataTable
                     ->editColumn('created_at', fn (User $user) => $user->created_at->format('d-m-Y H:i'))
                     ->editColumn('updated_at', fn (User $user) => $user->updated_at->format('d-m-Y H:i'));
             })
-            ->columns(function (\Mulaidarinull\Larascaff\DataTables\HtmlBuilder $builder) {
+            ->columns(function (Tables\HtmlBuilder $builder) {
                 $builder
                     ->columnsWithActions([
                         Tables\Column::make('name'),

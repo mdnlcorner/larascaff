@@ -47,12 +47,11 @@ class BaseRoleModule extends Module
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make(
-                    permission: 'update-permissions',
-                    url: '/{{id}}/permissions',
-                    label: 'Permissions',
-                    icon: 'tabler-shield'
-                ),
+                Tables\Actions\Action::make('permissions')
+                    ->label('Permission')
+                    ->path('{{id}}/permissions')
+                    ->permission('update-permissions')
+                    ->icon('tabler-shield'),
             ])
             ->columns(function (Tables\HtmlBuilder $builder) {
                 $builder

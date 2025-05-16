@@ -4,6 +4,7 @@ namespace Mulaidarinull\Larascaff\Tables;
 
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Yajra\DataTables\Services\DataTable;
 
 class Table extends DataTable
@@ -12,7 +13,7 @@ class Table extends DataTable
 
     public ?EloquentTable $eloquentTable = null;
 
-    public function __construct(protected Model | QueryBuilder $model, protected string $url, protected array $tableActions = [])
+    public function __construct(protected Model | QueryBuilder $model, protected string $url, protected Collection | array $tableActions = [])
     {
         $this->model = $this->query = $model;
         $this->url = $url;
@@ -47,23 +48,25 @@ class Table extends DataTable
         return $this;
     }
 
+    /**
+     * @param  \Mulaidarinull\Larascaff\Actions\Action[]  $actions
+     */
     public function actions(array $actions): static
     {
         $this->tableActions = collect($actions)
-            ->flatMap(fn ($item) => $item)
             ->map(function ($item) {
-                $item['url'] = url($this->url . $item['url']);
+                $item = $item->getOptions();
+                $item['url'] = url($this->url . $item['path']);
 
                 return $item;
             })
-            ->filter(function ($item, $key) {
+            ->filter(function ($item) {
                 if (! user()) {
                     return true;
                 }
 
-                return user()->can($key . ' ' . $this->url);
-            })
-            ->toArray();
+                return user()->can($item['permission'] . ' ' . $this->url);
+            });
 
         return $this;
     }

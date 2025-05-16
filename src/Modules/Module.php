@@ -119,25 +119,26 @@ abstract class Module extends Controller
         return $title;
     }
 
-    public static function getActions(bool $validatePermission = false)
+    public static function getActions(bool $validatePermission = false): \Illuminate\Support\Collection
     {
         $url = static::getUrl();
 
         $actions = collect([
-            CreateAction::make(),
-            ...static::actions(),
+            CreateAction::make()->getOptions(),
+            ...array_map(function (\Mulaidarinull\Larascaff\Actions\Action $item) {
+                return $item->getOptions();
+            }, static::actions()),
         ])
-            ->flatMap(fn ($item) => $item)
             ->map(function ($item) use ($url) {
-                $item['url'] = url($url . $item['url']);
+                $item['url'] = url($url . $item['path']);
 
                 return $item;
-            })->toArray();
+            });
 
         if ($validatePermission) {
-            return array_filter($actions, function ($permission) use ($url) {
-                return user()->can($permission . ' ' . $url);
-            }, ARRAY_FILTER_USE_KEY);
+            $actions->filter(function ($action) use ($url) {
+                return user()->can($action['permission'] . ' ' . $url);
+            });
         }
 
         return $actions;

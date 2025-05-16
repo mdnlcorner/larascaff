@@ -3,44 +3,118 @@
 namespace Mulaidarinull\Larascaff\Actions;
 
 use Illuminate\Http\Request;
-use Mulaidarinull\Larascaff\Enums\ColorVariant;
+use Illuminate\Support\Arr;
 
 class Action
 {
-    public static function make(string $permission, string $url, ?string $label = null, ?string $method = 'GET', \Closure | null | bool $show = null, bool $ajax = true, bool $targetBlank = false, ?string $icon = null, string | ColorVariant | null $color = null)
-    {
-        if (is_bool($show)) {
-            $show = fn () => $show;
-        }
+    protected array $options = [];
 
-        if ($color instanceof ColorVariant) {
+    public function permission(string $permission): static
+    {
+        $this->options['permission'] = $permission;
+
+        return $this;
+    }
+
+    public function show(\Closure | bool $show): static
+    {
+        $this->options['show'] = is_bool($show) ? fn () => $show : $show;
+
+        return $this;
+    }
+
+    public function form(\Closure | array $form): static
+    {
+
+        return $this;
+    }
+
+    public function action(): static
+    {
+
+        return $this;
+    }
+
+    public function color(string | \Mulaidarinull\Larascaff\Enums\ColorVariant $color): static
+    {
+        if ($color instanceof \Mulaidarinull\Larascaff\Enums\ColorVariant) {
             $color = $color->value;
         }
+        $this->options['color'] = $color;
 
-        $actions[$permission] = [
-            'permission' => $permission,
-            'url' => $url,
-            'label' => $label ?? ucfirst($permission),
-            'method' => $method,
-            'show' => $show ?? fn () => true,
-            'ajax' => $ajax,
-            'blank' => $targetBlank ? '_blank' : '',
-            'icon' => $icon ?? ($permission == 'update' ? 'tabler-edit' : ($permission == 'read' ? 'tabler-eye' : ($permission == 'delete' ? 'tabler-trash' : null))),
-            'color' => $color ?? ($permission == 'update' ? 'warning' : ($permission == 'delete' ? 'danger' : null)),
-        ];
+        return $this;
+    }
 
-        return $actions;
+    public function icon(string $icon): static
+    {
+        $this->options['icon'] = $icon;
+
+        return $this;
+    }
+
+    public function label(string $label): static
+    {
+        $this->options['label'] = $label;
+
+        return $this;
+    }
+
+    public function path(string $path): static
+    {
+        $this->options['path'] = str($path)->start('/')->value();
+
+        return $this;
+    }
+
+    public function blank(?bool $blank = true): static
+    {
+        $this->options['blank'] = $blank ? '_blank' : null;
+
+        return $this;
+    }
+
+    public function method(?string $method = 'get'): static
+    {
+        $this->options['method'] = $method;
+
+        return $this;
+    }
+
+    public function ajax(?bool $ajax = true): static
+    {
+        $this->options['ajax'] = $ajax;
+
+        return $this;
+    }
+
+    public function getOptions(): array
+    {
+        $this->options['permission'] = Arr::get($this->options, 'permission', null);
+        $this->options['blank'] = Arr::get($this->options, 'blank', null);
+        $this->options['ajax'] = Arr::get($this->options, 'ajax', true);
+        $this->options['path'] = Arr::get($this->options, 'path', null);
+        $this->options['show'] = Arr::get($this->options, 'show', fn () => fn () => true);
+        $this->options['method'] = Arr::get($this->options, 'method', 'get');
+        $this->options['icon'] = Arr::get($this->options, 'icon', ($this->options['permission'] == 'update' ? 'tabler-edit' : ($this->options['permission'] == 'read' ? 'tabler-eye' : ($this->options['permission'] == 'delete' ? 'tabler-trash' : null))));
+        $this->options['color'] = Arr::get($this->options, 'color', ($this->options['permission'] == 'update' ? 'warning' : ($this->options['permission'] == 'delete' ? 'danger' : 'primary')));
+
+        return $this->options;
+    }
+
+    public static function make(string $name): static
+    {
+        $instance = new static;
+        $instance->options['label'] = str($name)->headline()->value();
+        $instance->options['name'] = $name;
+
+        return $instance;
     }
 
     public function actionHandler(Request $request)
     {
-        if ($request->ajax()) {
-            abort(404);
-        }
-
         $request->validate(['module' => 'required', 'method' => 'required']);
         if (! class_exists($request->module)) {
-            return responseError('Class not exist');
+            return responseError('Class does not exist');
         }
 
         return $request->module::{$request->method}($request);

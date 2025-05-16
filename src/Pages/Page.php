@@ -48,7 +48,7 @@ abstract class Page extends Controller
     {
         $url = static::$url;
         if (! $url) {
-            $url = str(static::class)->after(static::NAMESPACE)->beforeLast('Module')->explode('\\')
+            $url = str(static::class)->after(static::NAMESPACE)->beforeLast('Page')->explode('\\')
                 ->map(fn ($item) => str($item)->kebab())
                 ->implode('/');
             $url = Pluralizer::plural($url);
