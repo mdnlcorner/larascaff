@@ -70,7 +70,7 @@ export function initActionModal() {
     mainContent.on('click', '[data-handler]', function (e) {
         e.preventDefault()
         const handler = JSON.parse(this.dataset.handler);
-        const req = new AjaxAction(window.location.origin + '/larascaff', {
+        const req = new AjaxAction(window.location.origin + '/handler', {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json'

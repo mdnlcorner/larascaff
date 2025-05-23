@@ -182,6 +182,9 @@ class Uploader extends Field
 
         $requestKey = array_key_first($files);
 
+        /**
+         * @var UploadedFile $file
+         */
         $file = is_array($request->input($requestKey))
             ? $request->file($requestKey)[0]
             : $request->file($requestKey);

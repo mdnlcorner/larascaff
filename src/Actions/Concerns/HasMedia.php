@@ -25,16 +25,16 @@ trait HasMedia
         return $this->media;
     }
 
-    protected function uploadMediaHandler(Uploader $media, Model $model)
+    protected function uploadMediaHandler(Uploader $input, Model $model)
     {
         $data = $this->getFormData();
 
-        if ($media instanceof Uploader) {
+        if ($input instanceof Uploader) {
             if (request()->post('_id')) {
                 $model->oldModelValue = $this->oldModelValue;
-                $model->updateMedia($media->getPath(), $data[$media->getName()] ?? null, $media->getField());
-            } elseif (isset($data[$media->getName()])) {
-                $model->storeMedia($media->getPath(), $data[$media->getName()] ?? null, $media->getField());
+                $model->updateMedia($input->getPath(), $data[$input->getName()] ?? null, $input->getField());
+            } elseif (isset($data[$input->getName()])) {
+                $model->storeMedia($input->getPath(), $data[$input->getName()] ?? null, $input->getField());
             }
         }
     }

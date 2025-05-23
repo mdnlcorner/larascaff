@@ -47,8 +47,12 @@ class EditAction extends Action
 
             $record->save();
 
-            foreach ($this->getMedia() as $inputMedia) {
-                $this->uploadMediaHandler($inputMedia, $record);
+            foreach ($this->getMedia() as $input) {
+                $this->uploadMediaHandler(input: $input, model: $record);
+            }
+
+            foreach($this->getRelationship() as $input) {
+                $this->relationshipHandler(input: $input, model: $record);
             }
 
             $this->callHook($this->afterSave);

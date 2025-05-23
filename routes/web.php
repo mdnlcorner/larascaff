@@ -17,7 +17,7 @@ Route::middleware(larascaffConfig()->getMiddleware())->group(function () {
         Route::get('options', [Select::class, 'serverSideOptionsHandler']);
         Route::post('repeater-items', [Repeater::class, 'repeaterHandler']);
         Route::post('module-action', RouteHandler::class);
-        Route::post('larascaff', [Action::class, 'actionHandler']);
+        Route::post('handler', [Action::class, 'actionHandler']);
 
         // Pages route
         File::ensureDirectoryExists(app_path('Larascaff/Pages'));

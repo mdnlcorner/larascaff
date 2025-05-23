@@ -511,7 +511,7 @@ abstract class Module extends Controller
 
     protected function mediaHandler(Request $request, $form, $model)
     {
-        if ($form instanceof \Mulaidarinull\Larascaff\Components\Forms\Uploader) {
+        if ($form instanceof \Mulaidarinull\Larascaff\Forms\Components\Uploader) {
             if ((in_array('PUT', $request->route()->methods()) || in_array('PATCH', $request->route()->methods()))) {
                 $model->oldModelValue = static::$oldModelValue;
                 $model->updateMedia($form->getPath(), $request->{$form->getName()}, $form->getField());
@@ -613,7 +613,7 @@ abstract class Module extends Controller
             $forms = call_user_func_array([$this, $method], $parameters);
 
             foreach ($forms->getComponents() as $form) {
-                if ($form instanceof \Mulaidarinull\Larascaff\Components\Forms\Uploader) {
+                if ($form instanceof \Mulaidarinull\Larascaff\Forms\Components\Uploader) {
                     static::getInstanceModel()->deleteMedia();
                 }
             }

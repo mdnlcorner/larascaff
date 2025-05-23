@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
-use Mulaidarinull\Larascaff\Components\Layouts\Section;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Tables;
@@ -77,7 +76,7 @@ class BaseUserModule extends Module
         return $form->schema([
             Forms\Components\TextInput::make('name'),
             Forms\Components\TextInput::make('email')->prependIcon('tabler-mail'),
-            Section::make('Credentials')
+            Forms\Components\Section::make('Credentials')
                 ->collapsible()
                 ->description('Secure your account with strong password combination!')
                 ->schema([
@@ -129,7 +128,14 @@ class BaseUserModule extends Module
         return $table
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->modifyFormData(function(array $data, User $record) {
+                        if (! $data['password']) {
+                            $data['password'] = $record->password;
+                        }
+                        
+                        return $data;
+                    }),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('permissions')
                     ->label('Permission')

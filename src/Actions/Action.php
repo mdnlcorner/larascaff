@@ -12,6 +12,7 @@ class Action
     use Concerns\HasForm;
     use Concerns\HasLifecycle;
     use Concerns\HasMedia;
+    use Concerns\HasRelationship;
     use Concerns\HasValidation;
     use HasModule;
 
@@ -179,7 +180,7 @@ class Action
                         'slot' => view('larascaff::form-builder', ['form' => $form]),
                         'size' => $request->post('_action_handler')::getModalSize(),
                         'title' => $request->post('_action_handler')::getModalTitle(),
-                        'action' => url('larascaff'),
+                        'action' => url('handler'),
                         'method' => 'POST',
                     ])->render(),
                 ]);
