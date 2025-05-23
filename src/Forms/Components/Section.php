@@ -5,7 +5,7 @@ namespace Mulaidarinull\Larascaff\Forms\Components;
 use Illuminate\Support\Facades\Blade;
 use Mulaidarinull\Larascaff\Forms\Concerns;
 
-class Section
+class Section extends Layout
 {
     use Concerns\HasCollapsible;
     use Concerns\HasColumnSpan;

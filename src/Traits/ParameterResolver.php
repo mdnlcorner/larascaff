@@ -2,17 +2,12 @@
 
 namespace Mulaidarinull\Larascaff\Traits;
 
-use Illuminate\Container\Container;
 use Illuminate\Support\Reflector;
 
 trait ParameterResolver
 {
-    private Container $container;
-
     protected function resolveParameters($method, $excepts = [])
     {
-        $this->container ??= new Container;
-
         $reflectionMethod = new \ReflectionMethod($this, $method);
         $parameters = [];
         foreach ($reflectionMethod->getParameters() as $param) {
@@ -28,7 +23,7 @@ trait ParameterResolver
             }
 
             if (! $found) {
-                $parameters[] = $this->container->make($className);
+                $parameters[] = app()->make($className);
             }
         }
 

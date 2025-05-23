@@ -13,11 +13,13 @@ class Table extends DataTable
 
     public ?EloquentTable $eloquentTable = null;
 
-    public function __construct(protected Model | QueryBuilder $model, protected string $url, protected Collection | array $tableActions = [])
+    protected Collection | array $tableActions = [];
+
+    public function __construct(protected Model | QueryBuilder $model, protected string $url, protected ?string $actionHandler = null)
     {
-        $this->model = $this->query = $model;
+        $this->query = $model;
         $this->url = $url;
-        $this->tableActions = [];
+        $this->actionHandler = $actionHandler;
     }
 
     public function dataTable(): EloquentTable
@@ -66,7 +68,7 @@ class Table extends DataTable
                 }
 
                 return user()->can($item['permission'] . ' ' . $this->url);
-            });
+            })->keyBy('name');
 
         return $this;
     }
@@ -85,7 +87,13 @@ class Table extends DataTable
                     foreach ($this->tableActions as $action) {
                         if ($action['show']($model)) {
                             $action['url'] = str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']);
-                            $actions[$action['permission']] = $action;
+                            $action['handler'] = json_encode([
+                                'actionHandler' => $this->actionHandler,
+                                'actionName' => $action['name'],
+                                'actionType' => 'form',
+                                'id' => $model->{$model->getRouteKeyName()},
+                            ]);
+                            $actions[] = $action;
                         }
                     }
 
@@ -145,7 +153,7 @@ class Table extends DataTable
 
     public function columns($cb): static
     {
-        $model = explode('Models\\', get_class($this->model->getModel()));
+        $model = explode('Models\\', get_class($this->query->getModel()));
         $this->htmlBuilder = $this->generateHtmlBuilder()->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
         $cb($this->htmlBuilder);
 

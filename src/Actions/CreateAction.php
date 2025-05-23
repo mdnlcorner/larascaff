@@ -2,6 +2,10 @@
 
 namespace Mulaidarinull\Larascaff\Actions;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Mulaidarinull\Larascaff\Enums\ColorVariant;
 
 class CreateAction extends Action
@@ -14,5 +18,46 @@ class CreateAction extends Action
             ->path('/create')
             ->color(ColorVariant::Primary)
             ->blank(false);
+    }
+
+    protected function setup(string $name)
+    {
+        parent::setup($name);
+        $this->permission('create');
+        if ($this->getModule()) {
+            $this->action(function (Request $request, $record) {
+                return $this->store($request, $record);
+            });
+        }
+    }
+
+    protected function store(Request $request, Model $record): \Illuminate\Http\JsonResponse
+    {
+        Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
+
+        $this->inspectFormBuilder($this->getForm()->getComponents());
+        $request->validate($this->validations['validations'] ?? [], $this->validations['messages'] ?? []);
+
+        DB::beginTransaction();
+
+        try {
+            $this->callModifyFormData($this->modifyFormData);
+
+            $record->fill($this->formData);
+
+            $this->callHook($this->beforeSave);
+
+            $record->save();
+
+            $this->callHook($this->afterSave);
+
+            DB::commit();
+
+            return responseSuccess();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return responseError($th);
+        }
     }
 }

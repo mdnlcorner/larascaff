@@ -67,6 +67,43 @@ export function initActionModal() {
     const mainContent = $('.main-content')
     window['datatableId'] = mainContent.find('.table').attr('id') ?? ''
 
+    mainContent.on('click', '[data-handler]', function (e) {
+        e.preventDefault()
+        const handler = JSON.parse(this.dataset.handler);
+        const req = new AjaxAction(window.location.origin + '/larascaff', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                _action_handler: handler.actionHandler,
+                _action_name: handler.actionName,
+                _action_type: handler.actionType,
+                _id: handler.id,
+            })
+        })
+        req.onSuccess(function (res) {
+            if (window['modalAction'] && res.html) {
+                modalEl.innerHTML = res.html
+                window['modalAction'].show()
+
+                const handle = new HandleFormSubmit()
+                handle
+                    .addData({
+                        _action_handler: res.action_handler,
+                        _action_name: res.action_name,
+                        _action_type: res.action_type,
+                        _id: res.id
+                    })
+                    .onSuccess(res => {
+
+                    })
+                    .reloadDatatable(window['datatableId'] ?? '')
+                    .init();
+            }
+        }, false).execute()
+    })
+
     mainContent.on('click', '[data-action]', function (e) {
         e.preventDefault()
         if (this.dataset.method.toLowerCase() == 'delete') {
@@ -86,15 +123,15 @@ export function initActionModal() {
             return
         };
 
-        const ajaxAction = (new AjaxAction(this))
-            .onSuccess(function (res) {
-                const handle = (new HandleFormSubmit())
-                    .onSuccess(res => {
+        const ajaxAction = new AjaxAction(this)
+        ajaxAction.onSuccess(function (res) {
+            const handle = (new HandleFormSubmit())
+            handle.onSuccess(res => {
 
-                    })
-                    .reloadDatatable(window['datatableId'] ?? '')
-                    .init();
             })
+                .reloadDatatable(window['datatableId'] ?? '')
+                .init();
+        })
             .execute()
     })
 }
@@ -131,7 +168,7 @@ export function initActionByUrl() {
     if (params.get('action')) {
         const actions = $('[data-actions]').data('actions')
         let action = params.get('action') ?? '';
-        
+
         if (actions[action]) {
             resolvedUrl = actions[action]['url']
         }
@@ -297,12 +334,18 @@ export class HandleFormSubmit extends AjaxOption {
     formId: JQuery;
     button: JQuery<HTMLElement>;
     buttonLabel: string;
+    formData: Record<string, any> = {}
 
     constructor(formId = '#formAction') {
         super()
         this.formId = $(formId)
         this.button = this.formId.find('button[type="submit"]')
         this.buttonLabel = this.button.html()
+    }
+
+    addData(formData: Record<string, any>) {
+        this.formData = formData
+        return this;
     }
 
     reloadDatatable(id: string) {
@@ -315,10 +358,16 @@ export class HandleFormSubmit extends AjaxOption {
         this.formId.on('submit', function (this: any, e) {
             e.preventDefault()
 
+            const formData = new FormData(this)
+
+            Object.entries(_this.formData).map(([key, value]) => {
+                formData.append(key, value)
+            })
+
             $.ajax({
                 url: _this.formId.attr('action'),
                 method: _this.formId.attr('method'),
-                data: new FormData(this),
+                data: formData,
                 processData: false,
                 contentType: false,
                 beforeSend: () => {

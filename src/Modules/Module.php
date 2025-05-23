@@ -48,6 +48,8 @@ abstract class Module extends Controller
 
     protected static ?Builder $datatable = null;
 
+    private array $pageData = [];
+
     final const NAMESPACE = 'App\\Larascaff\\Modules\\';
 
     public static function routes(): array
@@ -146,11 +148,10 @@ abstract class Module extends Controller
 
     public function index(Request $request)
     {
-        $data = [
+        $this->pageData = [
             'pageTitle' => static::getPageTitle(),
             'url' => Pluralizer::singular(static::getUrl()),
             'actions' => static::getActions(true),
-            'tableActions' => [],
         ];
 
         // ====== Widgets ======
@@ -158,7 +159,7 @@ abstract class Module extends Controller
             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
             $widgets = call_user_func_array([$this, $method], $parameters);
 
-            $data['widgets'] = view('larascaff::widget', [
+            $this->pageData['widgets'] = view('larascaff::widget', [
                 'widgets' => $widgets,
             ]);
         }
@@ -166,11 +167,11 @@ abstract class Module extends Controller
 
         $tabs = collect(static::tabs());
         if ($tabs->count()) {
-            $data['tabs'] = $tabs;
+            $this->pageData['tabs'] = $tabs;
         }
 
-        static::$datatable = static::getInstanceModel()->query();
-        if (isset($data['tabs'])) {
+        static::$datatable = static::getInstanceModel()->newQuery();
+        if (isset($this->pageData['tabs'])) {
             if (! $request->has('activeTab')) {
                 if (is_callable($tabs->first()->getQuery())) {
                     call_user_func($tabs->first()->getQuery(), static::$datatable);
@@ -189,19 +190,27 @@ abstract class Module extends Controller
             }
         }
 
-        $datatable = new Table(static::$datatable, static::getUrl());
-
+        $datatable = new Table(static::$datatable, static::getUrl(), static::class);
         if (method_exists($this, 'filterTable')) {
             $filterTable = call_user_func([$this, 'filterTable']);
-            $data['filterTable'] = view('larascaff::filter', [
+            $this->pageData['filterTable'] = view('larascaff::filter', [
                 'filterTable' => $filterTable,
             ]);
             $datatable->filterTable($filterTable);
         }
-        $table = call_user_func([$this, 'table'], $datatable);
-        $data['tableActions'] = $table->getActions();
 
-        return $datatable->render('larascaff::main-content', $data);
+        $this->pageData['tableActions'] = static::getTableActions($datatable);
+
+        return $datatable->render('larascaff::main-content', $this->pageData);
+    }
+
+    public static function getTableActions(?Table $table = null)
+    {
+        if (! $table) {
+            $table = new Table(static::getInstanceModel()->newQuery(), static::getUrl(), static::class);
+        }
+
+        return call_user_func_array([static::class, 'table'], [$table])->getActions();
     }
 
     public static function getModalTitle()
@@ -330,6 +339,11 @@ abstract class Module extends Controller
         }
     }
 
+    public static function getModalSize()
+    {
+        return static::$modalSize;
+    }
+
     public function getRecord($id): Model
     {
         static::$instanceModel = static::getInstanceModel()->query()->where(static::getInstanceModel()->getRouteKeyName(), $id)->firstOrFail();
@@ -397,9 +411,14 @@ abstract class Module extends Controller
         $request->validate(static::$validations['validations'] ?? [], static::$validations['messages'] ?? []);
     }
 
-    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
+    public function update(Request $request, Model | string $id): \Illuminate\Http\JsonResponse
     {
-        $this->getRecord($id);
+        if ($id instanceof Model) {
+            static::$instanceModel = $id;
+        } else {
+            $this->getRecord($id);
+        }
+
         $this->formBuilderTranslation($request, static::formBuilder(new Form));
         $this->initValidation($request);
         DB::beginTransaction();
@@ -412,6 +431,7 @@ abstract class Module extends Controller
             }
 
             static::$oldModelValue = static::getInstanceModel()->replicate();
+
             static::getInstanceModel()->fill($request->all());
             static::getInstanceModel()->save();
 
