@@ -33,6 +33,7 @@ class EditAction extends Action
 
         $this->inspectFormBuilder($this->getForm()->getComponents());
 
+        dd($this->validations);
         $request->validate($this->validations['validations'] ?? [], $this->validations['messages'] ?? []);
 
         DB::beginTransaction();

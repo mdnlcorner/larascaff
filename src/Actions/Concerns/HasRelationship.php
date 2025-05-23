@@ -34,6 +34,8 @@ trait HasRelationship
                 break;
             case $relationship instanceof Relations\MorphOne:
             case $relationship instanceof Relations\HasOne:
+
+                dd($relationship);
                 
                 break;
             case $relationship instanceof Relations\HasMany:

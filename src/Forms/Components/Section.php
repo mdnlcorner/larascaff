@@ -30,9 +30,16 @@ class Section extends Layout
     public function view()
     {
         $slot = '';
+        $relationship = $this->getRelationship();
+        if ($relationship) {
+            getRecord()->loadMissing($relationship);
+        }
         foreach ($this->components as $component) {
             if (method_exists($component, 'module')) {
                 $component->module($this->module);
+            }
+            if ($relationship) {
+                $component->name($relationship . '.' . $component->getName());
             }
             $slot .= $component->view();
         }

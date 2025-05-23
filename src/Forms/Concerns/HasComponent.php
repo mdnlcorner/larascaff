@@ -23,7 +23,14 @@ trait HasComponent
         return $static;
     }
 
-    public function getName()
+    public function name(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getName(): string
     {
         return $this->name;
     }
@@ -31,8 +38,8 @@ trait HasComponent
     public function schema(array $components)
     {
         $this->components = collect($components);
-        $e = new \Exception;
-        $this->module = $e->getTrace()[1]['class'] ?? null;
+        $e = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
+        $this->module = $e[1]['class'] ?? null;
 
         return $this;
     }
