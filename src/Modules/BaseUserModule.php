@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Tables;
@@ -14,19 +15,6 @@ use Yajra\DataTables\EloquentDataTable;
 class BaseUserModule extends Module
 {
     protected static ?string $model = User::class;
-
-    public function validationRules()
-    {
-        return [
-            'name' => 'required',
-            'email' => ['required', 'email', Rule::unique('users')->ignore(static::getInstanceModel())],
-            'password' => ['confirmed', Rule::requiredIf(function () {
-                return request()->routeIs('users.store');
-            })],
-            'roles' => 'nullable',
-            'gender' => ['required', 'in:Male,Female'],
-        ];
-    }
 
     public function getPermissionsByUser(User $user)
     {
@@ -40,50 +28,29 @@ class BaseUserModule extends Module
         ]);
     }
 
-    public function editPermissions(User $user)
-    {
-        $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
-        $users = User::query()->where('id', '!=', $user->id)->get()->map(fn ($user) => ['label' => $user->name, 'value' => $user->id]);
-        $view = view('larascaff::pages.user-permission-form', [
-            'data' => $user,
-            'menus' => $menus,
-            'users' => $users,
-        ]);
-        $prefix = getPrefix();
-        if ($prefix) {
-            $prefix .= '.';
-        }
-
-        return $this->form($view, [
-            'method' => 'PUT',
-            'title' => 'Permission User',
-            'action' => route($prefix . 'users.permissions.update', $user->{$user->getRouteKeyName()}),
-            'size' => 'lg',
-        ]);
-    }
-
-    public function updatePermissions(Request $request, User $user)
-    {
-        Gate::authorize('update-permissions ' . static::getUrl());
-
-        $user->syncPermissions($request->permissions);
-
-        return responseSuccess();
-    }
-
     public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('name'),
-            Forms\Components\TextInput::make('email')->prependIcon('tabler-mail'),
+            Forms\Components\TextInput::make('name')->required(),
+            Forms\Components\TextInput::make('email')
+                ->validations([
+                    'required',
+                    Rule::unique('users')->ignore(getRecord()),
+                ])
+                ->prependIcon('tabler-mail'),
             Forms\Components\Section::make('Credentials')
                 ->collapsible()
                 ->description('Secure your account with strong password combination!')
                 ->schema([
-                    Forms\Components\TextInput::make('password')->password()->revealable(),
+                    Forms\Components\TextInput::make('password')
+                        ->validations(['confirmed', Rule::requiredIf(function () {
+                            return request()->routeIs('users.store');
+                        })])->password()->revealable(),
                     Forms\Components\TextInput::make('password_confirmation')->password()->revealable(),
                 ]),
-            Forms\Components\Radio::make('gender')->options(['Male' => 'Male', 'Female' => 'Female']),
+            Forms\Components\Radio::make('gender')
+                ->validations(['required', 'in:Male,Female'])
+                ->options(['Male' => 'Male', 'Female' => 'Female']),
             Forms\Components\Select::make('roles')
                 ->label('Roles')
                 ->searchable()
@@ -118,8 +85,6 @@ class BaseUserModule extends Module
     {
         return [
             static::makeRoute(url: '{user}/copy-permissions', action: 'getPermissionsByUser', name: 'copy-permissions.edit'),
-            static::makeRoute(url: '{user}/permissions', action: 'editPermissions', name: 'permissions.edit'),
-            static::makeRoute(url: '{user}/permissions', action: 'updatePermissions', method: 'put', name: 'permissions.update'),
         ];
     }
 
@@ -140,6 +105,30 @@ class BaseUserModule extends Module
                 Tables\Actions\Action::make('permissions')
                     ->label('Permission')
                     ->path('{{id}}/permissions')
+                    ->form(function (Forms\Components\Form $form) {
+                        return $form->schema([
+                            PermissionFormComponent::make()
+                                ->shareData(function (User $user) {
+                                    $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
+                                    $users = User::query()->where('id', '!=', $user->id)->get()->map(fn ($user) => ['label' => $user->name, 'value' => $user->id]);
+
+                                    return [
+                                        'data' => $user,
+                                        'users' => $users,
+                                        'menus' => $menus,
+                                    ];
+                                }),
+                        ])
+                            ->modalSize(ModalSize::Lg)
+                            ->columns(1);
+                    })
+                    ->action(function (Request $request, User $user) {
+                        Gate::authorize('update-permissions ' . static::getUrl());
+
+                        $user->syncPermissions($request->permissions);
+
+                        return responseSuccess();
+                    })
                     ->permission('update-permissions')
                     ->icon('tabler-shield'),
             ])

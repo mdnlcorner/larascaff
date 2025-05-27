@@ -177,6 +177,9 @@ class Action
 
         switch ($request->post('_action_type')) {
             case 'form':
+                /**
+                 * @var Form
+                 */
                 $form = $this->resolveClosureParams($handler['form']);
 
                 return response()->json([
@@ -186,7 +189,7 @@ class Action
                     'id' => $request->post('_id'),
                     'html' => view('larascaff::form', [
                         'slot' => view('larascaff::form-builder', ['form' => $form]),
-                        'size' => $request->post('_action_handler')::getModalSize(),
+                        'size' => $form->getModalSize(),
                         'title' => $request->post('_action_handler')::getModalTitle(),
                         'action' => isset($handler['action']) ? url('handler') : null,
                         'method' => 'POST',
@@ -203,7 +206,7 @@ class Action
 
     protected function resolveClosureParams(?callable $cb = null)
     {
-        if (! $cb) {
+        if (! $cb instanceof \Closure) {
             return;
         }
 
