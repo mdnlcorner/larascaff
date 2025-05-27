@@ -2,11 +2,11 @@
 
 namespace Mulaidarinull\Larascaff\Modules\Configuration;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\Actions\Action;
+use Mulaidarinull\Larascaff\Actions\CreateAction;
 use Mulaidarinull\Larascaff\Enums\ColorVariant;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
@@ -23,18 +23,22 @@ class BaseMenuModule extends Module
     public static function actions(): array
     {
         return [
-            Action::make('sort')->permission('sort')->path('sort')->label('Sort menu')->color(ColorVariant::Info)->method('post'),
+            CreateAction::make()
+                ->afterSave(function () {
+                    Cache::forget('menus');
+                    Cache::forget('urlMenu');
+                }),
+            Action::make('sort')->permission('sort')->path('sort')
+                ->label('Sort menu')->color(ColorVariant::Info)
+                ->form(false)
+                ->action(function () {
+                    return static::sort();
+                })
+                ->method('post'),
         ];
     }
 
-    public static function routes(): array
-    {
-        return [
-            static::makeRoute(url: 'sort', action: 'sort', method: 'post'),
-        ];
-    }
-
-    public function sort()
+    public static function sort()
     {
         $menus = static::getInstanceModel()->getMenus();
 
@@ -69,8 +73,16 @@ class BaseMenuModule extends Module
         return $table
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->afterSave(function () {
+                        Cache::forget('menus');
+                        Cache::forget('urlMenu');
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->afterSave(function () {
+                        Cache::forget('menus');
+                        Cache::forget('urlMenu');
+                    }),
             ])
             ->customQuery(function (\Illuminate\Database\Eloquent\Builder $query) {
                 $query->with('mainMenu', 'permissions');
@@ -112,23 +124,5 @@ class BaseMenuModule extends Module
                 ->modifyQuery(fn ($query) => $query->active()),
             Forms\Components\Radio::make('active')->options(['Y' => 1, 'N' => 0]),
         ]);
-    }
-
-    public static function afterStore(Request $request, Menu $menu)
-    {
-        Cache::forget('menus');
-        Cache::forget('urlMenu');
-    }
-
-    public static function afterUpdate(Request $request, Menu $menu)
-    {
-        Cache::forget('menus');
-        Cache::forget('urlMenu');
-    }
-
-    public function afterDelete()
-    {
-        Cache::forget('menus');
-        Cache::forget('urlMenu');
     }
 }

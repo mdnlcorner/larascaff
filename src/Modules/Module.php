@@ -124,15 +124,25 @@ abstract class Module extends Controller
     public static function getActions(bool $validatePermission = false): \Illuminate\Support\Collection
     {
         $url = static::getUrl();
+        $actions = [];
+        foreach (CreateAction::make()->getOptions() as $key => $create) {
+            $actions[$key] = $create;
+        }
+        foreach (static::actions() as $action) {
+            foreach ($action->getOptions() as $key => $value) {
+                $actions[$key] = $value;
+            }
+        }
 
-        $actions = collect([
-            CreateAction::make()->getOptions(),
-            ...array_map(function (\Mulaidarinull\Larascaff\Actions\Action $item) {
-                return $item->getOptions();
-            }, static::actions()),
-        ])
+        $actions = collect($actions)
             ->map(function ($item) use ($url) {
                 $item['url'] = url($url . $item['path']);
+                $item['handler'] = json_encode([
+                    'actionHandler' => static::class,
+                    'actionType' => $item['hasForm'] === true ? 'form' : 'action',
+                    'actionName' => $item['name'],
+                    'id' => '',
+                ]);
 
                 return $item;
             });
@@ -225,119 +235,119 @@ abstract class Module extends Controller
         return $title;
     }
 
-    public function create(Request $request)
-    {
-        if (! $request->ajax()) {
-            return redirect()->to(static::getUrl() . '?action=create');
-        }
+    // public function create(Request $request)
+    // {
+    //     if (! $request->ajax()) {
+    //         return redirect()->to(static::getUrl() . '?action=create');
+    //     }
 
-        try {
-            setRecord(static::getInstanceModel());
-            $this->addDataToview([
-                'action' => url(static::getUrl()),
-            ]);
+    //     try {
+    //         setRecord(static::getInstanceModel());
+    //         $this->addDataToview([
+    //             'action' => url(static::getUrl()),
+    //         ]);
 
-            if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-                call_user_func_array([$this, $method], $parameters);
-            }
-            // run hook before create
-            if (method_exists($this, $method = 'beforeCreate')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-                call_user_func_array([$this, $method], $parameters);
-            }
+    //         if (method_exists($this, $method = 'shareData')) {
+    //             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+    //             call_user_func_array([$this, $method], $parameters);
+    //         }
+    //         // run hook before create
+    //         if (method_exists($this, $method = 'beforeCreate')) {
+    //             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+    //             call_user_func_array([$this, $method], $parameters);
+    //         }
 
-            return $this->form(
-                view('larascaff::form-builder', ['form' => static::formBuilder(new Form)]),
-                [
-                    'size' => static::$modalSize,
-                    'title' => static::getModalTitle(),
-                    ...static::$viewData,
-                ]
-            );
-        } catch (\Throwable $th) {
-            return responseError($th);
-        }
-    }
+    //         return $this->form(
+    //             view('larascaff::form-builder', ['form' => static::formBuilder(new Form)]),
+    //             [
+    //                 'size' => static::$modalSize,
+    //                 'title' => static::getModalTitle(),
+    //                 ...static::$viewData,
+    //             ]
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return responseError($th);
+    //     }
+    // }
 
-    public function store(Request $request): \Illuminate\Http\JsonResponse
-    {
-        $this->formBuilderTranslation($request, static::formBuilder(new Form));
-        $this->initValidation($request);
-        DB::beginTransaction();
+    // public function store(Request $request): \Illuminate\Http\JsonResponse
+    // {
+    //     $this->formBuilderTranslation($request, static::formBuilder(new Form));
+    //     $this->initValidation($request);
+    //     DB::beginTransaction();
 
-        try {
-            // run hook before store
-            if (method_exists($this, $method = 'beforeStore')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-                call_user_func_array([$this, $method], $parameters);
-            }
+    //     try {
+    //         // run hook before store
+    //         if (method_exists($this, $method = 'beforeStore')) {
+    //             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+    //             call_user_func_array([$this, $method], $parameters);
+    //         }
 
-            static::getInstanceModel()->fill($request->all());
-            static::getInstanceModel()->save();
+    //         static::getInstanceModel()->fill($request->all());
+    //         static::getInstanceModel()->save();
 
-            // handle form builder input
-            $this->formBuilderResolver($request);
+    //         // handle form builder input
+    //         $this->formBuilderResolver($request);
 
-            // run hook after store
-            if (method_exists($this, $method = 'afterStore')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-                call_user_func_array([$this, $method], $parameters);
-            }
+    //         // run hook after store
+    //         if (method_exists($this, $method = 'afterStore')) {
+    //             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+    //             call_user_func_array([$this, $method], $parameters);
+    //         }
 
-            DB::commit();
+    //         DB::commit();
 
-            return responseSuccess();
-        } catch (\Throwable $th) {
-            DB::rollBack();
+    //         return responseSuccess();
+    //     } catch (\Throwable $th) {
+    //         DB::rollBack();
 
-            return responseError($th);
-        }
-    }
+    //         return responseError($th);
+    //     }
+    // }
 
-    public function show(string $id, Request $request)
-    {
-        if (! $request->ajax()) {
-            return redirect()->to(static::getUrl() . '?tableAction=read&tableActionId=' . $id);
-        }
-        $this->getRecord($id);
+    // public function show(string $id, Request $request)
+    // {
+    //     if (! $request->ajax()) {
+    //         return redirect()->to(static::getUrl() . '?tableAction=read&tableActionId=' . $id);
+    //     }
+    //     $this->getRecord($id);
 
-        try {
-            $this->addDataToview([
-                'action' => null,
-            ]);
+    //     try {
+    //         $this->addDataToview([
+    //             'action' => null,
+    //         ]);
 
-            // run hook before show
-            if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-                call_user_func_array([$this, $method], $parameters);
-            }
-            if (method_exists($this, $method = 'beforeShow')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-                call_user_func_array([$this, $method], $parameters);
-            }
+    //         // run hook before show
+    //         if (method_exists($this, $method = 'shareData')) {
+    //             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+    //             call_user_func_array([$this, $method], $parameters);
+    //         }
+    //         if (method_exists($this, $method = 'beforeShow')) {
+    //             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+    //             call_user_func_array([$this, $method], $parameters);
+    //         }
 
-            setRecord(static::getInstanceModel());
+    //         setRecord(static::getInstanceModel());
 
-            $info = static::infoList(new Info);
-            if ($info->getComponents()) {
-                $view = view(
-                    'larascaff::form-builder',
-                    ['form' => $info]
-                );
-            } else {
-                $view = view('larascaff::form-builder', ['form' => static::formBuilder(new Form)]);
-            }
+    //         $info = static::infoList(new Info);
+    //         if ($info->getComponents()) {
+    //             $view = view(
+    //                 'larascaff::form-builder',
+    //                 ['form' => $info]
+    //             );
+    //         } else {
+    //             $view = view('larascaff::form-builder', ['form' => static::formBuilder(new Form)]);
+    //         }
 
-            return $this->form($view, [
-                'size' => static::$modalSize,
-                'title' => static::getModalTitle(),
-                ...static::$viewData,
-            ]);
-        } catch (\Throwable $th) {
-            return responseError($th);
-        }
-    }
+    //         return $this->form($view, [
+    //             'size' => static::$modalSize,
+    //             'title' => static::getModalTitle(),
+    //             ...static::$viewData,
+    //         ]);
+    //     } catch (\Throwable $th) {
+    //         return responseError($th);
+    //     }
+    // }
 
     public static function getModalSize()
     {
@@ -351,43 +361,43 @@ abstract class Module extends Controller
         return static::$instanceModel;
     }
 
-    public function edit(string $id, Request $request)
-    {
-        if (! $request->ajax()) {
-            return redirect()->to(static::getUrl() . '?tableAction=update&tableActionId=' . $id);
-        }
-        $this->getRecord($id);
+    // public function edit(string $id, Request $request)
+    // {
+    //     if (! $request->ajax()) {
+    //         return redirect()->to(static::getUrl() . '?tableAction=update&tableActionId=' . $id);
+    //     }
+    //     $this->getRecord($id);
 
-        try {
-            $this->addDataToview([
-                'action' => url(static::getUrl() . '/' . static::getInstanceModel()->{static::getInstanceModel()->getRouteKeyName()}),
-                'method' => 'PUT',
-            ]);
+    //     try {
+    //         $this->addDataToview([
+    //             'action' => url(static::getUrl() . '/' . static::getInstanceModel()->{static::getInstanceModel()->getRouteKeyName()}),
+    //             'method' => 'PUT',
+    //         ]);
 
-            // run hook before edit
-            if (method_exists($this, $method = 'shareData')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-                call_user_func_array([$this, $method], $parameters);
-            }
-            if (method_exists($this, $method = 'beforeEdit')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-                call_user_func_array([$this, $method], $parameters);
-            }
+    //         // run hook before edit
+    //         if (method_exists($this, $method = 'shareData')) {
+    //             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+    //             call_user_func_array([$this, $method], $parameters);
+    //         }
+    //         if (method_exists($this, $method = 'beforeEdit')) {
+    //             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+    //             call_user_func_array([$this, $method], $parameters);
+    //         }
 
-            setRecord(static::getInstanceModel());
+    //         setRecord(static::getInstanceModel());
 
-            return $this->form(
-                view('larascaff::form-builder', ['form' => static::formBuilder(new Form)]),
-                [
-                    'size' => static::$modalSize,
-                    'title' => static::getModalTitle(),
-                    ...static::$viewData,
-                ]
-            );
-        } catch (\Throwable $th) {
-            return responseError($th);
-        }
-    }
+    //         return $this->form(
+    //             view('larascaff::form-builder', ['form' => static::formBuilder(new Form)]),
+    //             [
+    //                 'size' => static::$modalSize,
+    //                 'title' => static::getModalTitle(),
+    //                 ...static::$viewData,
+    //             ]
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return responseError($th);
+    //     }
+    // }
 
     public function form($view, array $formConfig = [])
     {
@@ -411,48 +421,48 @@ abstract class Module extends Controller
         $request->validate(static::$validations['validations'] ?? [], static::$validations['messages'] ?? []);
     }
 
-    public function update(Request $request, Model | string $id): \Illuminate\Http\JsonResponse
-    {
-        if ($id instanceof Model) {
-            static::$instanceModel = $id;
-        } else {
-            $this->getRecord($id);
-        }
+    // public function update(Request $request, Model | string $id): \Illuminate\Http\JsonResponse
+    // {
+    //     if ($id instanceof Model) {
+    //         static::$instanceModel = $id;
+    //     } else {
+    //         $this->getRecord($id);
+    //     }
 
-        $this->formBuilderTranslation($request, static::formBuilder(new Form));
-        $this->initValidation($request);
-        DB::beginTransaction();
+    //     $this->formBuilderTranslation($request, static::formBuilder(new Form));
+    //     $this->initValidation($request);
+    //     DB::beginTransaction();
 
-        try {
-            // run hook before udpate
-            if (method_exists($this, $method = 'beforeUpdate')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-                call_user_func_array([$this, $method], $parameters);
-            }
+    //     try {
+    //         // run hook before udpate
+    //         if (method_exists($this, $method = 'beforeUpdate')) {
+    //             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+    //             call_user_func_array([$this, $method], $parameters);
+    //         }
 
-            static::$oldModelValue = static::getInstanceModel()->replicate();
+    //         static::$oldModelValue = static::getInstanceModel()->replicate();
 
-            static::getInstanceModel()->fill($request->all());
-            static::getInstanceModel()->save();
+    //         static::getInstanceModel()->fill($request->all());
+    //         static::getInstanceModel()->save();
 
-            // handle form builder
-            $this->formBuilderResolver($request);
+    //         // handle form builder
+    //         $this->formBuilderResolver($request);
 
-            // run hook after update
-            if (method_exists($this, $method = 'afterUpdate')) {
-                $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-                call_user_func_array([$this, $method], $parameters);
-            }
+    //         // run hook after update
+    //         if (method_exists($this, $method = 'afterUpdate')) {
+    //             $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
+    //             call_user_func_array([$this, $method], $parameters);
+    //         }
 
-            DB::commit();
+    //         DB::commit();
 
-            return responseSuccess();
-        } catch (\Throwable $th) {
-            DB::rollBack();
+    //         return responseSuccess();
+    //     } catch (\Throwable $th) {
+    //         DB::rollBack();
 
-            return responseError($th);
-        }
-    }
+    //         return responseError($th);
+    //     }
+    // }
 
     protected function formBuilderTranslation(Request $request, Form $form)
     {
@@ -663,9 +673,10 @@ abstract class Module extends Controller
             Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName . $route['name'] : null);
         }
 
-        array_pop($routeName);
-        Route::name(implode('.', $routeName) . (count($routeName) ? '.' : ''))->group(function () {
-            Route::resource(static::getUrl(), static::class);
+        $lastRouteName = array_pop($routeName);
+        Route::name(implode('.', $routeName) . (count($routeName) ? '.' : ''))->group(function () use ($lastRouteName) {
+            // Route::resource(static::getUrl(), static::class);
+            Route::get(static::getUrl(), [static::class, 'index'])->name($lastRouteName . '.index');
         });
     }
 

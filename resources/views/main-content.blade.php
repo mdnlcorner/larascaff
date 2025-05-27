@@ -7,8 +7,15 @@
             </div>
             <div class="flex items-center gap-2" data-table-actions="{{ json_encode($tableActions?? []) }}" data-actions="{{ json_encode($actions ?? []) }}">
                 @foreach (($actions ?? []) as $item)
-                    @if ($item['show'])
-                        <x-larascaff::button variant="{{ $item['color'] }}" class="mb-3" data-method="{{ $item['method'] }}" data-action="{{ $item['url'] }}">{{ $item['label'] }}</x-larascaff::button>
+                    @if ($item['show']())
+                        <x-larascaff::button 
+                            data-handler="{{ $item['handler'] }}" 
+                            variant="{{ $item['color'] }}" class="mb-3" 
+                            data-method="{{ $item['method'] }}" 
+                            data-url="{{ $item['ajax'] ? url('handler') : $item['url'] }}" 
+                        >
+                            {{ $item['label'] }}
+                        </x-larascaff::button>
                     @endif
                 @endforeach
             </div>

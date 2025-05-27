@@ -33,7 +33,7 @@ class Textarea extends Field
             [
                 'name' => $this->name,
                 'label' => $this->label,
-                'value' => $this->value,
+                'value' => $this->getValue(),
                 'placeholder' => $this->placeholder,
                 'columnSpan' => $this->columnSpan,
                 'disabled' => $this->disabled,

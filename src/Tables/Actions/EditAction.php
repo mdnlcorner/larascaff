@@ -51,7 +51,6 @@ class EditAction extends Action
                 $this->uploadMediaHandler(input: $input, model: $record);
             }
 
-            dd($this->getRelationship());
             foreach ($this->getRelationship() as $input) {
                 $this->relationshipHandler(input: $input, model: $record);
             }

@@ -70,7 +70,7 @@ export function initActionModal() {
     mainContent.on('click', '[data-handler]', function (e) {
         e.preventDefault()
         const handler = JSON.parse(this.dataset.handler);
-        const req = new AjaxAction(window.location.origin + '/handler', {
+        const req = new AjaxAction(this, {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json'
@@ -104,36 +104,36 @@ export function initActionModal() {
         }, false).execute()
     })
 
-    mainContent.on('click', '[data-action]', function (e) {
-        e.preventDefault()
-        if (this.dataset.method.toLowerCase() == 'delete') {
-            confirmation(res => {
-                (new AjaxAction(this))
-                    .onSuccess(res => {
-                        showToast(res.status, res.message)
-                        reloadDatatable(window['datatableId'])
-                    }, false)
-                    .onError(err => {
-                        const message = err.responseJSON?.message
-                        showToast('error', message ?? 'Something went wrong')
-                    })
-                    .execute()
-            })
+    // mainContent.on('click', '[data-action]', function (e) {
+    //     e.preventDefault()
+    //     if (this.dataset.method.toLowerCase() == 'delete') {
+    //         confirmation(res => {
+    //             (new AjaxAction(this))
+    //                 .onSuccess(res => {
+    //                     showToast(res.status, res.message)
+    //                     reloadDatatable(window['datatableId'])
+    //                 }, false)
+    //                 .onError(err => {
+    //                     const message = err.responseJSON?.message
+    //                     showToast('error', message ?? 'Something went wrong')
+    //                 })
+    //                 .execute()
+    //         })
 
-            return
-        };
+    //         return
+    //     };
 
-        const ajaxAction = new AjaxAction(this)
-        ajaxAction.onSuccess(function (res) {
-            const handle = (new HandleFormSubmit())
-            handle.onSuccess(res => {
+    //     const ajaxAction = new AjaxAction(this)
+    //     ajaxAction.onSuccess(function (res) {
+    //         const handle = (new HandleFormSubmit())
+    //         handle.onSuccess(res => {
 
-            })
-                .reloadDatatable(window['datatableId'] ?? '')
-                .init();
-        })
-            .execute()
-    })
+    //         })
+    //             .reloadDatatable(window['datatableId'] ?? '')
+    //             .init();
+    //     })
+    //         .execute()
+    // })
 }
 
 export function handleCheckMenu() {
@@ -274,7 +274,7 @@ export class AjaxAction extends AjaxOption {
         if (el instanceof HTMLElement) {
             this.el = $(el)
             this.label = this.el.html()
-            this.url = this.el.data('action')
+            this.url = this.el.data('url')
             this.method = this.el.data('method')
         } else {
             this.el = null
@@ -400,12 +400,16 @@ export class HandleFormSubmit extends AjaxOption {
                             for (let [key, value] of Object.entries(errors)) {
                                 let input = _this.formId.find(`[name="${key}"]`)
                                 if (!input.length) {
-                                    if (key.includes('.')) {
+                                    if (key.includes('.')) {                                        
                                         // @ts-ignore
-                                        value = value[0].replace(key, key.split('.')[0])
-                                        key = key.split('.')[0]
+                                        let keySplit = key.split('.') 
+                                        if (! isNaN(parseInt(keySplit[1])) && parseInt(keySplit[1]).toString().length == keySplit[1].length) {
+                                            input = _this.formId.find(`[name="${key}[]"]`)
+                                        } else {
+                                            let searchKey = keySplit[0] + '[' + keySplit[1] + ']';
+                                            input = _this.formId.find(`[name="${searchKey}"]`)
+                                        }
                                     }
-                                    input = _this.formId.find(`[name="${key}[]"]`)
                                 }
                                 if (i == 0) {
                                     input.trigger('focus')

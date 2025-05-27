@@ -80,11 +80,18 @@ trait HasField
 
             if ($matches[1]) {
                 if ($parentRelation = getRecord()->{$this->getParentRelationship()}) {
-                    $this->value($parentRelation->{$matches[1]});
+                    $this->value($parentRelation->{$matches[1][0]});
+                    if (method_exists($this, 'numberFormat') && $this->numberFormat) {
+                        $this->value(number_format($this->value, 0, $this->numberFormat[1], $this->numberFormat[0]));
+                    }
                 }
             }
         } else {
-            $this->value(is_null($this->value) ? ($this->numberFormat ? number_format(getRecord($this->name), 0, $this->numberFormat[1], $this->numberFormat[0]) : getRecord($this->name)) ?? '' : $this->value);
+            if (method_exists($this, 'numberFormat')) {
+                $this->value(is_null($this->value) ? ($this->numberFormat ? number_format(getRecord($this->name), 0, $this->numberFormat[1], $this->numberFormat[0]) : getRecord($this->name)) ?? '' : $this->value);
+            } elseif (is_null($this->value)) {
+                $this->value(getRecord($this->name));
+            }
         }
 
         return $this->value;

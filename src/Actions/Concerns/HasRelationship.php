@@ -29,13 +29,17 @@ trait HasRelationship
         switch (true) {
             case $relationship instanceof Relations\MorphToMany:
             case $relationship instanceof Relations\BelongsToMany:
-                $relationship->sync($this->getFormData()[str_replace('[]', '', $input->getName())]);
+                $relationship->sync($this->getFormData()[str_replace('[]', '', $input->getName())] ?? []);
 
                 break;
             case $relationship instanceof Relations\MorphOne:
             case $relationship instanceof Relations\HasOne:
-
-                dd($relationship, $input);
+                if ($model->{$input->getRelationship()}) {
+                    $relation = $model->{$input->getRelationship()}->fill($this->getFormData()[$input->getRelationship()]);
+                    $relation->save();
+                } else {
+                    $relationship->create($this->getFormData()[$input->getRelationship()]);
+                }
 
                 break;
             case $relationship instanceof Relations\HasMany:

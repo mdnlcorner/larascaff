@@ -4,13 +4,10 @@ namespace Mulaidarinull\Larascaff\Actions\Concerns;
 
 use Closure;
 use Illuminate\Support\Collection;
-use Mulaidarinull\Larascaff\Forms\Components\Form;
 
 trait HasForm
 {
     protected array $formData = [];
-
-    protected ?Form $form = null;
 
     protected ?Closure $modifyFormData = null;
 
@@ -32,9 +29,13 @@ trait HasForm
         }
     }
 
-    public function form(\Closure $form): static
+    public function form(Closure | bool | null $form = null): static
     {
         $this->options['form'] = $form;
+        $this->options['hasForm'] = true;
+        if (is_bool($form)) {
+            $this->options['hasForm'] = $form;
+        }
 
         return $this;
     }

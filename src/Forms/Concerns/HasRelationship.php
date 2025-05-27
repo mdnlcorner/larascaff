@@ -8,7 +8,7 @@ trait HasRelationship
 
     protected ?string $parentRelationship = null;
 
-    public function relationship(?string $name = null): static
+    public function relationship(?string $name = null, ?string $label = 'name'): static
     {
         $this->relationship = $name;
         if (is_null($name)) {

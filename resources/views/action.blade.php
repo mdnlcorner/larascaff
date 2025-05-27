@@ -9,7 +9,7 @@
                 <x-larascaff::dropdown-link 
                     data-handler="{{ $action['handler'] }}"
                     data-method="{{ $action['method'] }}" 
-                    data-actions="{{ $action['url'] }}"
+                    data-url="{{ url('handler') }}"
                 >
                     <button type="buttton" @class([
                         'flex items-center w-full gap-x-1 text-left',

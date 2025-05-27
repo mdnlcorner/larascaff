@@ -55,9 +55,13 @@ class Table extends DataTable
      */
     public function actions(array $actions): static
     {
-        $this->tableActions = collect($actions)
+        foreach ($actions as $action) {
+            foreach ($action->getOptions() as $key => $value) {
+                $this->tableActions[$key] = $value;
+            }
+        }
+        $this->tableActions = collect($this->tableActions)
             ->map(function ($item) {
-                $item = $item->getOptions();
                 $item['url'] = url($this->url . $item['path']);
 
                 return $item;
@@ -68,7 +72,7 @@ class Table extends DataTable
                 }
 
                 return user()->can($item['permission'] . ' ' . $this->url);
-            })->keyBy('name');
+            });
 
         return $this;
     }

@@ -136,7 +136,10 @@ class Action
         $this->options['icon'] = Arr::get($this->options, 'icon', ($this->options['permission'] == 'update' ? 'tabler-edit' : ($this->options['permission'] == 'read' ? 'tabler-eye' : ($this->options['permission'] == 'delete' ? 'tabler-trash' : null))));
         $this->options['color'] = Arr::get($this->options, 'color', ($this->options['permission'] == 'update' ? 'warning' : ($this->options['permission'] == 'delete' ? 'danger' : 'primary')));
         $this->options['form'] = Arr::get($this->options, 'form', null);
+        $this->options['hasForm'] = Arr::get($this->options, 'hasForm', true);
         $this->options['name'] = $this->options['name'];
+
+        return [$this->options['name'] => $this->options];
 
         return $this->options;
     }
@@ -155,16 +158,21 @@ class Action
             return responseError('Class does not exist');
         }
 
-        $handler = call_user_func([$request->post('_action_handler'), 'getTableActions']);
+        // actions
+        $handler = call_user_func([$request->post('_action_handler'), 'getActions']);
+        // table actions
+        $handler = $handler->merge(call_user_func([$request->post('_action_handler'), 'getTableActions']));
         $handler = Arr::get($handler, $request->post('_action_name'), null);
 
         if (is_null($handler)) {
             return responseError('Action not found');
         }
 
-        if ($request->post('_id')) {
-            $model = $request->post('_action_handler')::getInstanceModel();
+        $model = $request->post('_action_handler')::getInstanceModel();
+        if ($request->post('_id') && $request->post('_id') != 'null') {
             setRecord($model->query()->where($model->getRouteKeyName(), $request->post('_id'))->firstOrFail());
+        } else {
+            setRecord($model);
         }
 
         switch ($request->post('_action_type')) {
@@ -180,21 +188,25 @@ class Action
                         'slot' => view('larascaff::form-builder', ['form' => $form]),
                         'size' => $request->post('_action_handler')::getModalSize(),
                         'title' => $request->post('_action_handler')::getModalTitle(),
-                        'action' => url('handler'),
+                        'action' => isset($handler['action']) ? url('handler') : null,
                         'method' => 'POST',
                     ])->render(),
                 ]);
 
                 break;
-            default:
+            case 'action':
                 return $this->resolveClosureParams($handler['action']);
 
                 break;
         }
     }
 
-    protected function resolveClosureParams(callable $cb)
+    protected function resolveClosureParams(?callable $cb = null)
     {
+        if (! $cb) {
+            return;
+        }
+
         $parameters = [];
         foreach ((new \ReflectionFunction($cb))->getParameters() as $parameter) {
             $default = match ($parameter->getName()) {

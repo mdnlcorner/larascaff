@@ -37,7 +37,7 @@ class Select extends Field
 
     protected ?string $relationship = null;
 
-    public function relationship(?string $name, string $label = 'name'): static
+    public function relationship(?string $name = null, ?string $label = 'name'): static
     {
         $this->relationship = $name;
         $this->searchable = true;
@@ -339,7 +339,7 @@ class Select extends Field
                 'multiple' => $this->multiple,
                 'searchable' => $this->searchable,
                 'serverSide' => $this->serverSide,
-                'value' => $this->value,
+                'value' => $this->getValue(),
                 'dependColumn' => $this->dependColumn,
                 'dependValue' => $this->dependValue,
                 'depend' => $this->depend,
