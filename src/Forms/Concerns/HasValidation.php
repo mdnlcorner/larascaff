@@ -9,10 +9,10 @@ trait HasValidation
     public function validations(array $validations, array $messages = [])
     {
         foreach ($validations as $validation) {
-            $this->validations['validations'][$this->name][] = $validation;
+            $this->validations['validations'][] = $validation;
         }
         foreach ($messages as $key => $message) {
-            $this->validations['messages'][$this->name . '.' . $key] = $message;
+            $this->validations['messages'][$key] = $message;
         }
 
         return $this;

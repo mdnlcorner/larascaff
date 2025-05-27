@@ -129,11 +129,11 @@ class BaseUserModule extends Module
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
-                    ->modifyFormData(function(array $data, User $record) {
+                    ->modifyFormData(function (array $data, User $record) {
                         if (! $data['password']) {
                             $data['password'] = $record->password;
                         }
-                        
+
                         return $data;
                     }),
                 Tables\Actions\DeleteAction::make(),

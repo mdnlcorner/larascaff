@@ -6,12 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasRelationship;
 
 class Select extends Field
 {
-    use HasRelationship;
-
     protected array $options = [];
 
     protected bool $multiple = false;

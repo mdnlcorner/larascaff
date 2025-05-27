@@ -16,8 +16,8 @@
     'numberFormat' => null
 ])
 <div x-data="{
-    value: @js(is_null($value) ? ($numberFormat ? number_format(getRecord($name),0, $numberFormat[1], $numberFormat[0]) : getRecord($name)) ?? '' : $value),
-    type: '{{ $type }}',
+    value: @js($value),
+    type: @js($type),
     revealableIcon: 'tabler-eye'
 }" @set-{{ $name }}.window = "value = $event.detail" @class([
     'w-full form-wrapper',

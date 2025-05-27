@@ -49,33 +49,32 @@ trait HasForm
         return $this->formData;
     }
 
-    protected function inspectFormBuilder(Collection $forms, mixed $relationship = null)
+    protected function inspectFormBuilder(Collection $fields, mixed $relationship = null)
     {
-        foreach ($forms as $form) {
-            if (method_exists($form, 'getValidations')) {
-                if ($relationship) {
-                    if (count($form->getValidations()) && ! $this->getModule()::getInstanceModel()->{$relationship}() instanceof \Illuminate\Database\Eloquent\Relations\HasMany) {
-                        $this->fillValidation($form);
+        foreach ($fields as $field) {
+            if (method_exists($field, 'getValidations')) {
+                $this->fillValidations($field, $relationship);
+            }
+
+            if (method_exists($field, 'numberFormat')) {
+                if ($field->getNumberFormat()) {
+                    if ($relationship) {
+                        $explode = explode('.', $field->getName());
+                        $this->formData[$relationship][$explode[count($explode) - 1]] = removeNumberFormat($this->formData[$relationship][$explode[count($explode) - 1]]);
+                    } else {
+                        $this->formData[$field->getName()] = removeNumberFormat($this->formData[$field->getName()]);
                     }
-                } else {
-                    $this->fillValidation($form);
                 }
             }
 
-            if (method_exists($form, 'numberFormat')) {
-                if ($form->getNumberFormat()) {
-                    $this->formData[$form->getName()] = removeNumberFormat($this->formData[$form->getName()]);
-                }
+            if (method_exists($field, 'getComponents')) {
+                $relationship = $field->getRelationship();
+                $this->inspectFormBuilder($field->getComponents(), $relationship);
             }
 
-            if (method_exists($form, 'getComponents')) {
-                $relationship = $form->getRelationship();
-                $this->inspectFormBuilder($form->getComponents(), $relationship);
-            }
+            $this->addRelationshipToBeHandled($field);
 
-            $this->addRelationshipToBeHandled($form);
-
-            $this->addMediaToBeHandled($form);
+            $this->addMediaToBeHandled($field);
         }
     }
 }

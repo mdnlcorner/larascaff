@@ -3,18 +3,18 @@
 namespace Mulaidarinull\Larascaff\Actions\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations;
 use Mulaidarinull\Larascaff\Forms\Components\Field;
 use Mulaidarinull\Larascaff\Forms\Components\Layout;
-use Illuminate\Database\Eloquent\Relations;
 
 trait HasRelationship
 {
     protected array $relationship = [];
 
-    public function addRelationshipToBeHandled(Field | Layout $form): void
+    public function addRelationshipToBeHandled(Field | Layout $field): void
     {
-        if ($form->getRelationship()) {
-            $this->relationship[] = $form;
+        if ($field->getRelationship()) {
+            $this->relationship[] = $field;
         }
     }
 
@@ -35,8 +35,8 @@ trait HasRelationship
             case $relationship instanceof Relations\MorphOne:
             case $relationship instanceof Relations\HasOne:
 
-                dd($relationship);
-                
+                dd($relationship, $input);
+
                 break;
             case $relationship instanceof Relations\HasMany:
 

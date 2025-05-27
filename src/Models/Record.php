@@ -19,7 +19,8 @@ class Record extends Model
             $this->record = new self;
         }
         if ($key) {
-            if (str_contains($key, '.')) {
+            if (str_contains($key, 'ewall')) {
+                dd($key);
                 $relations = explode('.', $key);
                 $name = array_pop($relations);
                 $this->record->loadMissing(implode('.', $relations));
