@@ -188,7 +188,7 @@ class Action
                     'action_type' => 'action',
                     'id' => $request->post('_id'),
                     'html' => view('larascaff::form', [
-                        'slot' => view('larascaff::form-builder', ['form' => $form]),
+                        'slot' => view('larascaff::form-builder', ['form' => $form])->render(),
                         'size' => $form->getModalSize(),
                         'title' => $request->post('_action_handler')::getModalTitle(),
                         'action' => isset($handler['action']) ? url('handler') : null,
@@ -212,15 +212,18 @@ class Action
 
         $parameters = [];
         foreach ((new \ReflectionFunction($cb))->getParameters() as $parameter) {
+            $form = app()->make(Form::class)->module($this->getModule());
             $default = match ($parameter->getName()) {
                 'record' => ['record' => getRecord()],
                 'model' => ['model' => $this->getModule()::getModel()],
                 'data' => ['data' => $this->getFormData()],
+                'form' => ['form' => $form],
                 default => []
             };
 
             $type = match ($parameter->getType()?->getName()) {
                 $this->getModule()::getModel() => [$parameter->getName() => getRecord()],
+                Form::class => [$parameter->getName() => $form],
                 default => []
             };
 

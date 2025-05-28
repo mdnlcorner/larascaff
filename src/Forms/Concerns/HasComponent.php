@@ -38,8 +38,6 @@ trait HasComponent
     public function schema(array $components)
     {
         $this->components = collect($components);
-        $e = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
-        $this->module = $e[1]['class'] ?? null;
 
         return $this;
     }

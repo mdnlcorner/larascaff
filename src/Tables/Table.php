@@ -29,6 +29,11 @@ class Table extends DataTable
         return $this->eloquentTable;
     }
 
+    public function getActionHandler(): string
+    {
+        return $this->actionHandler;
+    }
+
     public function filterTable($filter = []): static
     {
         $this->filterTable = $filter;
