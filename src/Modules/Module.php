@@ -141,7 +141,8 @@ abstract class Module extends Controller
                     'actionHandler' => static::class,
                     'actionType' => $item['hasForm'] === true ? 'form' : 'action',
                     'actionName' => $item['name'],
-                    'id' => '',
+                    'hasConfirmation' => $item['hasConfirmation'],
+                    'id' => null,
                 ]);
 
                 return $item;

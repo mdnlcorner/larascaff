@@ -70,6 +70,7 @@ export function initActionModal() {
     mainContent.on('click', '[data-handler]', function (e) {
         e.preventDefault()
         const handler = JSON.parse(this.dataset.handler);
+
         const req = new AjaxAction(this, {
             method: 'post',
             headers: {
@@ -82,58 +83,47 @@ export function initActionModal() {
                 _id: handler.id,
             })
         })
+
+        // if has confirmation
+        if (handler.hasConfirmation) {
+            confirmation(() => {
+                req.onSuccess(res => {
+                    showToast(res.status, res.message)
+                    reloadDatatable(window['datatableId'])
+                }, false)
+                    .onError(err => {
+                        const message = err.responseJSON?.message
+                        showToast('error', message ?? 'Something went wrong')
+                    })
+                    .execute()
+            })
+
+            return
+        }
+
         req.onSuccess(function (res) {
             if (window['modalAction'] && res.html) {
                 modalEl.innerHTML = res.html
                 window['modalAction'].show()
 
                 const handle = new HandleFormSubmit()
-                handle
-                    .addData({
-                        _action_handler: res.action_handler,
-                        _action_name: res.action_name,
-                        _action_type: res.action_type,
-                        _id: res.id
-                    })
+                handle.addData({
+                    _action_handler: res.action_handler,
+                    _action_name: res.action_name,
+                    _action_type: res.action_type,
+                    _id: res.id
+                })
                     .onSuccess(res => {
 
                     })
                     .reloadDatatable(window['datatableId'] ?? '')
                     .init();
+            } else {
+                showToast(res.status, res.message)
+                reloadDatatable(window['datatableId'])
             }
         }, false).execute()
     })
-
-    // mainContent.on('click', '[data-action]', function (e) {
-    //     e.preventDefault()
-    //     if (this.dataset.method.toLowerCase() == 'delete') {
-    //         confirmation(res => {
-    //             (new AjaxAction(this))
-    //                 .onSuccess(res => {
-    //                     showToast(res.status, res.message)
-    //                     reloadDatatable(window['datatableId'])
-    //                 }, false)
-    //                 .onError(err => {
-    //                     const message = err.responseJSON?.message
-    //                     showToast('error', message ?? 'Something went wrong')
-    //                 })
-    //                 .execute()
-    //         })
-
-    //         return
-    //     };
-
-    //     const ajaxAction = new AjaxAction(this)
-    //     ajaxAction.onSuccess(function (res) {
-    //         const handle = (new HandleFormSubmit())
-    //         handle.onSuccess(res => {
-
-    //         })
-    //             .reloadDatatable(window['datatableId'] ?? '')
-    //             .init();
-    //     })
-    //         .execute()
-    // })
 }
 
 export function handleCheckMenu() {
@@ -400,10 +390,10 @@ export class HandleFormSubmit extends AjaxOption {
                             for (let [key, value] of Object.entries(errors)) {
                                 let input = _this.formId.find(`[name="${key}"]`)
                                 if (!input.length) {
-                                    if (key.includes('.')) {                                        
+                                    if (key.includes('.')) {
                                         // @ts-ignore
-                                        let keySplit = key.split('.') 
-                                        if (! isNaN(parseInt(keySplit[1])) && parseInt(keySplit[1]).toString().length == keySplit[1].length) {
+                                        let keySplit = key.split('.')
+                                        if (!isNaN(parseInt(keySplit[1])) && parseInt(keySplit[1]).toString().length == keySplit[1].length) {
                                             input = _this.formId.find(`[name="${key}[]"]`)
                                         } else {
                                             let searchKey = keySplit[0] + '[' + keySplit[1] + ']';

@@ -38,4 +38,15 @@ trait HasMedia
             }
         }
     }
+
+    protected function deleteMediaHandler(Uploader $input, Model $model)
+    {
+        if ($input instanceof Uploader) {
+            $filename = null;
+            if ($input->getField()) {
+                $filename = $input->getPath() . '/' . $model->{$input->getField()};
+            }
+            $model->deleteMedia($filename, $input->getField());
+        }
+    }
 }

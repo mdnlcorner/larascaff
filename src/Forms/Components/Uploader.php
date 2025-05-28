@@ -90,6 +90,11 @@ class Uploader extends Field
         return $this;
     }
 
+    public function getDisk(): string
+    {
+        return $this->disk;
+    }
+
     public function linkPreview(bool $linkPreview = true): static
     {
         $this->config['linkPreview'] = $linkPreview;

@@ -25,7 +25,7 @@ trait HasForm
     protected function callModifyFormData($callback)
     {
         if ($callback) {
-            $data = $this->resolveClosureParams($callback);
+            $data = $this->resolveClosureParams($callback, $this->getOptions()[$this->getName()]);
             if (! $data) {
                 throw new \Exception('Closure in modifyFormData must return array $data');
             }
@@ -65,9 +65,13 @@ trait HasForm
                 if ($field->getNumberFormat()) {
                     if ($relationship) {
                         $explode = explode('.', $field->getName());
-                        $this->formData[$relationship][$explode[count($explode) - 1]] = removeNumberFormat($this->formData[$relationship][$explode[count($explode) - 1]]);
+                        if (isset($this->formData[$relationship][$explode[count($explode) - 1]])) {
+                            $this->formData[$relationship][$explode[count($explode) - 1]] = removeNumberFormat($this->formData[$relationship][$explode[count($explode) - 1]]);
+                        }
                     } else {
-                        $this->formData[$field->getName()] = removeNumberFormat($this->formData[$field->getName()]);
+                        if (isset($this->formData[$field->getName()])) {
+                            $this->formData[$field->getName()] = removeNumberFormat($this->formData[$field->getName()]);
+                        }
                     }
                 }
             }

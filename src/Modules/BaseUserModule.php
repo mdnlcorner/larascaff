@@ -101,7 +101,6 @@ class BaseUserModule extends Module
 
                         return $data;
                     }),
-                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('permissions')
                     ->label('Permission')
                     ->form(function (Forms\Components\Form $form) {
@@ -130,6 +129,7 @@ class BaseUserModule extends Module
                     })
                     ->permission('update-permissions')
                     ->icon('tabler-shield'),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->customizeColumn(function (EloquentDataTable $eloquentDataTable) {
                 $eloquentDataTable

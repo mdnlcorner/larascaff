@@ -99,7 +99,8 @@ class Table extends DataTable
                             $action['handler'] = json_encode([
                                 'actionHandler' => $this->actionHandler,
                                 'actionName' => $action['name'],
-                                'actionType' => 'form',
+                                'actionType' => $action['hasForm'] === true ? 'form' : 'action',
+                                'hasConfirmation' => $action['hasConfirmation'],
                                 'id' => $model->{$model->getRouteKeyName()},
                             ]);
                             $actions[] = $action;

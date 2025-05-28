@@ -10,6 +10,7 @@ use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
 
 class Action
 {
+    use Concerns\HasConfirmation;
     use Concerns\HasForm;
     use Concerns\HasLifecycle;
     use Concerns\HasMedia;
@@ -158,6 +159,11 @@ class Action
         return $this;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     public function ajax(?bool $ajax = true): static
     {
         $this->ajax = $ajax;
@@ -180,6 +186,7 @@ class Action
         $this->options['name'] = $this->name;
         $this->options['label'] = $this->label;
         $this->options['action'] = $this->action;
+        $this->options['hasConfirmation'] = $this->confirmation;
 
         return [$this->name => $this->options];
     }
@@ -254,6 +261,9 @@ class Action
         foreach ((new \ReflectionFunction($cb))->getParameters() as $parameter) {
             $form = app()->make(Form::class)->module($this->getModule());
             if (! $this->title) {
+                if (! isset($handler['name'])) {
+                    dd($handler);
+                }
                 $form->title('Form ' . ucwords($handler['name']) . ' ' . str(ucwords(str_replace('_', ' ', $this->getModule()::getInstanceModel()->getTable())))->singular()->toString());
             }
             $default = match ($parameter->getName()) {
