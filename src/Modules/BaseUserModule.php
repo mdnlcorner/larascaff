@@ -104,10 +104,9 @@ class BaseUserModule extends Module
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('permissions')
                     ->label('Permission')
-                    ->path('{{id}}/permissions')
                     ->form(function (Forms\Components\Form $form) {
                         return $form->schema([
-                            PermissionFormComponent::make()
+                            UserPermissionFormComponent::make()
                                 ->shareData(function (User $user) {
                                     $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
                                     $users = User::query()->where('id', '!=', $user->id)->get()->map(fn ($user) => ['label' => $user->name, 'value' => $user->id]);
@@ -147,21 +146,5 @@ class BaseUserModule extends Module
                         Tables\Column::make('updated_at'),
                     ]);
             });
-    }
-
-    public static function beforeStore(Request $request, User $user)
-    {
-        $request->merge([
-            'password' => bcrypt($request->password),
-        ]);
-    }
-
-    public static function beforeUpdate(Request $request, User $user)
-    {
-        if (! $request->password) {
-            $request->merge(['password' => $user->password]);
-        } else {
-            $request->merge(['password' => bcrypt($request->password)]);
-        }
     }
 }

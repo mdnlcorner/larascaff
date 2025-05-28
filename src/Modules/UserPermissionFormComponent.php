@@ -2,9 +2,10 @@
 
 namespace Mulaidarinull\Larascaff\Modules;
 
+use Illuminate\Contracts\View\View;
 use Mulaidarinull\Larascaff\Forms\Components\Component;
 
-class PermissionFormComponent extends Component
+class UserPermissionFormComponent extends Component
 {
     protected ?\Closure $shareData = null;
 
@@ -22,7 +23,7 @@ class PermissionFormComponent extends Component
         return $cb(getRecord());
     }
 
-    public function view()
+    public function view(): View
     {
         return view('larascaff::pages.user-permission-form', [
             'form' => $this,

@@ -3,7 +3,6 @@
 namespace Mulaidarinull\Larascaff\Modules\Configuration;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Validation\Rule;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\Actions\Action;
 use Mulaidarinull\Larascaff\Actions\CreateAction;
@@ -58,14 +57,6 @@ class BaseMenuModule extends Module
         BatchFacade::update(new Menu, $data, 'id');
 
         return responseSuccess();
-    }
-
-    public function validationRules()
-    {
-        return [
-            'name' => 'required',
-            'url' => ['required', Rule::unique(static::getInstanceModel()->getTable())->ignore(static::getInstanceModel())],
-        ];
     }
 
     public static function table(Tables\Table $table): Tables\Table
