@@ -26,6 +26,12 @@ class Form
 
     public function getTitle(): string
     {
+        if (! $this->title) {
+            if ($this->getModule()::getInstanceModel()) {
+                $this->title = 'Form ' . str(ucwords(str_replace('_', ' ', $this->getModule()::getInstanceModel()->getTable())))->singular();
+            }
+        }
+
         return $this->title;
     }
 

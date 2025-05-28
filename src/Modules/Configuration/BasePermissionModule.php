@@ -40,7 +40,7 @@ class BasePermissionModule extends Module
             Forms\Components\TextInput::make('name')
                 ->validations([
                     'required',
-                    Rule::unique('permissions')->ignore(getRecord())
+                    Rule::unique('permissions')->ignore(getRecord()),
                 ]),
             Forms\Components\TextInput::make('guard_name')->required(),
             Forms\Components\Select::make('menu_id')

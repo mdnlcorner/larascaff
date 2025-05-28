@@ -9,6 +9,10 @@ trait HasForm
 {
     protected array $formData = [];
 
+    protected Closure | bool | null $form = null;
+
+    protected bool $hasForm = true;
+
     protected ?Closure $modifyFormData = null;
 
     public function modifyFormData(callable $callback): static
@@ -31,10 +35,10 @@ trait HasForm
 
     public function form(Closure | bool | null $form = null): static
     {
-        $this->options['form'] = $form;
-        $this->options['hasForm'] = true;
+        $this->form = $form;
+        $this->hasForm = true;
         if (is_bool($form)) {
-            $this->options['hasForm'] = $form;
+            $this->hasForm = $form;
         }
 
         return $this;
@@ -42,7 +46,7 @@ trait HasForm
 
     public function getForm()
     {
-        return app()->call($this->options['form']);
+        return app()->call($this->form);
     }
 
     public function getFormData(): array
