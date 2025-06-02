@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
+use Mulaidarinull\Larascaff\Info\Components\Info;
 
 class Action
 {
@@ -225,7 +226,7 @@ class Action
         switch ($request->post('_action_type')) {
             case 'form':
                 /**
-                 * @var Form
+                 * @var Form|Info
                  */
                 $form = $this->resolveClosureParams($handler['form'], $handler);
 
@@ -259,24 +260,19 @@ class Action
 
         $parameters = [];
         foreach ((new \ReflectionFunction($cb))->getParameters() as $parameter) {
-            $form = app()->make(Form::class)->module($this->getModule());
-            if (! $this->title) {
-                if (! isset($handler['name'])) {
-                    dd($handler);
-                }
-                $form->title('Form ' . ucwords($handler['name']) . ' ' . str(ucwords(str_replace('_', ' ', $this->getModule()::getInstanceModel()->getTable())))->singular()->toString());
-            }
             $default = match ($parameter->getName()) {
-                'record' => ['record' => getRecord()],
-                'model' => ['model' => $this->getModule()::getModel()],
-                'data' => ['data' => $this->getFormData()],
-                'form' => ['form' => $form],
+                'record' => [$parameter->getName() => getRecord()],
+                'model' => [$parameter->getName() => $this->getModule()::getModel()],
+                'data' => [$parameter->getName() => $this->getFormData()],
+                'form' => [$parameter->getName() => app()->make(Form::class)->module($this->getModule())],
+                'info' => [$parameter->getName() => app()->make(Info::class)->module($this->getModule())],
                 default => []
             };
 
-            $type = match ($parameter->getType()?->getName()) {
+            $type = match ($parameter->getType()) {
                 $this->getModule()::getModel() => [$parameter->getName() => getRecord()],
-                Form::class => [$parameter->getName() => $form],
+                Form::class => [$parameter->getName() => Arr::get($default, 'form', app()->make(Form::class)->module($this->getModule()))],
+                Info::class => [$parameter->getName() => Arr::get($default, 'info', app()->make(Info::class)->module($this->getModule()))],
                 default => []
             };
 

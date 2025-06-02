@@ -21,12 +21,12 @@ class EditAction extends Action
 
         if ($this->getModule()) {
             $this->action(function (Request $request, $record) {
-                return $this->update($request, $record);
+                return $this->handle($request, $record);
             });
         }
     }
 
-    protected function update(Request $request, Model $record): \Illuminate\Http\JsonResponse
+    protected function handle(Request $request, Model $record): \Illuminate\Http\JsonResponse
     {
         Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
 

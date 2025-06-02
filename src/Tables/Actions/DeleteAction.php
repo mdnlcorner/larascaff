@@ -3,7 +3,7 @@
 namespace Mulaidarinull\Larascaff\Tables\Actions;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
@@ -24,17 +24,21 @@ class DeleteAction extends Action
         $this->form(false);
 
         if ($this->getModule()) {
-            $this->action(function (Request $request, $record) {
-                return $this->delete($request, $record);
+            $this->action(function ($record) {
+                return $this->handle($record);
             });
         }
     }
 
-    protected function delete(Request $request, Model $record)
+    protected function handle(Model $record)
     {
         Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
 
-        $this->form(fn (Form $form) => $this->getModule()::formBuilder($form));
+        if ($form = Arr::get($this->getModule()::getActions(), 'create.form')) {
+            $this->form($form);
+        } else {
+            $this->form(fn (Form $form) => $this->getModule()::formBuilder($form));
+        }
 
         $this->inspectFormBuilder($this->getForm()->getComponents());
 

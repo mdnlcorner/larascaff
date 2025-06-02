@@ -23,12 +23,12 @@ class CreateAction extends Action
             ->method('POST');
         if ($this->getModule()) {
             $this->action(function (Request $request, $record) {
-                return $this->store($request, $record);
+                return $this->handle($request, $record);
             });
         }
     }
 
-    protected function store(Request $request, Model $record): \Illuminate\Http\JsonResponse
+    protected function handle(Request $request, Model $record): \Illuminate\Http\JsonResponse
     {
         Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
 
