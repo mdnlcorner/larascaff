@@ -54,7 +54,7 @@ trait HasForm
         return $this->formData;
     }
 
-    protected function inspectFormBuilder(Collection $fields, mixed $relationship = null)
+    protected function inspectFormBuilder(Collection | array $fields, mixed $relationship = null)
     {
         foreach ($fields as $field) {
             if (method_exists($field, 'getValidations')) {
@@ -81,7 +81,7 @@ trait HasForm
                 if (method_exists($field, 'getRelationship')) {
                     $relationship = $field->getRelationship();
                 }
-                $this->inspectFormBuilder($field->getComponents(), $relationship);
+                $this->inspectFormBuilder($field->getComponents() ?? [], $relationship);
             }
 
             $this->addRelationshipToBeHandled($field);

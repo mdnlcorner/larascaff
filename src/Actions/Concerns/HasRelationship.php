@@ -4,7 +4,6 @@ namespace Mulaidarinull\Larascaff\Actions\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations;
-use Mulaidarinull\Larascaff\Forms\Components\Component;
 use Mulaidarinull\Larascaff\Forms\Components\Field;
 use Mulaidarinull\Larascaff\Forms\Components\Layout;
 
@@ -12,7 +11,7 @@ trait HasRelationship
 {
     protected array $relationship = [];
 
-    public function addRelationshipToBeHandled(Field | Layout | Component $field): void
+    public function addRelationshipToBeHandled(mixed $field): void
     {
         if (method_exists($field, 'getRelationship') && $field->getRelationship()) {
             $this->relationship[] = $field;

@@ -59,14 +59,7 @@ class Action
         $this->name = $name;
         if (request()->has(['_action_handler', '_action_name', '_action_type', '_id']) && request()->ajax()) {
             $this->module(request()->post('_action_handler'));
-            $this->formData = request()->except([
-                '_token',
-                '_method',
-                '_action_handler',
-                '_action_name',
-                '_action_type',
-                '_id',
-            ]);
+            $this->fillFormData();
 
             $this->form(function (Form $form) {
                 return $this->getModule()::formBuilder($form);
@@ -193,6 +186,18 @@ class Action
         return [$this->name => $this->options];
     }
 
+    protected function fillFormData()
+    {
+        $this->formData = request()->except([
+            '_token',
+            '_method',
+            '_action_handler',
+            '_action_name',
+            '_action_type',
+            '_id',
+        ]);
+    }
+
     public function actionHandler(Request $request)
     {
         $request->validate([
@@ -246,6 +251,12 @@ class Action
 
                 break;
             case 'action':
+                if ($actions['form'] && ! $this->form) {
+                    $this->fillFormData();
+                    $this->form = $actions['form'];
+                    $this->inspectFormBuilder($this->getForm()->getComponents());
+                }
+
                 return $this->resolveClosureParams($actions['action']);
 
                 break;
