@@ -10,6 +10,8 @@ trait HasLifecycle
 
     protected ?Closure $beforeSave = null;
 
+    protected ?Closure $beforeFormFilled = null;
+
     protected function callHook(?callable $hook)
     {
         if ($hook) {
@@ -17,9 +19,16 @@ trait HasLifecycle
         }
     }
 
-    public function afterSave(\Closure $callback): static
+    public function afterSave(Closure $callback): static
     {
         $this->afterSave = $callback;
+
+        return $this;
+    }
+
+    public function beforeFormFilled(Closure $callback): static
+    {
+        $this->beforeFormFilled = $callback;
 
         return $this;
     }

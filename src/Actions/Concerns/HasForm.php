@@ -15,7 +15,7 @@ trait HasForm
 
     protected ?Closure $modifyFormData = null;
 
-    public function modifyFormData(callable $callback): static
+    public function modifyFormData(Closure $callback): static
     {
         $this->modifyFormData = $callback;
 
@@ -25,7 +25,7 @@ trait HasForm
     protected function callModifyFormData($callback)
     {
         if ($callback) {
-            $data = $this->resolveClosureParams($callback, $this->getOptions()[$this->getName()]);
+            $data = $this->resolveClosureParams($callback);
             if (! $data) {
                 throw new \Exception('Closure in modifyFormData must return array $data');
             }

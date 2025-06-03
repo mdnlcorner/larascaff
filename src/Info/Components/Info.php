@@ -4,15 +4,14 @@ namespace Mulaidarinull\Larascaff\Info\Components;
 
 use Closure;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasColumnSpan;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasComponent;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
+use Mulaidarinull\Larascaff\Forms\Concerns;
 
 class Info
 {
-    use HasColumnSpan;
-    use HasComponent;
-    use HasModule;
+    use Concerns\HasColumnSpan;
+    use Concerns\HasComponent;
+    use Concerns\HasModal;
+    use Concerns\HasModule;
 
     protected ?string $label = '';
 
@@ -21,28 +20,6 @@ class Info
     protected bool $show = true;
 
     protected $value = null;
-
-    protected ?string $title = null;
-
-    protected ?ModalSize $modalSize = ModalSize::Md;
-
-    public function title(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    public function getTitle(): string
-    {
-        if (! $this->title) {
-            if ($this->getModule()::getInstanceModel()) {
-                $this->title = 'Form ' . str(ucwords(str_replace('_', ' ', $this->getModule()::getInstanceModel()->getTable())))->singular();
-            }
-        }
-
-        return $this->title;
-    }
 
     public function value($value)
     {

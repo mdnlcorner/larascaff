@@ -188,6 +188,7 @@ class Action
         $this->options['label'] = $this->label;
         $this->options['action'] = $this->action;
         $this->options['hasConfirmation'] = $this->confirmation;
+        $this->options['beforeFormFilled'] = $this->beforeFormFilled;
 
         return [$this->name => $this->options];
     }
@@ -200,19 +201,19 @@ class Action
             '_action_type' => 'required',
         ]);
 
-        $this->module($request->post('_action_handler'));
-
         if (! class_exists($request->post('_action_handler'))) {
             return responseError('Class does not exist');
         }
 
-        // get actions
-        $handler = call_user_func([$request->post('_action_handler'), 'getActions']);
-        // get table actions
-        $handler = $handler->merge(call_user_func([$request->post('_action_handler'), 'getTableActions']));
-        $handler = Arr::get($handler, $request->post('_action_name'), null);
+        $this->module($request->post('_action_handler'));
 
-        if (is_null($handler)) {
+        // get actions
+        $actions = call_user_func([$request->post('_action_handler'), 'getActions']);
+        // get table actions
+        $actions = $actions->merge(call_user_func([$request->post('_action_handler'), 'getTableActions']));
+        $actions = Arr::get($actions, $request->post('_action_name'), null);
+
+        if (is_null($actions)) {
             return responseError('Action not found');
         }
 
@@ -228,7 +229,9 @@ class Action
                 /**
                  * @var Form|Info
                  */
-                $form = $this->resolveClosureParams($handler['form'], $handler);
+                $form = $this->resolveClosureParams($actions['form']);
+
+                $this->callHook($actions['beforeFormFilled']);
 
                 return response()->json([
                     'action_handler' => $request->post('_action_handler'),
@@ -236,23 +239,20 @@ class Action
                     'action_type' => 'action',
                     'id' => $request->post('_id'),
                     'html' => view('larascaff::form', [
-                        'slot' => view('larascaff::form-builder', ['form' => $form])->render(),
-                        'size' => $form->getModalSize(),
-                        'title' => $form->getTitle(),
-                        'action' => isset($handler['action']) ? url('handler') : null,
-                        'method' => 'POST',
+                        'form' => $form,
+                        'action' => isset($actions['action']) ? url('handler') : null,
                     ])->render(),
                 ]);
 
                 break;
             case 'action':
-                return $this->resolveClosureParams($handler['action'], $handler);
+                return $this->resolveClosureParams($actions['action']);
 
                 break;
         }
     }
 
-    protected function resolveClosureParams(?callable $cb = null, ?array $handler = [])
+    protected function resolveClosureParams(?callable $cb = null)
     {
         if (! $cb instanceof \Closure) {
             return;
