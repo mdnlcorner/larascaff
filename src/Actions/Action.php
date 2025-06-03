@@ -269,7 +269,7 @@ class Action
                 default => []
             };
 
-            $type = match ($parameter->getType()) {
+            $type = match ($parameter->getType()?->getName()) {
                 $this->getModule()::getModel() => [$parameter->getName() => getRecord()],
                 Form::class => [$parameter->getName() => Arr::get($default, 'form', app()->make(Form::class)->module($this->getModule()))],
                 Info::class => [$parameter->getName() => Arr::get($default, 'info', app()->make(Info::class)->module($this->getModule()))],

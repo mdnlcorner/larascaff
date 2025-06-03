@@ -45,6 +45,7 @@ class CreateAction extends Action
             $this->callHook($this->beforeSave);
 
             $record->save();
+            setRecord($record);
 
             foreach ($this->getMedia() as $input) {
                 $this->uploadMediaHandler(input: $input, model: $record);

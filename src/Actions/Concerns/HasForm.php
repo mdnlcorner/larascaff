@@ -77,7 +77,10 @@ trait HasForm
             }
 
             if (method_exists($field, 'getComponents')) {
-                $relationship = $field->getRelationship();
+                $relationship = null;
+                if (method_exists($field, 'getRelationship')) {
+                    $relationship = $field->getRelationship();
+                }
                 $this->inspectFormBuilder($field->getComponents(), $relationship);
             }
 

@@ -3,6 +3,7 @@
 namespace Mulaidarinull\Larascaff\Actions\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
+use Mulaidarinull\Larascaff\Forms\Components\Component;
 use Mulaidarinull\Larascaff\Forms\Components\Field;
 use Mulaidarinull\Larascaff\Forms\Components\Layout;
 use Mulaidarinull\Larascaff\Forms\Components\Uploader;
@@ -13,7 +14,7 @@ trait HasMedia
 
     protected ?Model $oldModelValue = null;
 
-    protected function addMediaToBeHandled(Field | Layout $input)
+    protected function addMediaToBeHandled(Field | Layout | Component $input)
     {
         if ($input instanceof Uploader) {
             $this->media[] = $input;
