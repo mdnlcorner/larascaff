@@ -24,6 +24,8 @@ class Action
 
     protected array $options = [];
 
+    protected ?Action $instance = null;
+
     protected ?string $permission = null;
 
     protected ?Closure $show = null;
@@ -54,8 +56,14 @@ class Action
     {
         $static = new static;
         $static->setup($name);
+        $static->instance = $static;
 
         return $static;
+    }
+
+    public function getInstance(): static
+    {
+        return $this->instance;
     }
 
     protected function setup(string $name)
@@ -173,6 +181,7 @@ class Action
 
     public function getOptions(): array
     {
+        $this->options['instance'] = $this->instance;
         $this->options['permission'] = $this->permission;
         $this->options['blank'] = $this->blank;
         $this->options['ajax'] = $this->ajax;
@@ -262,10 +271,12 @@ class Action
             case 'action':
                 if ($actions['isCustomAction']) {
                     $this->fillFormData();
-                    $this->form = $actions['form'];
-                    $this->withValidations = $actions['withValidations'];
-                    $this->isCustomAction = $actions['isCustomAction'];
-                    $this->permission = $actions['permission'];
+
+                    foreach ($actions as $key => $action) {
+                        $this->{$key} = $action;
+                    }
+
+                    $this->form = ! $actions['form'] ? Arr::get($this->getModule()::getActions(), 'create.form') : $actions['form'];
 
                     return $this->actionHandler($request, getRecord(), $actions['action']);
                 }
@@ -274,36 +285,6 @@ class Action
 
                 break;
         }
-    }
-
-    protected function resolveClosureParams(?callable $cb = null)
-    {
-        if (! $cb instanceof \Closure) {
-            throw new \Exception('Param must be callable');
-        }
-
-        $parameters = [];
-        foreach ((new \ReflectionFunction($cb))->getParameters() as $parameter) {
-            $default = match ($parameter->getName()) {
-                'record' => [$parameter->getName() => getRecord()],
-                'model' => [$parameter->getName() => $this->getModule()::getModel()],
-                'data' => [$parameter->getName() => $this->getFormData()],
-                'form' => [$parameter->getName() => app()->make(Form::class)->module($this->getModule())],
-                'info' => [$parameter->getName() => app()->make(Info::class)->module($this->getModule())],
-                default => []
-            };
-
-            $type = match ($parameter->getType()?->getName()) {
-                $this->getModule()::getModel() => [$parameter->getName() => getRecord()],
-                Form::class => [$parameter->getName() => Arr::get($default, 'form', app()->make(Form::class)->module($this->getModule()))],
-                Info::class => [$parameter->getName() => Arr::get($default, 'info', app()->make(Info::class)->module($this->getModule()))],
-                default => []
-            };
-
-            $parameters = [...$parameters, ...$default, ...$type];
-        }
-
-        return app()->call($cb, $parameters);
     }
 
     protected function actionHandler(Request $request, Model $record, ?Closure $action = null): \Illuminate\Http\JsonResponse
@@ -341,12 +322,14 @@ class Action
 
             setRecord($record);
 
-            foreach ($this->getMedia() as $input) {
-                $this->uploadMediaHandler(input: $input, model: $record);
-            }
+            if (! $this->isCustomAction) {
+                foreach ($this->getMedia() as $input) {
+                    $this->uploadMediaHandler(input: $input, model: $record);
+                }
 
-            foreach ($this->getRelationship() as $input) {
-                $this->relationshipHandler(input: $input, model: $record);
+                foreach ($this->getRelationship() as $input) {
+                    $this->relationshipHandler(input: $input, model: $record);
+                }
             }
 
             $this->callHook($this->afterSave);
@@ -359,5 +342,35 @@ class Action
 
             return responseError($th);
         }
+    }
+
+    protected function resolveClosureParams(?callable $cb = null)
+    {
+        if (! $cb instanceof \Closure) {
+            throw new \Exception('Param must be callable');
+        }
+
+        $parameters = [];
+        foreach ((new \ReflectionFunction($cb))->getParameters() as $parameter) {
+            $default = match ($parameter->getName()) {
+                'record' => [$parameter->getName() => getRecord()],
+                'model' => [$parameter->getName() => $this->getModule()::getModel()],
+                'data' => [$parameter->getName() => $this->getFormData()],
+                'form' => [$parameter->getName() => app()->make(Form::class)->module($this->getModule())],
+                'info' => [$parameter->getName() => app()->make(Info::class)->module($this->getModule())],
+                default => []
+            };
+
+            $type = match ($parameter->getType()?->getName()) {
+                $this->getModule()::getModel() => [$parameter->getName() => getRecord()],
+                Form::class => [$parameter->getName() => Arr::get($default, 'form', app()->make(Form::class)->module($this->getModule()))],
+                Info::class => [$parameter->getName() => Arr::get($default, 'info', app()->make(Info::class)->module($this->getModule()))],
+                default => []
+            };
+
+            $parameters = [...$parameters, ...$default, ...$type];
+        }
+
+        return app()->call($cb, $parameters);
     }
 }

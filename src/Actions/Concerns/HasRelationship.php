@@ -34,7 +34,11 @@ trait HasRelationship
                 break;
             case $relationship instanceof Relations\MorphOne:
             case $relationship instanceof Relations\HasOne:
-                if ($model->{$input->getRelationship()}) {
+                if ($this->getInstance() instanceof \Mulaidarinull\Larascaff\Tables\Actions\DeleteAction) {
+                    return $model->{$input->getRelationship()}()->delete();
+                }
+
+                if ($model->{$input->getRelationship()} && ($this->getInstance() instanceof \Mulaidarinull\Larascaff\Tables\Actions\EditAction)) {
                     $relation = $model->{$input->getRelationship()}->fill($this->getFormData()[$input->getRelationship()]);
                     $relation->save();
                 } else {

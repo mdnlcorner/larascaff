@@ -47,11 +47,15 @@ class DeleteAction extends Action
         try {
             $this->callHook($this->beforeSave);
 
-            $record->delete();
+            foreach ($this->getRelationship() as $input) {
+                $this->relationshipHandler(input: $input, model: $record);
+            }
 
             foreach ($this->getMedia() as $input) {
                 $this->deleteMediaHandler(input: $input, model: $record);
             }
+
+            $record->delete();
 
             $this->callHook($this->afterSave);
 
