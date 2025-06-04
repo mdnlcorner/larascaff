@@ -3,8 +3,11 @@
 namespace Mulaidarinull\Larascaff\Actions;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
 use Mulaidarinull\Larascaff\Info\Components\Info;
@@ -40,6 +43,8 @@ class Action
     protected ?string $blank = null;
 
     protected ?Closure $action = null;
+
+    protected bool $isCustomAction = false;
 
     protected string $method = 'post';
 
@@ -89,6 +94,7 @@ class Action
     public function action(\Closure $action): static
     {
         $this->action = $action;
+        $this->isCustomAction = true;
 
         return $this;
     }
@@ -180,7 +186,9 @@ class Action
         $this->options['name'] = $this->name;
         $this->options['label'] = $this->label;
         $this->options['action'] = $this->action;
+        $this->options['isCustomAction'] = $this->isCustomAction;
         $this->options['hasConfirmation'] = $this->confirmation;
+        $this->options['withValidations'] = $this->withValidations;
         $this->options['beforeFormFilled'] = $this->beforeFormFilled;
 
         return [$this->name => $this->options];
@@ -198,7 +206,7 @@ class Action
         ]);
     }
 
-    public function actionHandler(Request $request)
+    public function routeActionHandler(Request $request)
     {
         $request->validate([
             '_action_handler' => 'required',
@@ -214,6 +222,7 @@ class Action
 
         // get actions
         $actions = call_user_func([$request->post('_action_handler'), 'getActions']);
+
         // get table actions
         $actions = $actions->merge(call_user_func([$request->post('_action_handler'), 'getTableActions']));
         $actions = Arr::get($actions, $request->post('_action_name'), null);
@@ -251,10 +260,14 @@ class Action
 
                 break;
             case 'action':
-                if ($actions['form'] && ! $this->form) {
+                if ($actions['isCustomAction']) {
                     $this->fillFormData();
                     $this->form = $actions['form'];
-                    $this->inspectFormBuilder($this->getForm()->getComponents());
+                    $this->withValidations = $actions['withValidations'];
+                    $this->isCustomAction = $actions['isCustomAction'];
+                    $this->permission = $actions['permission'];
+
+                    return $this->actionHandler($request, getRecord(), $actions['action']);
                 }
 
                 return $this->resolveClosureParams($actions['action']);
@@ -266,7 +279,7 @@ class Action
     protected function resolveClosureParams(?callable $cb = null)
     {
         if (! $cb instanceof \Closure) {
-            return;
+            throw new \Exception('Param must be callable');
         }
 
         $parameters = [];
@@ -291,5 +304,60 @@ class Action
         }
 
         return app()->call($cb, $parameters);
+    }
+
+    protected function actionHandler(Request $request, Model $record, ?Closure $action = null): \Illuminate\Http\JsonResponse
+    {
+        Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
+
+        $this->inspectFormBuilder($this->getForm()->getComponents());
+
+        if ($this->withValidations) {
+            $request->validate($this->validations['validations'] ?? [], $this->validations['messages'] ?? []);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $this->callModifyFormData($this->modifyFormData);
+
+            if (! $this->isCustomAction) {
+                $record->fill($this->formData);
+            }
+
+            $this->callHook($this->beforeSave);
+
+            if ($this->name == 'edit') {
+                $this->oldModelValue = $record->replicate();
+            }
+
+            if (! $this->isCustomAction) {
+                $record->save();
+            }
+
+            if ($action && is_callable($action)) {
+                $this->resolveClosureParams($action);
+            }
+
+            setRecord($record);
+
+            foreach ($this->getMedia() as $input) {
+                $this->uploadMediaHandler(input: $input, model: $record);
+            }
+
+            foreach ($this->getRelationship() as $input) {
+                $this->relationshipHandler(input: $input, model: $record);
+            }
+
+            $this->callHook($this->afterSave);
+
+            DB::commit();
+
+            return responseSuccess();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return responseError($th);
+        }
     }
 }

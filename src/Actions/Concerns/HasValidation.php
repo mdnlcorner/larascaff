@@ -8,6 +8,15 @@ trait HasValidation
 {
     protected array $validations = [];
 
+    protected bool $withValidations = true;
+
+    public function withValidations(bool $status = true): static
+    {
+        $this->withValidations = $status;
+
+        return $this;
+    }
+
     protected function fillValidations(Field $field, ?string $relationship)
     {
         if ($relationship) {

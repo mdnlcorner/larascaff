@@ -24,9 +24,9 @@ class DeleteAction extends Action
         $this->form(false);
 
         if ($this->getModule()) {
-            $this->action(function ($record) {
+            $this->action = function ($record) {
                 return $this->handle($record);
-            });
+            };
         }
     }
 

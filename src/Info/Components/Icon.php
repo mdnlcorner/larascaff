@@ -10,24 +10,24 @@ class Icon extends Info
 
     protected ?string $icon = null;
 
-    public function color(string $color)
+    public function color(string $color): static
     {
         $this->color = $color;
 
         return $this;
     }
 
-    public function icon(string $icon)
+    public function icon(string $icon): static
     {
         $this->icon = $icon;
 
         return $this;
     }
 
-    public function view()
+    public function view(): string
     {
         if (! $this->show) {
-            return;
+            return '';
         }
 
         return Blade::render(
