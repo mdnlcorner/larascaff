@@ -84,9 +84,6 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
             $this->makeJs();
         }
         $this->makeMenu(Pluralizer::plural($this->moduleName, null));
-        if ($this->option('simple')) {
-            $this->makeView();
-        }
         $this->makeModule();
     }
 
@@ -121,7 +118,7 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
             '{{ modelVariable }}' => Pluralizer::singular($this->tableName),
         ];
 
-        $stubFile = $this->resolveStubPath('/../../stubs/' . (! $this->option('simple') ? 'larascaff.module-builder.stub' : 'larascaff.module.stub'));
+        $stubFile = $this->resolveStubPath('/../../stubs/' . 'larascaff.module-builder.stub');
         $file = $this->laravel->basePath('/app/Larascaff/Modules' . ($this->path != '' ? '/' . $this->path : '') . "/{$moduleClass}.php");
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, $replaces, $file, 'Module');
