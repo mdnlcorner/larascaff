@@ -5,11 +5,11 @@
                 @isset($dataTable)<p class="items-center hidden gap-1 text-sm md:flex text-muted-foreground"><span>{{ $pageTitle }}</span> @svg("tabler-chevron-right", 'w-4 h-4') <span>List</span></p>@endisset
                 <h4>{{ $pageTitle }}</h4>
             </div>
-            <div class="flex items-center gap-2" data-table-actions="{{ json_encode($tableActions?? []) }}" data-actions="{{ json_encode($actions ?? []) }}">
+            <div class="flex items-center gap-2" data-table-actions="{{ json_encode($tableActions ?? []) }}" data-actions="{{ json_encode($actions ?? []) }}">
                 @foreach (($actions ?? []) as $item)
                     @if ($item['show']())
                         <x-larascaff::button 
-                            data-handler="{{ $item['handler'] }}" 
+                            data-handler="{{ json_encode($item['handler']) }}" 
                             variant="{{ $item['color'] }}" class="mb-3" 
                             data-method="{{ $item['method'] }}" 
                             data-url="{{ $item['ajax'] ? url('handler') : $item['url'] }}" 

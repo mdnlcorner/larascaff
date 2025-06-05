@@ -68,6 +68,13 @@ class Table extends DataTable
         $this->tableActions = collect($this->tableActions)
             ->map(function ($item) {
                 $item['url'] = url($this->url . $item['path']);
+                $item['handler'] = [
+                    'actionHandler' => $this->actionHandler,
+                    'actionName' => $item['name'],
+                    'actionType' => $item['hasForm'] === true ? 'form' : 'action',
+                    'hasConfirmation' => $item['hasConfirmation'],
+                    'id' => null,
+                ];
 
                 return $item;
             })
@@ -93,16 +100,11 @@ class Table extends DataTable
             $this->eloquentTable = (new EloquentTable($this->query))->addIndexColumn()
                 ->addColumn('action', function (Model $model) {
                     $actions = [];
-                    foreach ($this->tableActions as $action) {
+                    foreach ($this->getActions() as $action) {
                         if ($action['show']($model)) {
                             $action['url'] = str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']);
-                            $action['handler'] = json_encode([
-                                'actionHandler' => $this->actionHandler,
-                                'actionName' => $action['name'],
-                                'actionType' => $action['hasForm'] === true ? 'form' : 'action',
-                                'hasConfirmation' => $action['hasConfirmation'],
-                                'id' => $model->{$model->getRouteKeyName()},
-                            ]);
+                            $action['handler']['id'] = $model->{$model->getRouteKeyName()};
+                            $action['handler'] = json_encode($action['handler']);
                             $actions[] = $action;
                         }
                     }

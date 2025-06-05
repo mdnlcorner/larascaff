@@ -121,13 +121,13 @@ abstract class Module extends Controller
         $actions = collect($actions)
             ->map(function ($item) use ($url) {
                 $item['url'] = url($url . $item['path']);
-                $item['handler'] = json_encode([
+                $item['handler'] = [
                     'actionHandler' => static::class,
                     'actionType' => $item['hasForm'] === true ? 'form' : 'action',
                     'actionName' => $item['name'],
                     'hasConfirmation' => $item['hasConfirmation'],
                     'id' => null,
-                ]);
+                ];
 
                 return $item;
             });

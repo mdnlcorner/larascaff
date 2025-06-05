@@ -113,10 +113,7 @@ export function initActionModal() {
                     _action_type: res.action_type,
                     _id: res.id
                 })
-                    .onSuccess(res => {
-
-                    })
-                    .reloadDatatable(window['datatableId'] ?? '')
+                handle.reloadDatatable(window['datatableId'] ?? '')
                     .init();
             } else {
                 showToast(res.status, res.message)
@@ -153,41 +150,66 @@ export function handleCheckMenu() {
 export function initActionByUrl() {
     const url = new URL(window['location'].href)
     const params = url.searchParams
-    let resolvedUrl: string = ''
+    let resolvedAction: Record<any, any> | null = null
 
     if (params.get('action')) {
         const actions = $('[data-actions]').data('actions')
-        let action = params.get('action') ?? '';
+        let action = params.get('action');
 
-        if (actions[action]) {
-            resolvedUrl = actions[action]['url']
+        if (action && actions[action]) {
+            resolvedAction = actions[action]
         }
-    }
-
-    if (params.get('tableAction')) {
+    } else if (params.get('tableAction')) {
         const actions = $('[data-table-actions]').data('tableActions')
         let action = params.get('tableAction') ?? '';
         let id = params.get('tableActionId') ?? '';
 
-        if (actions[action]) {
-            resolvedUrl = actions[action]['url']
+        if (action && actions[action]) {
+            resolvedAction = actions[action]
 
-            //@ts-ignore
-            resolvedUrl = resolvedUrl.replaceAll('{{id}}', id);
+            if (resolvedAction) {
+                resolvedAction.handler.id = id
+                //@ts-ignore
+                if (! resolvedAction.ajax) {
+                    resolvedAction.url.replaceAll('{{id}}', id);
+                }
+            }
         }
     }
-    if (resolvedUrl != '') {
-        (new AjaxAction(resolvedUrl))
-            .onSuccess(res => {
-                (new HandleFormSubmit())
+    if (resolvedAction) {
+        const req = new AjaxAction(window.location.origin + '/handler', {
+            method: resolvedAction.method,
+            headers: {
+                'Content-Type': 'Application/json'
+            },
+            data: JSON.stringify({
+                _action_handler: resolvedAction.handler?.actionHandler,
+                _action_name: resolvedAction.handler?.actionName,
+                _action_type: resolvedAction.handler?.actionType,
+                _id: resolvedAction.handler?.id,
+            })
+        })
+        req.onSuccess(res => {
+            if (window['modalAction'] && res.html) {
+                modalEl.innerHTML = res.html
+                window['modalAction'].show()
+
+                const handle = new HandleFormSubmit()
+                handle.addData({
+                    _action_handler: res.action_handler,
+                    _action_name: res.action_name,
+                    _action_type: res.action_type,
+                    _id: res.id
+                })
                     .reloadDatatable(window['datatableId'] ?? '')
                     .init();
-            })
-            .execute();
+            }
+        }, false).execute();
     }
-    document.addEventListener('hiddenModal', function (e) {
-        window['history'].replaceState({}, '', url.pathname)
-    })
+
+    // document.addEventListener('hiddenModal', function (e) {
+    //     window['history'].replaceState({}, '', url.pathname)
+    // })
 }
 
 export function confirmation(cb: (res: SweetAlertResult) => void, configs = {}) {
