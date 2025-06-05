@@ -30,16 +30,17 @@ class BaseMenuModule extends Module
             Action::make('sort')->permission('sort')->path('sort')
                 ->label('Sort menu')->color(ColorVariant::Info)
                 ->form(false)
-                ->action(function () {
-                    return static::sort();
+                ->withValidations(false)
+                ->action(function (Menu $record) {
+                    static::sort($record);
                 })
                 ->method('post'),
         ];
     }
 
-    public static function sort()
+    public static function sort(Menu $record)
     {
-        $menus = static::getInstanceModel()->getMenus();
+        $menus = $record->getMenus();
 
         $data = [];
         $i = 0;
@@ -53,10 +54,9 @@ class BaseMenuModule extends Module
         }
 
         Cache::forget('menus');
+        Cache::forget('urlMenu');
 
         BatchFacade::update(new Menu, $data, 'id');
-
-        return responseSuccess();
     }
 
     public static function table(Tables\Table $table): Tables\Table
@@ -103,8 +103,8 @@ class BaseMenuModule extends Module
     public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('name')->required(),
-            Forms\Components\TextInput::make('url')->required(),
+            Forms\Components\TextInput::make('name')->validations(['required']),
+            Forms\Components\TextInput::make('url')->validations(['required']),
             Forms\Components\TextInput::make('icon'),
             Forms\Components\TextInput::make('category'),
             Forms\Components\TextInput::make('orders'),

@@ -18,13 +18,6 @@ trait HasValidation
         return $this;
     }
 
-    public function required(bool $required = true)
-    {
-        $this->validations(['required']);
-
-        return $this;
-    }
-
     public function getValidations(): array
     {
         return $this->validations;

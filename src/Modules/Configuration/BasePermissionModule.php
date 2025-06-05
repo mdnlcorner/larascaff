@@ -42,11 +42,11 @@ class BasePermissionModule extends Module
                     'required',
                     Rule::unique('permissions')->ignore(getRecord()),
                 ]),
-            Forms\Components\TextInput::make('guard_name')->required(),
+            Forms\Components\TextInput::make('guard_name')->validations(['required']),
             Forms\Components\Select::make('menu_id')
                 ->label('Menu')
                 ->searchable()
-                ->required()
+                ->validations(['required'])
                 ->placeholder('Choose Menu')
                 ->serverSide(Menu::class)
                 ->relationship('menu', 'name'),

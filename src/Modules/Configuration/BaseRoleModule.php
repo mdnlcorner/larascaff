@@ -25,7 +25,7 @@ class BaseRoleModule extends Module
                     Rule::unique('roles')->ignore(static::getInstanceModel()),
                 ]),
             Forms\Components\TextInput::make('guard_name')
-                ->required(),
+                ->validations(['required']),
         ]);
     }
 

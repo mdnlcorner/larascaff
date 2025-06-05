@@ -31,7 +31,7 @@ class BaseUserModule extends Module
     public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('name')->required(),
+            Forms\Components\TextInput::make('name')->validations(['required']),
             Forms\Components\TextInput::make('email')
                 ->validations([
                     'required',
