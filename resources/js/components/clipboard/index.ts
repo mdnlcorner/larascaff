@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { CopyClipboardOptions } from './types';
+import instances from '../../dom/instances';
 import type { InstanceOptions } from '../../dom/types';
 import { CopyClipboardInterface } from './interface';
-import instances from '../../dom/instances';
+import type { CopyClipboardOptions } from './types';
 
 const Default: CopyClipboardOptions = {
     htmlEntities: false,
@@ -28,11 +28,9 @@ class CopyClipboard implements CopyClipboardInterface {
         triggerEl: HTMLElement | null = null,
         targetEl: HTMLInputElement | null = null,
         options: CopyClipboardOptions = Default,
-        instanceOptions: InstanceOptions = DefaultInstanceOptions
+        instanceOptions: InstanceOptions = DefaultInstanceOptions,
     ) {
-        this._instanceId = instanceOptions.id
-            ? instanceOptions.id
-            : targetEl.id;
+        this._instanceId = instanceOptions.id ? instanceOptions.id : targetEl.id;
 
         this._triggerEl = triggerEl;
         this._targetEl = targetEl;
@@ -40,12 +38,7 @@ class CopyClipboard implements CopyClipboardInterface {
         this._initialized = false;
 
         this.init();
-        instances.addInstance(
-            'CopyClipboard',
-            this,
-            this._instanceId,
-            instanceOptions.override
-        );
+        instances.addInstance('CopyClipboard', this, this._instanceId, instanceOptions.override);
     }
 
     init() {
@@ -56,10 +49,7 @@ class CopyClipboard implements CopyClipboardInterface {
 
             // clicking on the trigger element should copy the value of the target element
             if (this._triggerEl) {
-                this._triggerEl.addEventListener(
-                    'click',
-                    this._triggerElClickHandler
-                );
+                this._triggerEl.addEventListener('click', this._triggerElClickHandler);
             }
 
             this._initialized = true;
@@ -69,10 +59,7 @@ class CopyClipboard implements CopyClipboardInterface {
     destroy() {
         if (this._triggerEl && this._targetEl && this._initialized) {
             if (this._triggerEl) {
-                this._triggerEl.removeEventListener(
-                    'click',
-                    this._triggerElClickHandler
-                );
+                this._triggerEl.removeEventListener('click', this._triggerElClickHandler);
             }
             this._initialized = false;
         }
@@ -141,48 +128,28 @@ class CopyClipboard implements CopyClipboardInterface {
 }
 
 export function initCopyClipboards() {
-    document
-        .querySelectorAll('[data-copy-to-clipboard-target]')
-        .forEach(($triggerEl) => {
-            const targetId = $triggerEl.getAttribute(
-                'data-copy-to-clipboard-target'
-            );
-            const $targetEl = document.getElementById(targetId);
-            const contentType = $triggerEl.getAttribute(
-                'data-copy-to-clipboard-content-type'
-            );
-            const htmlEntities = $triggerEl.getAttribute(
-                'data-copy-to-clipboard-html-entities'
-            );
+    document.querySelectorAll('[data-copy-to-clipboard-target]').forEach(($triggerEl) => {
+        const targetId = $triggerEl.getAttribute('data-copy-to-clipboard-target');
+        const $targetEl = document.getElementById(targetId);
+        const contentType = $triggerEl.getAttribute('data-copy-to-clipboard-content-type');
+        const htmlEntities = $triggerEl.getAttribute('data-copy-to-clipboard-html-entities');
 
-            // check if the target element exists
-            if ($targetEl) {
-                if (
-                    !instances.instanceExists(
-                        'CopyClipboard',
-                        $targetEl.getAttribute('id')
-                    )
-                ) {
-                    new CopyClipboard(
-                        $triggerEl as HTMLElement,
-                        $targetEl as HTMLInputElement,
-                        {
-                            htmlEntities:
-                                htmlEntities && htmlEntities === 'true'
-                                    ? true
-                                    : Default.htmlEntities,
-                            contentType: contentType
-                                ? contentType
-                                : Default.contentType,
-                        } as CopyClipboardOptions
-                    );
-                }
-            } else {
-                console.error(
-                    `The target element with id "${targetId}" does not exist. Please check the data-copy-to-clipboard-target attribute.`
+        // check if the target element exists
+        if ($targetEl) {
+            if (!instances.instanceExists('CopyClipboard', $targetEl.getAttribute('id'))) {
+                new CopyClipboard(
+                    $triggerEl as HTMLElement,
+                    $targetEl as HTMLInputElement,
+                    {
+                        htmlEntities: htmlEntities && htmlEntities === 'true' ? true : Default.htmlEntities,
+                        contentType: contentType ? contentType : Default.contentType,
+                    } as CopyClipboardOptions,
                 );
             }
-        });
+        } else {
+            console.error(`The target element with id "${targetId}" does not exist. Please check the data-copy-to-clipboard-target attribute.`);
+        }
+    });
 }
 
 if (typeof window !== 'undefined') {

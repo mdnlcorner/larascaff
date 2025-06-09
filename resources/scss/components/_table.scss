@@ -1,59 +1,59 @@
 .table {
-  @apply w-full text-sm text-left rtl:text-right;
+    @apply w-full text-left text-sm rtl:text-right;
 
-  thead {
-    @apply text-xs uppercase bg-dark-100 dark:bg-dark-800;
+    thead {
+        @apply bg-dark-100 text-xs uppercase dark:bg-dark-800;
 
-    th {
-      @apply px-4 py-3;
+        th {
+            @apply px-4 py-3;
+        }
     }
-  }
 
-  tbody {
-    tr {
-      @apply border-b dark:border-dark-800 border-dark-100;
-
-      td {
-        @apply px-4 py-3;
-      }
-    }
-  }
-
-  &.table-borderless {
     tbody {
-      tr {
-        @apply border-b-0;
-      }
-    }
-  }
+        tr {
+            @apply border-b border-dark-100 dark:border-dark-800;
 
-  &.table-bordered {
-    tbody {
-      tr {
-        @apply border-x;
-      }
+            td {
+                @apply px-4 py-3;
+            }
+        }
     }
-  }
 
-  &.table-striped {
-    tbody {
-      tr {
-        @apply dark:even:bg-dark-800/20 even:bg-dark-100/70;
-      }
+    &.table-borderless {
+        tbody {
+            tr {
+                @apply border-b-0;
+            }
+        }
     }
-  }
 
-  &.table-sm {
-    tbody {
-      tr td {
-        @apply py-1;
-      }
+    &.table-bordered {
+        tbody {
+            tr {
+                @apply border-x;
+            }
+        }
     }
-  }
 
-  &.table-hover {
-    tr:hover {
-      @apply bg-dark-50 dark:bg-dark-800;
+    &.table-striped {
+        tbody {
+            tr {
+                @apply even:bg-dark-100/70 dark:even:bg-dark-800/20;
+            }
+        }
     }
-  }
+
+    &.table-sm {
+        tbody {
+            tr td {
+                @apply py-1;
+            }
+        }
+    }
+
+    &.table-hover {
+        tr:hover {
+            @apply bg-dark-50 dark:bg-dark-800;
+        }
+    }
 }

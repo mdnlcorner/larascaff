@@ -16,11 +16,11 @@
 }
 
 .fc .fc-daygrid-week-number {
-    @apply text-foreground text-xs dark:bg-dark-800 p-1;
+    @apply p-1 text-xs text-foreground dark:bg-dark-800;
 }
 
 .fc .fc-h-event {
-    @apply bg-primary border-primary border;
+    @apply border border-primary bg-primary;
 }
 
 .fc .fc-daygrid-event-dot {
@@ -162,7 +162,7 @@
 }
 
 .fc-v-event .fc-event-main {
-    @apply bg-primary
+    @apply bg-primary;
 }
 .fc-v-event {
     @apply border-primary;

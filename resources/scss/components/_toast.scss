@@ -1,9 +1,9 @@
 .toast-wrapper {
-    @apply fixed flex gap-4 z-50 flex-col h-0;
+    @apply fixed z-50 flex h-0 flex-col gap-4;
 }
 
 .toast-top-right {
-    @apply top-3 right-3;
+    @apply right-3 top-3;
 }
 
 .toast-top-center {
@@ -23,11 +23,11 @@
 }
 
 .toast-bottom-left {
-    @apply left-3 bottom-3;
+    @apply bottom-3 left-3;
 }
 
 .toast {
-    @apply z-50 transition-all duration-500 -translate-y-5 opacity-0 flex items-center w-80 max-w-xs p-4 bg-dark-100 rounded-lg shadow dark:bg-gray-800;
+    @apply z-50 flex w-80 max-w-xs -translate-y-5 items-center rounded-lg bg-dark-100 p-4 opacity-0 shadow transition-all duration-500 dark:bg-gray-800;
 
     &.showing {
         @apply translate-y-0 opacity-100;
@@ -37,7 +37,7 @@
         @apply bg-success-600;
 
         .toast-icon {
-            @apply inline-flex text-success-500 bg-success-100 dark:bg-success-800 dark:text-success-200;
+            @apply inline-flex bg-success-100 text-success-500 dark:bg-success-800 dark:text-success-200;
         }
     }
 
@@ -45,7 +45,7 @@
         @apply bg-warning;
 
         .toast-icon {
-            @apply inline-flex text-warning-500 bg-warning-100 dark:bg-warning-800 dark:text-warning-200;
+            @apply inline-flex bg-warning-100 text-warning-500 dark:bg-warning-800 dark:text-warning-200;
         }
     }
 
@@ -53,7 +53,7 @@
         @apply bg-info;
 
         .toast-icon {
-            @apply inline-flex text-info-500 bg-info-100 dark:bg-info-800 dark:text-info-200;
+            @apply inline-flex bg-info-100 text-info-500 dark:bg-info-800 dark:text-info-200;
         }
     }
 
@@ -61,7 +61,7 @@
         @apply bg-danger-600;
 
         .toast-icon {
-            @apply inline-flex text-danger-500 bg-danger-100 dark:bg-danger-800 dark:text-danger-200;
+            @apply inline-flex bg-danger-100 text-danger-500 dark:bg-danger-800 dark:text-danger-200;
         }
     }
 
@@ -88,14 +88,14 @@
     }
 
     .toast-close {
-        @apply ms-auto absolute top-2 right-2 -mx-1.5 -my-1.5 text-white hover:opacity-80 rounded-lg inline-flex items-center justify-center h-8 w-8;
+        @apply absolute right-2 top-2 -mx-1.5 -my-1.5 ms-auto inline-flex h-8 w-8 items-center justify-center rounded-lg text-white hover:opacity-80;
     }
 
     .toast-icon {
-        @apply hidden items-center justify-center flex-shrink-0 w-8 h-8 gap-3 rounded-lg;
+        @apply hidden h-8 w-8 flex-shrink-0 items-center justify-center gap-3 rounded-lg;
     }
 
     &-top-right {
-        @apply top-3 right-3;
+        @apply right-3 top-3;
     }
 }

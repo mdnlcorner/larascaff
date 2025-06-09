@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { DrawerOptions, PlacementClasses } from './types';
-import type { InstanceOptions, EventListenerInstance } from '../../dom/types';
-import { DrawerInterface } from './interface';
 import instances from '../../dom/instances';
+import type { EventListenerInstance, InstanceOptions } from '../../dom/types';
+import { DrawerInterface } from './interface';
+import type { DrawerOptions, PlacementClasses } from './types';
 
 const Default: DrawerOptions = {
     placement: 'left',
@@ -31,25 +31,14 @@ class Drawer implements DrawerInterface {
     _handleEscapeKey: EventListenerOrEventListenerObject;
     _initialized: boolean;
 
-    constructor(
-        targetEl: HTMLElement | null = null,
-        options: DrawerOptions = Default,
-        instanceOptions: InstanceOptions = DefaultInstanceOptions
-    ) {
-        this._instanceId = instanceOptions.id
-            ? instanceOptions.id
-            : targetEl.id;
+    constructor(targetEl: HTMLElement | null = null, options: DrawerOptions = Default, instanceOptions: InstanceOptions = DefaultInstanceOptions) {
+        this._instanceId = instanceOptions.id ? instanceOptions.id : targetEl.id;
         this._targetEl = targetEl;
         this._options = { ...Default, ...options };
         this._visible = false;
         this._initialized = false;
         this.init();
-        instances.addInstance(
-            'Drawer',
-            this,
-            this._instanceId,
-            instanceOptions.override
-        );
+        instances.addInstance('Drawer', this, this._instanceId, instanceOptions.override);
     }
 
     init() {
@@ -104,27 +93,19 @@ class Drawer implements DrawerInterface {
     hide() {
         // based on the edge option show placement classes
         if (this._options.edge) {
-            this._getPlacementClasses(
-                this._options.placement + '-edge'
-            ).active.map((c) => {
+            this._getPlacementClasses(this._options.placement + '-edge').active.map((c) => {
                 this._targetEl.classList.remove(c);
             });
-            this._getPlacementClasses(
-                this._options.placement + '-edge'
-            ).inactive.map((c) => {
+            this._getPlacementClasses(this._options.placement + '-edge').inactive.map((c) => {
                 this._targetEl.classList.add(c);
             });
         } else {
-            this._getPlacementClasses(this._options.placement).active.map(
-                (c) => {
-                    this._targetEl.classList.remove(c);
-                }
-            );
-            this._getPlacementClasses(this._options.placement).inactive.map(
-                (c) => {
-                    this._targetEl.classList.add(c);
-                }
-            );
+            this._getPlacementClasses(this._options.placement).active.map((c) => {
+                this._targetEl.classList.remove(c);
+            });
+            this._getPlacementClasses(this._options.placement).inactive.map((c) => {
+                this._targetEl.classList.add(c);
+            });
         }
 
         // set accessibility attributes
@@ -150,27 +131,19 @@ class Drawer implements DrawerInterface {
 
     show() {
         if (this._options.edge) {
-            this._getPlacementClasses(
-                this._options.placement + '-edge'
-            ).active.map((c) => {
+            this._getPlacementClasses(this._options.placement + '-edge').active.map((c) => {
                 this._targetEl.classList.add(c);
             });
-            this._getPlacementClasses(
-                this._options.placement + '-edge'
-            ).inactive.map((c) => {
+            this._getPlacementClasses(this._options.placement + '-edge').inactive.map((c) => {
                 this._targetEl.classList.remove(c);
             });
         } else {
-            this._getPlacementClasses(this._options.placement).active.map(
-                (c) => {
-                    this._targetEl.classList.add(c);
-                }
-            );
-            this._getPlacementClasses(this._options.placement).inactive.map(
-                (c) => {
-                    this._targetEl.classList.remove(c);
-                }
-            );
+            this._getPlacementClasses(this._options.placement).active.map((c) => {
+                this._targetEl.classList.add(c);
+            });
+            this._getPlacementClasses(this._options.placement).inactive.map((c) => {
+                this._targetEl.classList.remove(c);
+            });
         }
 
         // set accessibility attributes
@@ -206,9 +179,7 @@ class Drawer implements DrawerInterface {
         if (!this._visible) {
             const backdropEl = document.createElement('div');
             backdropEl.setAttribute('drawer-backdrop', '');
-            backdropEl.classList.add(
-                ...this._options.backdropClasses.split(' ')
-            );
+            backdropEl.classList.add(...this._options.backdropClasses.split(' '));
             document.querySelector('body').append(backdropEl);
             backdropEl.addEventListener('click', () => {
                 this.hide();
@@ -217,10 +188,7 @@ class Drawer implements DrawerInterface {
     }
 
     _destroyBackdropEl() {
-        if (
-            this._visible &&
-            document.querySelector('[drawer-backdrop]') !== null
-        ) {
+        if (this._visible && document.querySelector('[drawer-backdrop]') !== null) {
             document.querySelector('[drawer-backdrop]').remove();
         }
     }
@@ -274,11 +242,7 @@ class Drawer implements DrawerInterface {
         return this._visible;
     }
 
-    addEventListenerInstance(
-        element: HTMLElement,
-        type: string,
-        handler: EventListenerOrEventListenerObject
-    ) {
+    addEventListenerInstance(element: HTMLElement, type: string, handler: EventListenerOrEventListenerObject) {
         this._eventListenerInstances.push({
             element: element,
             type: type,
@@ -288,10 +252,7 @@ class Drawer implements DrawerInterface {
 
     removeAllEventListenerInstances() {
         this._eventListenerInstances.map((eventListenerInstance) => {
-            eventListenerInstance.element.removeEventListener(
-                eventListenerInstance.type,
-                eventListenerInstance.handler
-            );
+            eventListenerInstance.element.removeEventListener(eventListenerInstance.type, eventListenerInstance.handler);
         });
         this._eventListenerInstances = [];
     }
@@ -321,33 +282,21 @@ export function initDrawers() {
 
         if ($drawerEl) {
             const placement = $triggerEl.getAttribute('data-drawer-placement');
-            const bodyScrolling = $triggerEl.getAttribute(
-                'data-drawer-body-scrolling'
-            );
+            const bodyScrolling = $triggerEl.getAttribute('data-drawer-body-scrolling');
             const backdrop = $triggerEl.getAttribute('data-drawer-backdrop');
             const edge = $triggerEl.getAttribute('data-drawer-edge');
-            const edgeOffset = $triggerEl.getAttribute(
-                'data-drawer-edge-offset'
-            );
+            const edgeOffset = $triggerEl.getAttribute('data-drawer-edge-offset');
 
             new Drawer($drawerEl, {
                 placement: placement ? placement : Default.placement,
-                bodyScrolling: bodyScrolling
-                    ? bodyScrolling === 'true'
-                        ? true
-                        : false
-                    : Default.bodyScrolling,
-                backdrop: backdrop
-                    ? backdrop === 'true'
-                        ? true
-                        : false
-                    : Default.backdrop,
+                bodyScrolling: bodyScrolling ? (bodyScrolling === 'true' ? true : false) : Default.bodyScrolling,
+                backdrop: backdrop ? (backdrop === 'true' ? true : false) : Default.backdrop,
                 edge: edge ? (edge === 'true' ? true : false) : Default.edge,
                 edgeOffset: edgeOffset ? edgeOffset : Default.edgeOffset,
             } as DrawerOptions);
         } else {
             console.error(
-                `Drawer with id ${drawerId} not found. Are you sure that the data-drawer-target attribute points to the correct drawer id?`
+                `Drawer with id ${drawerId} not found. Are you sure that the data-drawer-target attribute points to the correct drawer id?`,
             );
         }
     });
@@ -357,97 +306,66 @@ export function initDrawers() {
         const $drawerEl = document.getElementById(drawerId);
 
         if ($drawerEl) {
-            const drawer: DrawerInterface = instances.getInstance(
-                'Drawer',
-                drawerId
-            );
+            const drawer: DrawerInterface = instances.getInstance('Drawer', drawerId);
 
             if (drawer) {
                 const toggleDrawer = () => {
                     drawer.toggle();
                 };
                 $triggerEl.addEventListener('click', toggleDrawer);
-                drawer.addEventListenerInstance(
-                    $triggerEl as HTMLElement,
-                    'click',
-                    toggleDrawer
-                );
+                drawer.addEventListenerInstance($triggerEl as HTMLElement, 'click', toggleDrawer);
             } else {
-                console.error(
-                    `Drawer with id ${drawerId} has not been initialized. Please initialize it using the data-drawer-target attribute.`
-                );
+                console.error(`Drawer with id ${drawerId} has not been initialized. Please initialize it using the data-drawer-target attribute.`);
             }
         } else {
             console.error(
-                `Drawer with id ${drawerId} not found. Are you sure that the data-drawer-target attribute points to the correct drawer id?`
+                `Drawer with id ${drawerId} not found. Are you sure that the data-drawer-target attribute points to the correct drawer id?`,
             );
         }
     });
 
-    document
-        .querySelectorAll('[data-drawer-dismiss], [data-drawer-hide]')
-        .forEach(($triggerEl) => {
-            const drawerId = $triggerEl.getAttribute('data-drawer-dismiss')
-                ? $triggerEl.getAttribute('data-drawer-dismiss')
-                : $triggerEl.getAttribute('data-drawer-hide');
-            const $drawerEl = document.getElementById(drawerId);
+    document.querySelectorAll('[data-drawer-dismiss], [data-drawer-hide]').forEach(($triggerEl) => {
+        const drawerId = $triggerEl.getAttribute('data-drawer-dismiss')
+            ? $triggerEl.getAttribute('data-drawer-dismiss')
+            : $triggerEl.getAttribute('data-drawer-hide');
+        const $drawerEl = document.getElementById(drawerId);
 
-            if ($drawerEl) {
-                const drawer: DrawerInterface = instances.getInstance(
-                    'Drawer',
-                    drawerId
-                );
+        if ($drawerEl) {
+            const drawer: DrawerInterface = instances.getInstance('Drawer', drawerId);
 
-                if (drawer) {
-                    const hideDrawer = () => {
-                        drawer.hide();
-                    };
-                    $triggerEl.addEventListener('click', hideDrawer);
-                    drawer.addEventListenerInstance(
-                        $triggerEl as HTMLElement,
-                        'click',
-                        hideDrawer
-                    );
-                } else {
-                    console.error(
-                        `Drawer with id ${drawerId} has not been initialized. Please initialize it using the data-drawer-target attribute.`
-                    );
-                }
+            if (drawer) {
+                const hideDrawer = () => {
+                    drawer.hide();
+                };
+                $triggerEl.addEventListener('click', hideDrawer);
+                drawer.addEventListenerInstance($triggerEl as HTMLElement, 'click', hideDrawer);
             } else {
-                console.error(
-                    `Drawer with id ${drawerId} not found. Are you sure that the data-drawer-target attribute points to the correct drawer id`
-                );
+                console.error(`Drawer with id ${drawerId} has not been initialized. Please initialize it using the data-drawer-target attribute.`);
             }
-        });
+        } else {
+            console.error(`Drawer with id ${drawerId} not found. Are you sure that the data-drawer-target attribute points to the correct drawer id`);
+        }
+    });
 
     document.querySelectorAll('[data-drawer-show]').forEach(($triggerEl) => {
         const drawerId = $triggerEl.getAttribute('data-drawer-show');
         const $drawerEl = document.getElementById(drawerId);
 
         if ($drawerEl) {
-            const drawer: DrawerInterface = instances.getInstance(
-                'Drawer',
-                drawerId
-            );
+            const drawer: DrawerInterface = instances.getInstance('Drawer', drawerId);
 
             if (drawer) {
                 const showDrawer = () => {
                     drawer.show();
                 };
                 $triggerEl.addEventListener('click', showDrawer);
-                drawer.addEventListenerInstance(
-                    $triggerEl as HTMLElement,
-                    'click',
-                    showDrawer
-                );
+                drawer.addEventListenerInstance($triggerEl as HTMLElement, 'click', showDrawer);
             } else {
-                console.error(
-                    `Drawer with id ${drawerId} has not been initialized. Please initialize it using the data-drawer-target attribute.`
-                );
+                console.error(`Drawer with id ${drawerId} has not been initialized. Please initialize it using the data-drawer-target attribute.`);
             }
         } else {
             console.error(
-                `Drawer with id ${drawerId} not found. Are you sure that the data-drawer-target attribute points to the correct drawer id?`
+                `Drawer with id ${drawerId} not found. Are you sure that the data-drawer-target attribute points to the correct drawer id?`,
             );
         }
     });

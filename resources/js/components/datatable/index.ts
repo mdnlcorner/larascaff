@@ -1,13 +1,13 @@
-import $ from 'jquery'
-import DataTable from 'datatables.net-dt'
+import DataTable from 'datatables.net-dt';
+import $ from 'jquery';
 // import 'datatables.net-dt/css/jquery.dataTables.min.css'
 import 'datatables.net-responsive-dt';
 import 'datatables.net-responsive-dt/css/responsive.dataTables.min.css';
-import '../../../scss/components/_datatable.scss'
+import '../../../scss/components/_datatable.scss';
 
 if (typeof window !== 'undefined') {
-    window.$ = window.jQuery = $
-    window.DataTable = DataTable
+    window.$ = window.jQuery = $;
+    window.DataTable = DataTable;
 }
 
-export default DataTable
+export default DataTable;

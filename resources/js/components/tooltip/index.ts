@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import type { Instance as PopperInstance, Options as PopperOptions } from '@popperjs/core';
 import { createPopper } from '@popperjs/core';
-import type {
-    Options as PopperOptions,
-    Instance as PopperInstance,
-} from '@popperjs/core';
-import type { TooltipOptions } from './types';
+import instances from '../../dom/instances';
 import type { InstanceOptions } from '../../dom/types';
 import { TooltipInterface } from './interface';
-import instances from '../../dom/instances';
+import type { TooltipOptions } from './types';
 
 const Default: TooltipOptions = {
     placement: 'top',
@@ -39,11 +36,9 @@ class Tooltip implements TooltipInterface {
         targetEl: HTMLElement | null = null,
         triggerEl: HTMLElement | null = null,
         options: TooltipOptions = Default,
-        instanceOptions: InstanceOptions = DefaultInstanceOptions
+        instanceOptions: InstanceOptions = DefaultInstanceOptions,
     ) {
-        this._instanceId = instanceOptions.id
-            ? instanceOptions.id
-            : targetEl.id;
+        this._instanceId = instanceOptions.id ? instanceOptions.id : targetEl.id;
         this._targetEl = targetEl;
         this._triggerEl = triggerEl;
         this._options = { ...Default, ...options };
@@ -51,12 +46,7 @@ class Tooltip implements TooltipInterface {
         this._visible = false;
         this._initialized = false;
         this.init();
-        instances.addInstance(
-            'Tooltip',
-            this,
-            this._instanceId,
-            instanceOptions.override
-        );
+        instances.addInstance('Tooltip', this, this._instanceId, instanceOptions.override);
     }
 
     init() {
@@ -168,48 +158,27 @@ class Tooltip implements TooltipInterface {
                 this.hide();
             }
         };
-        document.body.addEventListener(
-            'keydown',
-            this._keydownEventListener,
-            true
-        );
+        document.body.addEventListener('keydown', this._keydownEventListener, true);
     }
 
     _removeKeydownListener() {
-        document.body.removeEventListener(
-            'keydown',
-            this._keydownEventListener,
-            true
-        );
+        document.body.removeEventListener('keydown', this._keydownEventListener, true);
     }
 
     _setupClickOutsideListener() {
         this._clickOutsideEventListener = (ev: MouseEvent) => {
             this._handleClickOutside(ev, this._targetEl);
         };
-        document.body.addEventListener(
-            'click',
-            this._clickOutsideEventListener,
-            true
-        );
+        document.body.addEventListener('click', this._clickOutsideEventListener, true);
     }
 
     _removeClickOutsideListener() {
-        document.body.removeEventListener(
-            'click',
-            this._clickOutsideEventListener,
-            true
-        );
+        document.body.removeEventListener('click', this._clickOutsideEventListener, true);
     }
 
     _handleClickOutside(ev: Event, targetEl: HTMLElement) {
         const clickedEl = ev.target as Node;
-        if (
-            clickedEl !== targetEl &&
-            !targetEl.contains(clickedEl) &&
-            !this._triggerEl.contains(clickedEl) &&
-            this.isVisible()
-        ) {
+        if (clickedEl !== targetEl && !targetEl.contains(clickedEl) && !this._triggerEl.contains(clickedEl) && this.isVisible()) {
             this.hide();
         }
     }
@@ -233,10 +202,7 @@ class Tooltip implements TooltipInterface {
         // Enable the event listeners
         this._popperInstance.setOptions((options: PopperOptions) => ({
             ...options,
-            modifiers: [
-                ...options.modifiers,
-                { name: 'eventListeners', enabled: true },
-            ],
+            modifiers: [...options.modifiers, { name: 'eventListeners', enabled: true }],
         }));
 
         // handle click outside
@@ -262,10 +228,7 @@ class Tooltip implements TooltipInterface {
         // Disable the event listeners
         this._popperInstance.setOptions((options: PopperOptions) => ({
             ...options,
-            modifiers: [
-                ...options.modifiers,
-                { name: 'eventListeners', enabled: false },
-            ],
+            modifiers: [...options.modifiers, { name: 'eventListeners', enabled: false }],
         }));
 
         // handle click outside
@@ -308,15 +271,11 @@ export function initTooltips() {
                 $triggerEl as HTMLElement,
                 {
                     placement: placement ? placement : Default.placement,
-                    triggerType: triggerType
-                        ? triggerType
-                        : Default.triggerType,
-                } as TooltipOptions
+                    triggerType: triggerType ? triggerType : Default.triggerType,
+                } as TooltipOptions,
             );
         } else {
-            console.error(
-                `The tooltip element with id "${tooltipId}" does not exist. Please check the data-tooltip-target attribute.`
-            );
+            console.error(`The tooltip element with id "${tooltipId}" does not exist. Please check the data-tooltip-target attribute.`);
         }
     });
 }

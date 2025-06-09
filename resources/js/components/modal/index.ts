@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { ModalOptions } from './types';
-import type { InstanceOptions, EventListenerInstance } from '../../dom/types';
-import { ModalInterface } from './interface';
-import instances from '../../dom/instances';
 import { twMerge } from 'tailwind-merge';
+import instances from '../../dom/instances';
+import type { EventListenerInstance, InstanceOptions } from '../../dom/types';
+import { ModalInterface } from './interface';
+import type { ModalOptions } from './types';
 
 const Default: ModalOptions = {
     placement: 'top-center',
@@ -24,7 +24,7 @@ class Modal implements ModalInterface {
     _targetEl: HTMLElement;
     _options: ModalOptions;
     _isHidden: boolean;
-    _backdropEl: HTMLElement |undefined;
+    _backdropEl: HTMLElement | undefined;
     _clickOutsideEventListener: (e: MouseEvent) => void = () => {};
     _keydownEventListener: (e: KeyboardEvent) => void = () => {};
     _eventListenerInstances: EventListenerInstance[] = [];
@@ -33,30 +33,19 @@ class Modal implements ModalInterface {
     _shownModal: Event | undefined;
     _hiddenModal: Event | undefined;
 
-    constructor(
-        targetEl: HTMLElement,
-        options: ModalOptions = Default,
-        instanceOptions: InstanceOptions = DefaultInstanceOptions
-    ) {
-        this._instanceId = instanceOptions.id
-            ? instanceOptions.id
-            : targetEl.id;
+    constructor(targetEl: HTMLElement, options: ModalOptions = Default, instanceOptions: InstanceOptions = DefaultInstanceOptions) {
+        this._instanceId = instanceOptions.id ? instanceOptions.id : targetEl.id;
         this._targetEl = targetEl;
         this._options = { ...Default, ...options };
         this._isHidden = true;
         this._initialized = false;
 
         if (this._targetEl.dataset.modalBackdrop == 'static') {
-            this._options.backdrop = 'static'
+            this._options.backdrop = 'static';
         }
-        
+
         this.init();
-        instances.addInstance(
-            'Modal',
-            this,
-            this._instanceId,
-            instanceOptions.override
-        );
+        instances.addInstance('Modal', this, this._instanceId, instanceOptions.override);
     }
 
     init() {
@@ -77,11 +66,11 @@ class Modal implements ModalInterface {
             this._shownModal = new Event('shownModal', {
                 bubbles: true,
                 cancelable: false,
-            })
+            });
             this._hiddenModal = new Event('hiddenModal', {
                 bubbles: true,
                 cancelable: false,
-            })
+            });
         }
     }
 
@@ -104,41 +93,31 @@ class Modal implements ModalInterface {
 
     _destroyBackdropEl() {
         if (!this._isHidden) {
-            const backdrop = document.querySelector('[modal-backdrop]')
+            const backdrop = document.querySelector('[modal-backdrop]');
             backdrop?.setAttribute('class', twMerge(backdrop.classList.value, 'opacity-0'));
             setTimeout(() => {
                 backdrop?.remove();
-            }, 200)
+            }, 200);
         }
     }
 
     _setupModalCloseEventListeners() {
-
         if (this._options.backdrop === 'dynamic') {
-
             this._clickOutsideEventListener = (ev: MouseEvent) => {
                 ev.target && this._handleOutsideClick(ev.target);
             };
 
-            this._targetEl?.addEventListener(
-                'click',
-                this._clickOutsideEventListener,
-                true
-            );
+            this._targetEl?.addEventListener('click', this._clickOutsideEventListener, true);
         } else {
             // static
-            this._targetEl?.addEventListener(
-                'click',
-                e => {
-                    if (e.target === this._targetEl) {
-                        this._content?.setAttribute('class', twMerge(this._content.classList.value, 'scale-90'))
-                        setTimeout(() => {
-                            this._content?.setAttribute('class', twMerge(this._content.classList.value, 'duration-500 scale-100'))
-                        }, 300)
-                    }
+            this._targetEl?.addEventListener('click', (e) => {
+                if (e.target === this._targetEl) {
+                    this._content?.setAttribute('class', twMerge(this._content.classList.value, 'scale-90'));
+                    setTimeout(() => {
+                        this._content?.setAttribute('class', twMerge(this._content.classList.value, 'duration-500 scale-100'));
+                    }, 300);
                 }
-            );
-
+            });
         }
 
         this._keydownEventListener = (ev: KeyboardEvent) => {
@@ -146,40 +125,25 @@ class Modal implements ModalInterface {
                 if (this._options.backdrop == 'dynamic') {
                     this.hide();
                 } else {
-                    this._content?.setAttribute('class', twMerge(this._content.classList.value, 'scale-90'))
+                    this._content?.setAttribute('class', twMerge(this._content.classList.value, 'scale-90'));
                     setTimeout(() => {
-                        this._content?.setAttribute('class', twMerge(this._content.classList.value, 'duration-500 scale-100'))
-                    }, 300)
+                        this._content?.setAttribute('class', twMerge(this._content.classList.value, 'duration-500 scale-100'));
+                    }, 300);
                 }
             }
         };
-        document.body.addEventListener(
-            'keydown',
-            this._keydownEventListener,
-            true
-        );
+        document.body.addEventListener('keydown', this._keydownEventListener, true);
     }
 
     _removeModalCloseEventListeners() {
         if (this._options.backdrop === 'dynamic') {
-            this._targetEl?.removeEventListener(
-                'click',
-                this._clickOutsideEventListener,
-                true
-            );
+            this._targetEl?.removeEventListener('click', this._clickOutsideEventListener, true);
         }
-        document.body.removeEventListener(
-            'keydown',
-            this._keydownEventListener,
-            true
-        );
+        document.body.removeEventListener('keydown', this._keydownEventListener, true);
     }
 
     _handleOutsideClick(target: EventTarget) {
-        if (
-            target === this._targetEl ||
-            (target === this._backdropEl && this.isVisible())
-        ) {
+        if (target === this._targetEl || (target === this._backdropEl && this.isVisible())) {
             this.hide();
         }
     }
@@ -225,21 +189,20 @@ class Modal implements ModalInterface {
 
     show() {
         if (this._isHidden) {
-
             this._targetEl?.setAttribute('class', twMerge(this._targetEl.classList.value, 'block'));
             this._content = this._targetEl?.querySelector('[data-modal-content]') as HTMLElement;
 
             // handle close
-            this._content?.querySelectorAll('[data-modal-hide]').forEach(elem => {
-                elem.addEventListener('click', e => {
-                    this.hide()
-                })
-            })
-            
+            this._content?.querySelectorAll('[data-modal-hide]').forEach((elem) => {
+                elem.addEventListener('click', (e) => {
+                    this.hide();
+                });
+            });
+
             setTimeout(() => {
                 this._targetEl?.setAttribute('class', twMerge(this._targetEl.classList.value, 'opacity-100'));
                 this._content?.setAttribute('class', twMerge(this._content.classList.value, 'scale-100 opacity-100'));
-            }, 100)
+            }, 100);
 
             this._targetEl?.setAttribute('aria-modal', 'true');
             this._targetEl?.setAttribute('role', 'dialog');
@@ -256,10 +219,10 @@ class Modal implements ModalInterface {
             document.body.classList.add('overflow-hidden');
             // this._options?.onShow(this)
             if (this._options.onShow) {
-                this._options?.onShow(this)
+                this._options?.onShow(this);
             }
 
-            this._shownModal && this._targetEl?.dispatchEvent(this._shownModal)
+            this._shownModal && this._targetEl?.dispatchEvent(this._shownModal);
         }
     }
 
@@ -278,8 +241,8 @@ class Modal implements ModalInterface {
 
                 this._options.closable && this._removeModalCloseEventListeners();
                 this._options.onHide && this._options.onHide(this);
-                this._hiddenModal && this._targetEl?.dispatchEvent(this._hiddenModal)
-            }, 200)
+                this._hiddenModal && this._targetEl?.dispatchEvent(this._hiddenModal);
+            }, 200);
         }
     }
 
@@ -291,11 +254,7 @@ class Modal implements ModalInterface {
         return this._isHidden;
     }
 
-    addEventListenerInstance(
-        element: HTMLElement,
-        type: string,
-        handler: EventListenerOrEventListenerObject
-    ) {
+    addEventListenerInstance(element: HTMLElement, type: string, handler: EventListenerOrEventListenerObject) {
         this._eventListenerInstances.push({
             element: element,
             type: type,
@@ -305,10 +264,7 @@ class Modal implements ModalInterface {
 
     removeAllEventListenerInstances() {
         this._eventListenerInstances.map((eventListenerInstance) => {
-            eventListenerInstance.element.removeEventListener(
-                eventListenerInstance.type,
-                eventListenerInstance.handler
-            );
+            eventListenerInstance.element.removeEventListener(eventListenerInstance.type, eventListenerInstance.handler);
         });
         this._eventListenerInstances = [];
     }
@@ -334,8 +290,8 @@ export function initModals() {
     // toggle modal visibility
     document.querySelectorAll('[data-modal-toggle]').forEach(($triggerEl) => {
         const modalId = ($triggerEl as HTMLDivElement).dataset['modalTarget'];
-        const $modalEl = modalId && document.getElementById(modalId)
-        
+        const $modalEl = modalId && document.getElementById(modalId);
+
         // init modal
         if ($modalEl) {
             const placement = $modalEl.getAttribute('data-modal-placement');
@@ -345,43 +301,33 @@ export function initModals() {
                 {
                     placement: placement ? placement : Default.placement,
                     backdrop: backdrop ? backdrop : Default.backdrop,
-                } as ModalOptions
+                } as ModalOptions,
             );
         } else {
             console.error(
-                `Modal with id ${modalId} does not exist. Are you sure that the data-modal-target attribute points to the correct modal id?.`
+                `Modal with id ${modalId} does not exist. Are you sure that the data-modal-target attribute points to the correct modal id?.`,
             );
         }
 
         // add event
         if (modalId) {
-            const modal: ModalInterface = instances.getInstance(
-                'Modal',
-                modalId
-            );
+            const modal: ModalInterface = instances.getInstance('Modal', modalId);
 
             if (modal) {
                 const toggleModal = () => {
                     modal.toggle();
                 };
                 $triggerEl.addEventListener('click', toggleModal);
-                modal.addEventListenerInstance(
-                    $triggerEl as HTMLElement,
-                    'click',
-                    toggleModal
-                );
+                modal.addEventListenerInstance($triggerEl as HTMLElement, 'click', toggleModal);
             } else {
-                console.error(
-                    `Modal with id ${modalId} has not been initialized. Please initialize it using the data-modal-target attribute.`
-                );
+                console.error(`Modal with id ${modalId} has not been initialized. Please initialize it using the data-modal-target attribute.`);
             }
         } else {
             console.error(
-                `Modal with id ${modalId} does not exist. Are you sure that the data-modal-toggle attribute points to the correct modal id?`
+                `Modal with id ${modalId} does not exist. Are you sure that the data-modal-toggle attribute points to the correct modal id?`,
             );
         }
     });
-
 }
 
 if (typeof window !== 'undefined') {

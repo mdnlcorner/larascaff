@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import type { Instance as PopperInstance, Options as PopperOptions } from '@popperjs/core';
 import { createPopper } from '@popperjs/core';
-import type {
-    Options as PopperOptions,
-    Instance as PopperInstance,
-} from '@popperjs/core';
-import type { PopoverOptions } from './types';
+import instances from '../../dom/instances';
 import type { InstanceOptions } from '../../dom/types';
 import { PopoverInterface } from './interface';
-import instances from '../../dom/instances';
+import type { PopoverOptions } from './types';
 
 const Default: PopoverOptions = {
     placement: 'top',
@@ -40,11 +37,9 @@ class Popover implements PopoverInterface {
         targetEl: HTMLElement | null = null,
         triggerEl: HTMLElement | null = null,
         options: PopoverOptions = Default,
-        instanceOptions: InstanceOptions = DefaultInstanceOptions
+        instanceOptions: InstanceOptions = DefaultInstanceOptions,
     ) {
-        this._instanceId = instanceOptions.id
-            ? instanceOptions.id
-            : targetEl.id;
+        this._instanceId = instanceOptions.id ? instanceOptions.id : targetEl.id;
         this._targetEl = targetEl;
         this._triggerEl = triggerEl;
         this._options = { ...Default, ...options };
@@ -52,12 +47,7 @@ class Popover implements PopoverInterface {
         this._visible = false;
         this._initialized = false;
         this.init();
-        instances.addInstance(
-            'Popover',
-            this,
-            instanceOptions.id ? instanceOptions.id : this._targetEl.id,
-            instanceOptions.override
-        );
+        instances.addInstance('Popover', this, instanceOptions.id ? instanceOptions.id : this._targetEl.id, instanceOptions.override);
     }
 
     init() {
@@ -178,48 +168,27 @@ class Popover implements PopoverInterface {
                 this.hide();
             }
         };
-        document.body.addEventListener(
-            'keydown',
-            this._keydownEventListener,
-            true
-        );
+        document.body.addEventListener('keydown', this._keydownEventListener, true);
     }
 
     _removeKeydownListener() {
-        document.body.removeEventListener(
-            'keydown',
-            this._keydownEventListener,
-            true
-        );
+        document.body.removeEventListener('keydown', this._keydownEventListener, true);
     }
 
     _setupClickOutsideListener() {
         this._clickOutsideEventListener = (ev: MouseEvent) => {
             this._handleClickOutside(ev, this._targetEl);
         };
-        document.body.addEventListener(
-            'click',
-            this._clickOutsideEventListener,
-            true
-        );
+        document.body.addEventListener('click', this._clickOutsideEventListener, true);
     }
 
     _removeClickOutsideListener() {
-        document.body.removeEventListener(
-            'click',
-            this._clickOutsideEventListener,
-            true
-        );
+        document.body.removeEventListener('click', this._clickOutsideEventListener, true);
     }
 
     _handleClickOutside(ev: Event, targetEl: HTMLElement) {
         const clickedEl = ev.target as Node;
-        if (
-            clickedEl !== targetEl &&
-            !targetEl.contains(clickedEl) &&
-            !this._triggerEl.contains(clickedEl) &&
-            this.isVisible()
-        ) {
+        if (clickedEl !== targetEl && !targetEl.contains(clickedEl) && !this._triggerEl.contains(clickedEl) && this.isVisible()) {
             this.hide();
         }
     }
@@ -244,10 +213,7 @@ class Popover implements PopoverInterface {
         // Enable the event listeners
         this._popperInstance.setOptions((options: PopperOptions) => ({
             ...options,
-            modifiers: [
-                ...options.modifiers,
-                { name: 'eventListeners', enabled: true },
-            ],
+            modifiers: [...options.modifiers, { name: 'eventListeners', enabled: true }],
         }));
 
         // handle click outside
@@ -273,10 +239,7 @@ class Popover implements PopoverInterface {
         // Disable the event listeners
         this._popperInstance.setOptions((options: PopperOptions) => ({
             ...options,
-            modifiers: [
-                ...options.modifiers,
-                { name: 'eventListeners', enabled: false },
-            ],
+            modifiers: [...options.modifiers, { name: 'eventListeners', enabled: false }],
         }));
 
         // handle click outside
@@ -321,15 +284,11 @@ export function initPopovers() {
                 {
                     placement: placement ? placement : Default.placement,
                     offset: offset ? parseInt(offset) : Default.offset,
-                    triggerType: triggerType
-                        ? triggerType
-                        : Default.triggerType,
-                } as PopoverOptions
+                    triggerType: triggerType ? triggerType : Default.triggerType,
+                } as PopoverOptions,
             );
         } else {
-            console.error(
-                `The popover element with id "${popoverID}" does not exist. Please check the data-popover-target attribute.`
-            );
+            console.error(`The popover element with id "${popoverID}" does not exist. Please check the data-popover-target attribute.`);
         }
     });
 }

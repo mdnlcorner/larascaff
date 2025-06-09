@@ -1,9 +1,5 @@
-import {
-    DropdownOptions,
-    DropdownTriggerType,
-    DropdownTriggerEventTypes,
-} from './types';
 import type { Instance as PopperInstance } from '@popperjs/core';
+import { DropdownOptions, DropdownTriggerEventTypes, DropdownTriggerType } from './types';
 
 export declare interface DropdownInterface {
     _targetEl: HTMLElement;
@@ -20,9 +16,7 @@ export declare interface DropdownInterface {
     _setupClickOutsideListener(): void;
     _removeClickOutsideListener(): void;
     _handleClickOutside(ev: Event, targetEl: HTMLElement): void;
-    _getTriggerEvents(
-        triggerType: DropdownTriggerType
-    ): DropdownTriggerEventTypes;
+    _getTriggerEvents(triggerType: DropdownTriggerType): DropdownTriggerEventTypes;
     isVisible(): boolean;
     toggle(): void;
     show(): void;

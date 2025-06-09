@@ -1,32 +1,32 @@
 body {
-  .wrapper {
-    @apply flex flex-1 flex-col transition-margin duration-300 ease-in-out lg:ml-72;
+    .wrapper {
+        @apply flex flex-1 flex-col transition-margin duration-300 ease-in-out lg:ml-72;
 
-    &.expanded {
-      @apply lg:ml-20;
+        &.expanded {
+            @apply lg:ml-20;
+        }
     }
-  }
 
-  .row {
-    @apply flex -mx-3 flex-wrap;
-  }
+    .row {
+        @apply -mx-3 flex flex-wrap;
+    }
 
-  .card {
-    @apply md:px-6 md:py-5 py-4 px-4 mb-6 rounded-md shadow bg-card;
-  }
-  .card-title {
-    @apply mb-4;
-  }
+    .card {
+        @apply mb-6 rounded-md bg-card px-4 py-4 shadow md:px-6 md:py-5;
+    }
+    .card-title {
+        @apply mb-4;
+    }
 
-  .col {
-    @apply px-3 mb-3;
-  }
+    .col {
+        @apply mb-3 px-3;
+    }
 
-  .row.same-height > .col {
-    @apply flex flex-col;
-  }
+    .row.same-height > .col {
+        @apply flex flex-col;
+    }
 
-  .row.same-height > .col .card {
-    @apply flex flex-col h-full;
-  }
+    .row.same-height > .col .card {
+        @apply flex h-full flex-col;
+    }
 }

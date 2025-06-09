@@ -1,4 +1,3 @@
-import { DropdownInterface } from './interface';
 import type { Placement } from '@popperjs/core';
 
 export declare type DropdownTriggerType = 'click' | 'hover' | 'none';
