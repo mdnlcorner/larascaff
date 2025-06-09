@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import iziToast from 'izitoast'
+import iziToast, { IziToastPosition } from 'izitoast'
 import 'izitoast/dist/css/iziToast.min.css'
 import Swal, { SweetAlertResult } from 'sweetalert2'
 import '../scss/components/_swall.scss'
@@ -88,12 +88,12 @@ export function initActionModal() {
         if (handler.hasConfirmation) {
             confirmation(() => {
                 req.onSuccess(res => {
-                    showToast(res.status, res.message)
+                    showToast(res?.status, res?.title, res?.message)
                     reloadDatatable(window['datatableId'])
                 }, false)
                     .onError(err => {
                         const message = err.responseJSON?.message
-                        showToast('error', message ?? 'Something went wrong')
+                        showToast('error', 'Error', message ?? 'Something went wrong')
                     })
                     .execute()
             })
@@ -121,7 +121,7 @@ function successActionHandler(req: AjaxAction){
                 handle.reloadDatatable(window['datatableId'] ?? '')
                     .init();
             } else {
-                showToast(res.status, res.message)
+                showToast(res.status, res.title, res.message)
                 reloadDatatable(window['datatableId'])
             }
         }, false)
@@ -213,13 +213,16 @@ export function handleNotification(cb: (res: any) => void) {
 }
 
 type Tizi = keyof typeof iziToast
-export function showToast(type: Tizi = 'success', message = 'Berhasil menyimpan data') {
+export function showToast(type: Tizi = 'success', title: string|null, message: string|null, position: IziToastPosition = 'topRight' ) {
+    const config = {
+        title, message, position
+    }
+
+    if (! config.message) {
+        config.message = ''
+    }
     // @ts-ignore
-    iziToast[type]({
-        title: 'Info',
-        message,
-        position: 'topRight'
-    })
+    iziToast[type](config)
 }
 
 type TFunction = (res: any) => void
@@ -286,7 +289,7 @@ export class AjaxAction extends AjaxOption {
                         window['modalAction'].show()
                     }
                 } else {
-                    !this.successCb && showToast(res?.status, res?.message)
+                    !this.successCb && showToast(res?.status, res?.title, res?.message)
                 }
 
                 this.successCb && this.successCb(res)
@@ -358,7 +361,7 @@ export class HandleFormSubmit extends AjaxOption {
                         // @ts-ignore
                         window['modalAction']?.hide()
                     }
-                    showToast(res?.status, res?.message)
+                    showToast(res?.status, res?.title, res?.message)
                     _this.successCb && _this.successCb(res)
                     if (_this.datatableId) {
                         window['LaravelDataTables'][_this.datatableId].ajax.reload(null, false)
@@ -372,7 +375,7 @@ export class HandleFormSubmit extends AjaxOption {
                         const errors = err.responseJSON?.errors
 
                         if (message) {
-                            showToast('error', message)
+                            showToast('error', 'Error', message)
                         }
                         if (errors) {
                             let i = 0

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Gate;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
 use Mulaidarinull\Larascaff\Info\Components\Info;
+use Mulaidarinull\Larascaff\Notifications\Notification;
 
 class Action
 {
@@ -52,9 +53,15 @@ class Action
 
     protected ?string $title = null;
 
+    protected string $successNotificationTitle = '';
+
+    protected string $successNotificationBody = '';
+
+    protected ?Notification $successNotification = null;
+
     public static function make(string $name): static
     {
-        $static = new static;
+        $static = app(static::class);
         $static->setup($name);
         $static->instance = $static;
 
@@ -199,8 +206,41 @@ class Action
         $this->options['hasConfirmation'] = $this->confirmation;
         $this->options['withValidations'] = $this->withValidations;
         $this->options['beforeFormFilled'] = $this->beforeFormFilled;
+        $this->options['successNotification'] = $this->getSuccessNotification();
 
         return [$this->name => $this->options];
+    }
+
+    public function successNotification(Notification $notification): static
+    {
+        $this->successNotification = $notification;
+
+        return $this;
+    }
+
+    public function successNotificationTitle(string $title): static
+    {
+        $this->successNotificationTitle = $title;
+
+        return $this;
+    }
+
+    public function successNotificationBody(string $body): static
+    {
+        $this->successNotificationBody = $body;
+
+        return $this;
+    }
+
+    public function getSuccessNotification(): Notification
+    {
+        if (is_null($this->successNotification)) {
+            return Notification::make()
+                ->title($this->successNotificationTitle)
+                ->body($this->successNotificationBody);
+        }
+
+        return $this->successNotification;
     }
 
     protected function fillFormData()
@@ -333,10 +373,13 @@ class Action
             }
 
             $this->callHook($this->afterSave);
-
             DB::commit();
 
-            return responseSuccess();
+            return response()->json([
+                'status' => 'success',
+                'title' => $this->getSuccessNotification()->getNotification()['title'],
+                'message' => $this->getSuccessNotification()->getNotification()['body'],
+            ]);
         } catch (\Throwable $th) {
             DB::rollBack();
 
