@@ -101,7 +101,12 @@ export function initActionModal() {
             return
         }
 
-        req.onSuccess(function (res) {
+        successActionHandler(req)
+    })
+}
+
+function successActionHandler(req: AjaxAction){
+    req.onSuccess(function (res) {
             if (window['modalAction'] && res.html) {
                 modalEl.innerHTML = res.html
                 window['modalAction'].show()
@@ -119,31 +124,8 @@ export function initActionModal() {
                 showToast(res.status, res.message)
                 reloadDatatable(window['datatableId'])
             }
-        }, false).execute()
-    })
-}
-
-export function handleCheckMenu() {
-    $('.parent').on('click', function (this: HTMLInputElement) {
-        const childs = $(this).parents('tr').find('.child')
-        childs.prop('checked', this.checked)
-    })
-
-    $('.child').on('click', function () {
-        const parent = $(this).parents('tr')
-        const childs = parent.find('.child')
-        const checked = parent.find('.child:checked')
-
-        parent.find('.parent').prop('checked', childs.length == checked.length)
-    })
-
-    $('.parent').each(function () {
-        const parent = $(this).parents('tr')
-        const childs = parent.find('.child')
-        const checked = parent.find('.child:checked')
-
-        parent.find('.parent').prop('checked', childs.length == checked.length)
-    })
+        }, false)
+        .execute()
 }
 
 // handle action by url parameters
@@ -189,22 +171,7 @@ export function initActionByUrl() {
                 _id: resolvedAction.handler?.id,
             })
         })
-        req.onSuccess(res => {
-            if (window['modalAction'] && res.html) {
-                modalEl.innerHTML = res.html
-                window['modalAction'].show()
-
-                const handle = new HandleFormSubmit()
-                handle.addData({
-                    _action_handler: res.action_handler,
-                    _action_name: res.action_name,
-                    _action_type: res.action_type,
-                    _id: res.id
-                })
-                    .reloadDatatable(window['datatableId'] ?? '')
-                    .init();
-            }
-        }, false).execute();
+        successActionHandler(req)
     }
 
     // document.addEventListener('hiddenModal', function (e) {
@@ -466,7 +433,6 @@ if (typeof window !== 'undefined') {
     window['NProgress'] = NProgress;
     window['confirmation'] = confirmation;
     window['AjaxAction'] = AjaxAction;
-    window['handleCheckMenu'] = handleCheckMenu;
     window['initFilter'] = initFilter
     window['initActionModal'] = initActionModal
     window['initActionByUrl'] = initActionByUrl
