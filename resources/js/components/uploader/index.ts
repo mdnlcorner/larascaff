@@ -166,6 +166,7 @@ function initUploader({ files = [], ...config }: FilePond.FilePondOptions & Conf
 
             if (config.linkPreview) {
                 pond.on('init', function () {
+                    pond.element.querySelector(`input`).setAttribute('data-input-name', config.name)
                     pond.element.querySelectorAll('.filepond--file-info-main').forEach((el: any) => {
                         const filename = el.innerHTML
                         el.innerHTML = `<a target="_blank" class="pointer-events-auto" href="/${path + filename}"> [<u class="mr-2">Preview</u>]</a> ${filename} `

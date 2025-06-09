@@ -43,7 +43,7 @@
     @if ($label)
         <label for="id_{{ $name }}" class="inline-block mb-1 text-sm">{{ $label }}</label>
     @endif
-    <input type="hidden" class="peer" value="{{ $value }}" id="rich_editor_value_{{ $name }}" name="{{ $name }}" />
+    <input type="hidden" class="peer" value="{{ $value }}" id="rich_editor_value_{{ $name }}" data-input-name="{{ $name }}" name="{{ $name }}" />
     <div class="relative has-[:focus-visible]:ring-2 has-[:focus-visible]:outline-none has-[:focus-visible]:ring-primary has-[:focus-visible]:ring-offset-white dark:has-[:focus-visible]:ring-offset-dark-900 has-[:focus-visible]:ring-offset-2 w-full border group rounded-md peer-[.is-invalid]:border-danger peer-[.is-invalid]:has-[:focus-visible]:ring-danger/60">
         <trix-toolbar class="py-2 overflow-x-auto border-b" id="my_toolbar_{{ $name }}">
             <div class="flex items-center gap-3 px-2">

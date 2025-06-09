@@ -29,6 +29,6 @@
         @if ($label)
             <label for="{{ $name }}" class="inline-block mb-1 text-sm">{{ $label }}</label>
         @endif
-        <textarea class="hidden" name="{{ $name }}" x-ref="markdown">{{ getRecord($name) }}</textarea>
+        <textarea class="hidden" data-input-name="{{ $name }}" name="{{ $name }}" x-ref="markdown">{{ getRecord($name) }}</textarea>
     </div>
 </div>

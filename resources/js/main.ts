@@ -107,25 +107,25 @@ export function initActionModal() {
 
 function successActionHandler(req: AjaxAction){
     req.onSuccess(function (res) {
-            if (window['modalAction'] && res.html) {
-                modalEl.innerHTML = res.html
-                window['modalAction'].show()
+        if (window['modalAction'] && res.html) {
+            modalEl.innerHTML = res.html
+            window['modalAction'].show()
 
-                const handle = new HandleFormSubmit()
-                handle.addData({
-                    _action_handler: res.action_handler,
-                    _action_name: res.action_name,
-                    _action_type: res.action_type,
-                    _id: res.id
-                })
-                handle.reloadDatatable(window['datatableId'] ?? '')
-                    .init();
-            } else {
-                showToast(res.status, res.title, res.message)
-                reloadDatatable(window['datatableId'])
-            }
-        }, false)
-        .execute()
+            const handle = new HandleFormSubmit()
+            handle.addData({
+                _action_handler: res.action_handler,
+                _action_name: res.action_name,
+                _action_type: res.action_type,
+                _id: res.id
+            })
+            handle.reloadDatatable(window['datatableId'] ?? '')
+                .init();
+        } else {
+            showToast(res.status, res.title, res.message)
+            reloadDatatable(window['datatableId'])
+        }
+    }, false)
+    .execute()
 }
 
 // handle action by url parameters
@@ -380,7 +380,9 @@ export class HandleFormSubmit extends AjaxOption {
                         if (errors) {
                             let i = 0
                             for (let [key, value] of Object.entries(errors)) {
-                                let input = _this.formId.find(`[name="${key}"]`)
+                                // let input = _this.formId.find(`[name="${key}"]`)
+                                let input = _this.formId.find(`[data-input-name="${key}"]`)
+                                
                                 if (!input.length) {
                                     if (key.includes('.')) {
                                         // @ts-ignore

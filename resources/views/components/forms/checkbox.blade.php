@@ -2,7 +2,7 @@
 
 <div @class(["w-full form-wrapper flex flex-col justify-center", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])>
     <div class="flex items-center ">
-        <input name="{{ $name }}" 
+        <input data-input-name="{{ $name }}" name="{{ $name }}" 
         type="checkbox" {{ $disabled ? 'disabled' : null }} id="{{ $id }}" {{ $attributes->twMerge([
             'border rounded-sm focus:ring-offset-2 appearance-none focus:ring-2 border-border checked:text-white dark:focus:ring-offset-dark-900 focus:ring-offset-white',
             $disabled ? 'cursor-not-allowed' : null,

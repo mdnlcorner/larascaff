@@ -1,7 +1,7 @@
 @props([
     'error' => null,
     'size' => 'md',
-    'name' => 'name' . rand(),
+    'name' => null,
     'label' => null,
     'multiple' => false,
     'id' => 'id' . rand(),
@@ -41,7 +41,7 @@
         @class(["w-full form-wrapper", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])
     >
         <label for="{{ $id }}" class="inline-block mb-1 text-sm">{{ $label }}</label>
-        <select id="{{ $id }}" x-ref="input" {{ $attributes->merge() }} data-placeholder="{{ $placeholder }}"
+        <select data-input-name="{{ $name }}" id="{{ $id }}" x-ref="input" {{ $attributes->merge() }} data-placeholder="{{ $placeholder }}"
             name="{{ $multiple ? $name. '[]' : $name }}" {{ $multiple ? 'multiple' : '' }}></select>
     </div>
 @else
