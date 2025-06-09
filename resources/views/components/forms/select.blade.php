@@ -50,7 +50,7 @@
             <label for="{{ $id }}"
                 class="inline-block mb-1 {{ $size == 'sm' ? 'text-xs' : 'text-sm' }}">{{ $label }}</label>
         @endif
-        <select id="{{ $id }}" name="{{ $multiple ? $name. '[]' : $name }}" {{ $multiple ? 'multiple' : '' }}
+        <select id="{{ $id }}" data-input-name="{{ $name }}" name="{{ $multiple ? $name. '[]' : $name }}" {{ $multiple ? 'multiple' : '' }}
             {{ $attributes->twMerge([
                 'relative w-full [&.is-invalid]:border-danger [&.is-invalid]:focus-visible:ring-danger/60 text-sm bg-transparent border rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-white dark:focus:ring-offset-dark-800 border-border',
                 // size
