@@ -5,6 +5,7 @@ namespace Mulaidarinull\Larascaff\Tables;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Mulaidarinull\Larascaff\Tables\Columns\Column;
 use Yajra\DataTables\Services\DataTable;
 
 class Table extends DataTable
@@ -20,6 +21,7 @@ class Table extends DataTable
         $this->query = $model;
         $this->url = $url;
         $this->actionHandler = $actionHandler;
+        $this->generateTable();
     }
 
     public function dataTable(): EloquentTable
@@ -113,32 +115,15 @@ class Table extends DataTable
                 });
         }
     }
-
-    public function customizeColumn(callable $cb): static
-    {
-        $this->generateTable();
-        $cb($this->eloquentTable);
-
-        return $this;
-    }
-
-    public function customQuery($cb): static
+    
+    public function query(?callable $cb = null): QueryBuilder | static
     {
         if (is_callable($cb)) {
-            $this->query = $this->query->newQuery();
-            $cb($this->query);
-        } else {
-            $this->query = $cb;
+            $this->query = $cb($this->query);
+
+            return $this;
         }
 
-        return $this;
-    }
-
-    /**
-     * Get the query source of dataTable.
-     */
-    public function query(): QueryBuilder
-    {
         return $this->query->newQuery();
     }
 
@@ -163,11 +148,31 @@ class Table extends DataTable
             ->orderBy(1, 'desc');
     }
 
-    public function columns($cb): static
+    public function columns($columns): static
     {
         $model = explode('Models\\', get_class($this->query->getModel()));
         $this->htmlBuilder = $this->generateHtmlBuilder()->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
-        $cb($this->htmlBuilder);
+
+        /** @var Column $column */
+        foreach ($columns as $column) {
+            if ($state = $column->getState()) {
+                $this->eloquentTable->editColumn($column['data'], $state);
+            }
+        }
+
+        array_unshift(
+            $columns,
+            Column::make('DT_RowIndex')->title('#')->orderable(false)->searchable(false),
+            Column::make('id')->searchable(false)->orderable(true)->hidden(),
+        );
+
+        array_push($columns, Column::computed('action')
+            ->exportable(false)
+            ->printable(false)
+            ->width(60)
+            ->addClass('text-center'));
+
+        $this->htmlBuilder->columns($columns);
 
         return $this;
     }
