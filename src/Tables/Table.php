@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Tables;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -29,6 +30,27 @@ class Table extends DataTable
         $this->generateTable();
 
         return $this->eloquentTable;
+    }
+
+    public function rowClass(Closure | string | null $class = null): static
+    {
+        $this->eloquentTable->setRowClass($class);
+
+        return $this;
+    }
+
+    public function rowAttr(array $attr): static
+    {
+        $this->eloquentTable->setRowAttr($attr);
+
+        return $this;
+    }
+
+    public function rawColumns(array $columns): static
+    {
+        $this->eloquentTable->rawColumns($columns);
+
+        return $this;
     }
 
     public function getActionHandler(): string
@@ -115,11 +137,11 @@ class Table extends DataTable
                 });
         }
     }
-    
+
     public function query(?callable $cb = null): QueryBuilder | static
     {
         if (is_callable($cb)) {
-            $this->query = $cb($this->query);
+            $cb($this->query);
 
             return $this;
         }
@@ -148,7 +170,7 @@ class Table extends DataTable
             ->orderBy(1, 'desc');
     }
 
-    public function columns($columns): static
+    public function columns(array $columns, bool $hasAction = true, bool $hasIndex = true): static
     {
         $model = explode('Models\\', get_class($this->query->getModel()));
         $this->htmlBuilder = $this->generateHtmlBuilder()->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
@@ -160,17 +182,21 @@ class Table extends DataTable
             }
         }
 
-        array_unshift(
-            $columns,
-            Column::make('DT_RowIndex')->title('#')->orderable(false)->searchable(false),
-            Column::make('id')->searchable(false)->orderable(true)->hidden(),
-        );
+        if ($hasIndex) {
+            array_unshift(
+                $columns,
+                Column::make('DT_RowIndex')->title('#')->orderable(false)->searchable(false),
+                Column::make('id')->searchable(false)->orderable(true)->hidden(),
+            );
+        }
 
-        array_push($columns, Column::computed('action')
-            ->exportable(false)
-            ->printable(false)
-            ->width(60)
-            ->addClass('text-center'));
+        if ($hasAction) {
+            array_push($columns, Column::computed('action')
+                ->exportable(false)
+                ->printable(false)
+                ->width(60)
+                ->addClass('text-center'));
+        }
 
         $this->htmlBuilder->columns($columns);
 
