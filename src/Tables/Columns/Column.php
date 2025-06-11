@@ -29,6 +29,15 @@ class Column extends HtmlColumn
         return $this;
     }
 
+    public function raw(bool $status = true): static
+    {
+        if ($status) {
+            $this->columnEditing['rawColumns'] = [$this->getAttributes()['data']];
+        }
+
+        return $this;
+    }
+
     public function editColumn(Closure $cb): static
     {
         $this->columnEditing['editColumn'] = $cb;

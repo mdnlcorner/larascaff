@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Mulaidarinull\Larascaff\Info\Components\Icon;
 use Mulaidarinull\Larascaff\Tables\Columns\Column;
 use Mulaidarinull\Larascaff\Tables\Columns\IconColumn;
+use Mulaidarinull\Larascaff\Tables\Enums\ActionsPosition;
 use Yajra\DataTables\Services\DataTable;
 
 class Table extends DataTable
@@ -18,6 +19,8 @@ class Table extends DataTable
     protected ?EloquentTable $eloquentTable = null;
 
     protected Collection | array $tableActions = [];
+
+    protected ActionsPosition $actionsPosition = ActionsPosition::AfterColumns;
 
     public function __construct(protected Model | QueryBuilder $model, protected string $url, protected ?string $actionHandler = null)
     {
@@ -84,7 +87,7 @@ class Table extends DataTable
     /**
      * @param  \Mulaidarinull\Larascaff\Actions\Action[]  $actions
      */
-    public function actions(array $actions): static
+    public function actions(array $actions, ActionsPosition $position = ActionsPosition::AfterColumns): static
     {
         foreach ($actions as $action) {
             foreach ($action->getOptions() as $key => $value) {
@@ -112,6 +115,39 @@ class Table extends DataTable
                 return user()->can($item['permission'] . ' ' . $this->url);
             });
 
+        $this->generateHtmlBuilder();
+        $this->actionsPosition = $position;
+
+        $columns = [];
+        foreach ($this->htmlBuilder->getColumns() as $column) {
+            $columns[] = $column;
+        }
+
+        $columnAction = Column::computed('action')
+            ->exportable(false)
+            ->printable(false)
+            ->width(60)
+            ->addClass('text-center');
+
+        if (! count($columns)) {
+            $this->htmlBuilder->add($columnAction);
+        } else {
+            if ($position->name == 'AfterColumns') {
+                $this->htmlBuilder->columns([...$columns, $columnAction]);
+            } else {
+                $hasIndex = false;
+                $columns = array_filter($columns, function ($item) use (&$hasIndex) {
+                    if ($item['data'] == 'DT_RowIndex') {
+                        $hasIndex = true;
+                    }
+
+                    return $item['data'] != 'DT_RowIndex';
+                });
+
+                $this->htmlBuilder->columns([...($hasIndex ? [Column::make('DT_RowIndex')->title('#')->orderable(false)->searchable(false)] : []), $columnAction, ...$columns]);
+            }
+        }
+
         return $this;
     }
 
@@ -123,7 +159,7 @@ class Table extends DataTable
     protected function generateTable()
     {
         if (! $this->eloquentTable) {
-            $this->eloquentTable = (new EloquentTable($this->query))->addIndexColumn()
+            $this->eloquentTable = (new EloquentTable($this->query))
                 ->addColumn('action', function (Model $model) {
                     $actions = [];
                     foreach ($this->getActions() as $action) {
@@ -151,9 +187,10 @@ class Table extends DataTable
         return $this->query->newQuery();
     }
 
-    private function generateHtmlBuilder(): HtmlBuilder
+    protected function generateHtmlBuilder()
     {
-        return app(HtmlBuilder::class)
+        $model = explode('Models\\', get_class($this->query->getModel()));
+        $this->htmlBuilder = $this->htmlBuilder ?? app(HtmlBuilder::class)
             ->parameters([
                 'searchDelay' => 1000,
                 'responsive' => [
@@ -169,25 +206,29 @@ class Table extends DataTable
             ]])
             ->minifiedAjax()
             ->selectStyleSingle()
-            ->orderBy(1, 'desc');
+            ->orderBy(1, 'desc')
+            ->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
     }
 
-    public function columns(array $columns, bool $hasAction = true, bool $hasIndex = true): static
+    public function columns(array $columns, bool $hasIndex = true): static
     {
-        $model = explode('Models\\', get_class($this->query->getModel()));
-        $this->htmlBuilder = $this->generateHtmlBuilder()->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
+        $this->generateHtmlBuilder();
 
         /** @var Column $column */
         foreach ($columns as $column) {
             // handle column editing
             if ($columnEditing = $column->getColumnEditing()) {
-                foreach($columnEditing as $colName => $colEdit) {
-                    $this->eloquentTable->{$colName}($column['data'], $colEdit);
+                foreach ($columnEditing as $actionName => $colEdit) {
+                    if ($actionName == 'rawColumns') {
+                        $rawColumns[] = $column['data'];
+                    } else {
+                        $this->eloquentTable->{$actionName}($column['data'], $colEdit);
+                    }
                 }
             }
-            
+
             if ($column instanceof IconColumn) {
-                $this->eloquentTable->rawColumns(['close']);
+                $rawColumns[] = $column['data'];
                 $this->eloquentTable->editColumn($column['data'], function ($record) use ($column) {
                     if ($column->isBoolean()) {
                         return Icon::make('close')
@@ -202,25 +243,37 @@ class Table extends DataTable
             }
         }
 
-        if ($hasIndex) {
-            array_unshift(
-                $columns,
-                Column::make('DT_RowIndex')->title('#')->orderable(false)->searchable(false),
-                Column::make('id')->searchable(false)->orderable(true)->hidden(),
-            );
+        $this->eloquentTable->rawColumns($rawColumns ?? []);
+
+        $builderColumns = [];
+        foreach ($this->htmlBuilder->getColumns() as $builderColumn) {
+            $builderColumns[] = $builderColumn;
         }
 
-        if ($hasAction) {
-            array_push($columns, Column::computed('action')
-                ->exportable(false)
-                ->printable(false)
-                ->width(60)
-                ->addClass('text-center'));
+        $indexColumns = [];
+        if ($hasIndex) {
+            $this->eloquentTable->addIndexColumn();
+            $indexColumns = [
+                Column::make('DT_RowIndex')->title('#')->orderable(false)->searchable(false),
+                Column::computed('id')->hidden(),
+            ];
+        }
+
+        if ($this->actionsPosition->name == 'AfterColumns') {
+            $columns = [...$indexColumns, ...$columns, ...$builderColumns];
+        } else {
+            $columns = [...$indexColumns, ...$builderColumns, ...$columns];
         }
 
         $this->htmlBuilder->columns($columns);
 
         return $this;
+    }
+
+    protected function resolveColumns($columns = []): array
+    {
+
+        return $columns;
     }
 
     /**
