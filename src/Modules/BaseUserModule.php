@@ -10,7 +10,6 @@ use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Tables;
-use Yajra\DataTables\EloquentDataTable;
 
 class BaseUserModule extends Module
 {
@@ -131,20 +130,14 @@ class BaseUserModule extends Module
                     ->icon('tabler-shield'),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->customizeColumn(function (EloquentDataTable $eloquentDataTable) {
-                $eloquentDataTable
-                    ->editColumn('created_at', fn (User $user) => $user->created_at->format('d-m-Y H:i'))
-                    ->editColumn('updated_at', fn (User $user) => $user->updated_at->format('d-m-Y H:i'));
-            })
-            ->columns(function (Tables\HtmlBuilder $builder) {
-                $builder
-                    ->columnsWithActions([
-                        Tables\Column::make('name'),
-                        Tables\Column::make('email'),
-                        Tables\Column::make('gender'),
-                        Tables\Column::make('created_at'),
-                        Tables\Column::make('updated_at'),
-                    ]);
-            });
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\TextColumn::make('gender'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->editColumn(fn (User $user) => $user->created_at->format('d-m-Y H:i')),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->editColumn(fn (User $user) => $user->updated_at->format('d-m-Y H:i')),
+            ]);
     }
 }

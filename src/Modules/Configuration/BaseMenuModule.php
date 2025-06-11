@@ -75,29 +75,23 @@ class BaseMenuModule extends Module
                         Cache::forget('urlMenu');
                     }),
             ])
-            ->customQuery(function (\Illuminate\Database\Eloquent\Builder $query) {
+            ->query(function (\Illuminate\Database\Eloquent\Builder $query) {
                 $query->with('mainMenu', 'permissions');
             })
-            ->customizeColumn(function (Tables\EloquentTable $eloquentDataTable) {
-                $eloquentDataTable
-                    ->addColumn('permission', function (Menu $menu) {
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('url'),
+                Tables\Columns\TextColumn::make('category'),
+                Tables\Columns\TextColumn::make('icon'),
+                Tables\Columns\TextColumn::make('permissions')->searchable(false)->orderable(false)
+                    ->editColumn(function (Menu $menu) {
                         return $menu->permissions->pluck('name')->map(function ($item) {
                             $item = explode(' ', $item)[0];
 
                             return $item;
                         })->implode(', ');
-                    });
-            })
-            ->columns(function (Tables\HtmlBuilder $builder) {
-                $builder
-                    ->columnsWithActions([
-                        Tables\Column::make('name'),
-                        Tables\Column::make('url'),
-                        Tables\Column::make('category'),
-                        Tables\Column::make('icon'),
-                        Tables\Column::make('permission')->searchable(false)->orderable(false),
-                    ]);
-            });
+                    }),
+            ]);
     }
 
     public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form

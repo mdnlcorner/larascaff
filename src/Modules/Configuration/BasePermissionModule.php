@@ -22,16 +22,13 @@ class BasePermissionModule extends Module
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->customQuery(function (Builder $query) {
+            ->query(function (Builder $query) {
                 $query->with('menu');
             })
-            ->columns(function (Tables\HtmlBuilder $builder) {
-                $builder
-                    ->columnsWithActions([
-                        Tables\Column::make('name'),
-                        Tables\Column::make('menu.name')->name('menu.name')->title('Menu'),
-                    ]);
-            });
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('menu.name')->name('menu.name')->title('Menu'),
+            ]);
     }
 
     public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form

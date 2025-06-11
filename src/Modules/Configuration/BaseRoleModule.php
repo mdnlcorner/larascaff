@@ -72,12 +72,9 @@ class BaseRoleModule extends Module
                     ->permission('update-permissions')
                     ->icon('tabler-shield'),
             ])
-            ->columns(function (Tables\HtmlBuilder $builder) {
-                $builder
-                    ->columnsWithActions([
-                        Tables\Column::make('name'),
-                    ]);
-            });
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+            ]);
     }
 
     public function getPermissionsByRole($id)

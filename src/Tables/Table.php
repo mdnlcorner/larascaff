@@ -6,14 +6,16 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Mulaidarinull\Larascaff\Info\Components\Icon;
 use Mulaidarinull\Larascaff\Tables\Columns\Column;
+use Mulaidarinull\Larascaff\Tables\Columns\IconColumn;
 use Yajra\DataTables\Services\DataTable;
 
 class Table extends DataTable
 {
-    public QueryBuilder | Model | null $query = null;
+    protected QueryBuilder | Model | null $query = null;
 
-    public ?EloquentTable $eloquentTable = null;
+    protected ?EloquentTable $eloquentTable = null;
 
     protected Collection | array $tableActions = [];
 
@@ -177,8 +179,26 @@ class Table extends DataTable
 
         /** @var Column $column */
         foreach ($columns as $column) {
-            if ($state = $column->getState()) {
-                $this->eloquentTable->editColumn($column['data'], $state);
+            // handle column editing
+            if ($columnEditing = $column->getColumnEditing()) {
+                foreach($columnEditing as $colName => $colEdit) {
+                    $this->eloquentTable->{$colName}($column['data'], $colEdit);
+                }
+            }
+            
+            if ($column instanceof IconColumn) {
+                $this->eloquentTable->rawColumns(['close']);
+                $this->eloquentTable->editColumn($column['data'], function ($record) use ($column) {
+                    if ($column->isBoolean()) {
+                        return Icon::make('close')
+                            ->label(null)
+                            ->boolean()
+                            ->value($record->{$column['data']})
+                            ->view();
+                    }
+
+                    return $record->{$column['data']};
+                });
             }
         }
 
