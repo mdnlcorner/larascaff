@@ -27,7 +27,7 @@
             {!! $view !!}
         @endisset
         @isset($dataTable)
-            @isset($tabs)
+            @if($tabs->count())
                 <div class="flex justify-center pb-6">
                     <div class="px-3 py-2.5 rounded-xl bg-card border">
                         <div x-data="{
@@ -77,7 +77,7 @@
 
                     </div>
                 </div>
-            @endisset
+            @endif
             <div class="card">
                 <div class="border rounded-md dark:border-dark-800 border-dark-100">
                     @isset($filterTable)

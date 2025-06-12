@@ -11,6 +11,7 @@ use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Actions\CreateAction;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Info\Components\Info;
+use Mulaidarinull\Larascaff\Tables\Components\Tab;
 use Mulaidarinull\Larascaff\Tables\Table;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
@@ -30,7 +31,7 @@ abstract class Module extends Controller
 
     protected static ?string $pageTitle = null;
 
-    protected static ?Builder $datatable = null;
+    protected static ?Table $datatable = null;
 
     private array $pageData = [];
 
@@ -160,43 +161,48 @@ abstract class Module extends Controller
         }
         // ====== End Widgets ======
 
-        $tabs = collect(static::tabs());
-        if ($tabs->count()) {
-            $this->pageData['tabs'] = $tabs;
-        }
+        static::$datatable = new Table(static::getInstanceModel()->newQuery(), static::getUrl(), static::class);
 
-        static::$datatable = static::getInstanceModel()->newQuery();
-        if (isset($this->pageData['tabs'])) {
-            if (! $request->has('activeTab')) {
-                if (is_callable($tabs->first()->getQuery())) {
-                    call_user_func($tabs->first()->getQuery(), static::$datatable);
-                }
-            } else {
-                $tab = $tabs[$request->get('activeTab')] ?? null;
-                if ($tab) {
-                    if (is_callable($tab->getQuery())) {
-                        call_user_func($tab->getQuery(), static::$datatable);
-                    }
-                } else {
-                    if (is_callable($tabs->first()->getQuery())) {
-                        call_user_func($tabs->first()->getQuery(), static::$datatable);
-                    }
-                }
-            }
-        }
-
-        $datatable = new Table(static::$datatable, static::getUrl(), static::class);
         if (method_exists($this, 'filterTable')) {
             $filterTable = call_user_func([$this, 'filterTable']);
             $this->pageData['filterTable'] = view('larascaff::filter', [
                 'filterTable' => $filterTable,
             ]);
-            $datatable->filterTable($filterTable);
+            static::$datatable->filterTable($filterTable);
         }
 
-        $this->pageData['tableActions'] = static::getTableActions($datatable);
+        $this->pageData['tableActions'] = static::getTableActions(static::$datatable);
 
-        return $datatable->render('larascaff::main-content', $this->pageData);
+        $this->resolveTableTabs();
+
+        return static::$datatable->render('larascaff::main-content', $this->pageData);
+    }
+
+    protected function resolveTableTabs()
+    {
+        $this->pageData['tabs'] = static::$datatable->getTabs();
+
+        function defaultActiveTab(Tab $tab, Builder $datatable)
+        {
+            if (is_callable($tab->getQuery())) {
+                call_user_func($tab->getQuery(), $datatable);
+            }
+        }
+
+        if ($this->pageData['tabs']->count()) {
+            if (! request()->has('activeTab')) {
+                defaultActiveTab($this->pageData['tabs']->first(), static::$datatable->getQuery());
+            } else {
+                $tab = $this->pageData['tabs'][request()->get('activeTab')] ?? null;
+                if ($tab) {
+                    if (is_callable($tab->getQuery())) {
+                        call_user_func($tab->getQuery(), static::$datatable->getQuery());
+                    }
+                } else {
+                    defaultActiveTab($this->pageData['tabs']->first(), static::$datatable->getQuery());
+                }
+            }
+        }
     }
 
     public static function getTableActions(?Table $table = null)

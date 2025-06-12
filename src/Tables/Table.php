@@ -9,7 +9,9 @@ use Illuminate\Support\Collection;
 use Mulaidarinull\Larascaff\Info\Components\Icon;
 use Mulaidarinull\Larascaff\Tables\Columns\Column;
 use Mulaidarinull\Larascaff\Tables\Columns\IconColumn;
+use Mulaidarinull\Larascaff\Tables\Components\Tab;
 use Mulaidarinull\Larascaff\Tables\Enums\ActionsPosition;
+use Yajra\DataTables\Html\Builder;
 use Yajra\DataTables\Services\DataTable;
 
 class Table extends DataTable
@@ -21,6 +23,9 @@ class Table extends DataTable
     protected Collection | array $tableActions = [];
 
     protected ActionsPosition $actionsPosition = ActionsPosition::AfterColumns;
+
+    /** @var Collection<int, Tab> */
+    protected Collection $tabs;
 
     public function __construct(protected Model | QueryBuilder $model, protected string $url, protected ?string $actionHandler = null)
     {
@@ -37,6 +42,9 @@ class Table extends DataTable
         return $this->eloquentTable;
     }
 
+    /**
+     * Sets DT_RowClass template.
+     */
     public function rowClass(Closure | string | null $class = null): static
     {
         $this->eloquentTable->setRowClass($class);
@@ -44,6 +52,9 @@ class Table extends DataTable
         return $this;
     }
 
+    /**
+     * Set DT_RowAttr templates.
+     */
     public function rowAttr(array $attr): static
     {
         $this->eloquentTable->setRowAttr($attr);
@@ -51,6 +62,9 @@ class Table extends DataTable
         return $this;
     }
 
+    /**
+     * Set columns that should not be escaped.
+     */
     public function rawColumns(array $columns): static
     {
         $this->eloquentTable->rawColumns($columns);
@@ -85,7 +99,7 @@ class Table extends DataTable
     }
 
     /**
-     * @param  \Mulaidarinull\Larascaff\Actions\Action[]  $actions
+     * @param  list<\Mulaidarinull\Larascaff\Actions\Action>  $actions
      */
     public function actions(array $actions, ActionsPosition $position = ActionsPosition::AfterColumns): static
     {
@@ -151,6 +165,11 @@ class Table extends DataTable
         return $this;
     }
 
+    public function getQuery(): Model | QueryBuilder
+    {
+        return $this->query;
+    }
+
     public function getActions()
     {
         return $this->tableActions;
@@ -176,6 +195,24 @@ class Table extends DataTable
         }
     }
 
+    /**
+     * @param  array<string, Tab>  $tabs
+     */
+    public function tabs(array $tabs): static
+    {
+        $this->tabs = collect($tabs);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<string, Tab>
+     */
+    public function getTabs(): Collection
+    {
+        return $this->tabs ??= collect([]);
+    }
+
     public function query(?callable $cb = null): QueryBuilder | static
     {
         if (is_callable($cb)) {
@@ -189,32 +226,36 @@ class Table extends DataTable
 
     protected function generateHtmlBuilder()
     {
-        $model = explode('Models\\', get_class($this->query->getModel()));
-        $this->htmlBuilder = $this->htmlBuilder ?? app(HtmlBuilder::class)
-            ->parameters([
-                'searchDelay' => 1000,
-                'responsive' => [
-                    'details' => [
-                        'display' => '$.fn.dataTable.Responsive.display.childRowImmediate',
+        if (! $this->htmlBuilder) {
+            $model = explode('Models\\', get_class($this->query->getModel()));
+            $this->htmlBuilder = $this->builder()
+                ->parameters([
+                    'searchDelay' => 1000,
+                    'responsive' => [
+                        'details' => [
+                            'display' => '$.fn.dataTable.Responsive.display.childRowImmediate',
+                        ],
                     ],
-                ],
 
-            ])
-            ->language(['paginate' => [
-                'next' => '→',
-                'previous' => '←',
-            ]])
-            ->minifiedAjax()
-            ->selectStyleSingle()
-            ->orderBy(1, 'desc')
-            ->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
+                ])
+                ->language(['paginate' => [
+                    'next' => '→',
+                    'previous' => '←',
+                ]])
+                ->minifiedAjax()
+                ->selectStyleSingle()
+                ->orderBy(1, 'desc')
+                ->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
+        }
     }
 
+    /**
+     * @param  list<Column>  $columns
+     */
     public function columns(array $columns, bool $hasIndex = true): static
     {
         $this->generateHtmlBuilder();
 
-        /** @var Column $column */
         foreach ($columns as $column) {
             // handle column editing
             if ($columnEditing = $column->getColumnEditing()) {
@@ -270,23 +311,11 @@ class Table extends DataTable
         return $this;
     }
 
-    protected function resolveColumns($columns = []): array
-    {
-
-        return $columns;
-    }
-
-    /**
-     * Optional method if you want to use the html builder.
-     */
-    public function html(): HtmlBuilder
+    public function html(): Builder
     {
         return $this->htmlBuilder;
     }
 
-    /**
-     * Get the filename for export.
-     */
     protected function filename(): string
     {
         return '_' . date('YmdHis');
