@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { DialOptions, DialTriggerType } from './types';
+import instances from '../../dom/instances';
 import type { InstanceOptions } from '../../dom/types';
 import { DialInterface } from './interface';
-import instances from '../../dom/instances';
+import type { DialOptions, DialTriggerType } from './types';
 
 const Default: DialOptions = {
     triggerType: 'hover',
@@ -32,11 +32,9 @@ class Dial implements DialInterface {
         triggerEl: HTMLElement | null = null,
         targetEl: HTMLElement | null = null,
         options: DialOptions = Default,
-        instanceOptions: InstanceOptions = DefaultInstanceOptions
+        instanceOptions: InstanceOptions = DefaultInstanceOptions,
     ) {
-        this._instanceId = instanceOptions.id
-            ? instanceOptions.id
-            : targetEl.id;
+        this._instanceId = instanceOptions.id ? instanceOptions.id : targetEl.id;
         this._parentEl = parentEl;
         this._triggerEl = triggerEl;
         this._targetEl = targetEl;
@@ -44,19 +42,12 @@ class Dial implements DialInterface {
         this._visible = false;
         this._initialized = false;
         this.init();
-        instances.addInstance(
-            'Dial',
-            this,
-            this._instanceId,
-            instanceOptions.override
-        );
+        instances.addInstance('Dial', this, this._instanceId, instanceOptions.override);
     }
 
     init() {
         if (this._triggerEl && this._targetEl && !this._initialized) {
-            const triggerEventTypes = this._getTriggerEventTypes(
-                this._options.triggerType
-            );
+            const triggerEventTypes = this._getTriggerEventTypes(this._options.triggerType);
 
             this._showEventHandler = () => {
                 this.show();
@@ -82,9 +73,7 @@ class Dial implements DialInterface {
 
     destroy() {
         if (this._initialized) {
-            const triggerEventTypes = this._getTriggerEventTypes(
-                this._options.triggerType
-            );
+            const triggerEventTypes = this._getTriggerEventTypes(this._options.triggerType);
 
             triggerEventTypes.showEvents.forEach((ev: string) => {
                 this._triggerEl.removeEventListener(ev, this._showEventHandler);
@@ -193,27 +182,22 @@ export function initDials() {
             const $dialEl = document.getElementById(dialId);
 
             if ($dialEl) {
-                const triggerType =
-                    $triggerEl.getAttribute('data-dial-trigger');
+                const triggerType = $triggerEl.getAttribute('data-dial-trigger');
                 new Dial(
                     $parentEl as HTMLElement,
                     $triggerEl as HTMLElement,
                     $dialEl as HTMLElement,
                     {
-                        triggerType: triggerType
-                            ? triggerType
-                            : Default.triggerType,
-                    } as DialOptions
+                        triggerType: triggerType ? triggerType : Default.triggerType,
+                    } as DialOptions,
                 );
             } else {
                 console.error(
-                    `Dial with id ${dialId} does not exist. Are you sure that the data-dial-toggle attribute points to the correct modal id?`
+                    `Dial with id ${dialId} does not exist. Are you sure that the data-dial-toggle attribute points to the correct modal id?`,
                 );
             }
         } else {
-            console.error(
-                `Dial with id ${$parentEl.id} does not have a trigger element. Are you sure that the data-dial-toggle attribute exists?`
-            );
+            console.error(`Dial with id ${$parentEl.id} does not have a trigger element. Are you sure that the data-dial-toggle attribute exists?`);
         }
     });
 }

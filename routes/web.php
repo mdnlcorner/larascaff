@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Mulaidarinull\Larascaff\Actions\Action;
+use Mulaidarinull\Larascaff\Actions\RouteHandler;
 use Mulaidarinull\Larascaff\Forms\Components\Repeater;
 use Mulaidarinull\Larascaff\Forms\Components\Select;
 use Mulaidarinull\Larascaff\Forms\Components\Uploader;
@@ -15,7 +16,8 @@ Route::middleware(larascaffConfig()->getMiddleware())->group(function () {
         Route::post('uploader', [Uploader::class, 'uploadHandler'])->middleware('signed')->name('uploader');
         Route::get('options', [Select::class, 'serverSideOptionsHandler']);
         Route::post('repeater-items', [Repeater::class, 'repeaterHandler']);
-        Route::post('module-action', [Action::class, 'actionHandler']);
+        Route::post('module-action', RouteHandler::class);
+        Route::post('handler', [Action::class, 'routeActionHandler']);
 
         // Pages route
         File::ensureDirectoryExists(app_path('Larascaff/Pages'));

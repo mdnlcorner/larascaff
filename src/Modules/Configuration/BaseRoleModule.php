@@ -5,6 +5,7 @@ namespace Mulaidarinull\Larascaff\Modules\Configuration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Role;
@@ -18,25 +19,20 @@ class BaseRoleModule extends Module
     public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('name'),
-            Forms\Components\TextInput::make('guard_name'),
+            Forms\Components\TextInput::make('name')
+                ->validations([
+                    'required',
+                    Rule::unique('roles')->ignore(static::getInstanceModel()),
+                ]),
+            Forms\Components\TextInput::make('guard_name')
+                ->validations(['required']),
         ]);
-    }
-
-    public function validationRules(): array
-    {
-        return [
-            'name' => ['required', Rule::unique('roles')->ignore(static::getInstanceModel())],
-            'guard_name' => 'required',
-        ];
     }
 
     public static function routes(): array
     {
         return [
             static::makeRoute(url: '{role}/copy-permissions', action: 'getPermissionsByRole', name: 'copy-permissions.edit'),
-            static::makeRoute(url: '{role}/permissions', action: 'editPermissions', name: 'permissions.edit'),
-            static::makeRoute(url: '{role}/permissions', action: 'updatePermissions', method: 'put', name: 'permissions.update'),
         ];
     }
 
@@ -49,16 +45,36 @@ class BaseRoleModule extends Module
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('permissions')
                     ->label('Permission')
-                    ->path('{{id}}/permissions')
+                    ->form(function (Forms\Components\Form $form) {
+                        return $form->schema([
+                            RolePermissionFormComponent::make()
+                                ->shareData(function (Role $role) {
+                                    $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
+                                    $roles = Role::query()->where('id', '!=', $role->id)->get()->map(fn ($role) => ['label' => $role->name, 'value' => $role->id]);
+
+                                    return [
+                                        'data' => $role,
+                                        'roles' => $roles,
+                                        'menus' => $menus,
+                                    ];
+                                }),
+                        ])
+                            ->modalSize(ModalSize::Lg)
+                            ->columns(1);
+                    })
+                    ->action(function (Request $request, Role $role) {
+                        Gate::authorize('update-permissions ' . static::getUrl());
+
+                        $role->syncPermissions($request->permissions);
+
+                        return responseSuccess();
+                    })
                     ->permission('update-permissions')
                     ->icon('tabler-shield'),
             ])
-            ->columns(function (Tables\HtmlBuilder $builder) {
-                $builder
-                    ->columnsWithActions([
-                        Tables\Column::make('name'),
-                    ]);
-            });
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+            ]);
     }
 
     public function getPermissionsByRole($id)
@@ -73,36 +89,5 @@ class BaseRoleModule extends Module
                 ->orderBy('orders')
                 ->get(),
         ]);
-    }
-
-    public function editPermissions(Role $role)
-    {
-        $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
-        $roles = Role::query()->where('id', '!=', $role->id)->get()->map(fn ($role) => ['label' => $role->name, 'value' => $role->id]);
-        $view = view('larascaff::pages.role-permission-form', [
-            'data' => $role,
-            'menus' => $menus,
-            'roles' => $roles,
-        ]);
-        $prefix = getPrefix();
-        if ($prefix) {
-            $prefix .= '.';
-        }
-
-        return $this->form($view, [
-            'method' => 'PUT',
-            'title' => 'Permission Role',
-            'action' => route($prefix . 'configuration.roles.permissions.update', $role->{$role->getRouteKeyName()}),
-            'size' => 'lg',
-        ]);
-    }
-
-    public function updatePermissions(Request $request, Role $role)
-    {
-        Gate::authorize('update-permissions ' . static::getUrl());
-
-        $role->syncPermissions($request->permissions);
-
-        return responseSuccess();
     }
 }

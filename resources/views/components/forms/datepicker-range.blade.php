@@ -29,7 +29,7 @@
     @endif
     <div x-ref="datepicker" class="flex">
         <div class="w-full form-wrapper">
-            <input placeholder="{{ $placeholder1 }}" value="{{ $value1 }}" readonly name="{{ $name1 }}"
+            <input placeholder="{{ $placeholder1 }}" value="{{ $value1 }}" readonly data-input-name="{{ $name1 }}" name="{{ $name1 }}"
                 type="{{ $type }}" id="name1{{ $id }}"
                 {{ $attributes->twMergeFor('input1', [
                     'disabled:cursor-not-allowed px-3 py-2 [&.is-invalid]:border-danger [&.is-invalid]:focus-visible:ring-danger/60 px-3 py-2 text-sm w-full bg-transparent border rounded-l-md border-border focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-primary focus-visible:ring-offset-white placeholder:text-muted-foreground dark:focus-visible:ring-offset-dark-900 focus-visible:ring-offset-2',
@@ -43,7 +43,7 @@
             @svg('tabler-calendar', 'w-5 h-5')
         </div>
         <div class="w-full form-wrapper">
-            <input placeholder="{{ $placeholder2 }}" readonly value="{{ $value2 }}" name="{{ $name2 }}"
+            <input placeholder="{{ $placeholder2 }}" readonly value="{{ $value2 }}" data-input-name="{{ $name2 }}" name="{{ $name2 }}"
                 type="{{ $type }}" id="name2{{ $id }}"
                 {{ $attributes->twMergeFor('input2', [
                     'disabled:cursor-not-allowed px-3 py-2 [&.is-invalid]:border-danger [&.is-invalid]:focus-visible:ring-danger/60 px-3 py-2 text-sm w-full bg-transparent border rounded-r-md border-border focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-primary focus-visible:ring-offset-white placeholder:text-muted-foreground dark:focus-visible:ring-offset-dark-900 focus-visible:ring-offset-2',

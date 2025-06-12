@@ -1,5 +1,5 @@
-import { PopoverInterface } from './interface';
 import type { Placement } from '@popperjs/core';
+import { PopoverInterface } from './interface';
 
 export declare type PopoverTriggerType = 'click' | 'hover' | 'none';
 

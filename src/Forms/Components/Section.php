@@ -5,7 +5,7 @@ namespace Mulaidarinull\Larascaff\Forms\Components;
 use Illuminate\Support\Facades\Blade;
 use Mulaidarinull\Larascaff\Forms\Concerns;
 
-class Section
+class Section extends Layout
 {
     use Concerns\HasCollapsible;
     use Concerns\HasColumnSpan;
@@ -30,9 +30,17 @@ class Section
     public function view()
     {
         $slot = '';
+        $relationship = $this->getRelationship();
+        if ($relationship) {
+            getRecord()->loadMissing($relationship);
+        }
         foreach ($this->components as $component) {
             if (method_exists($component, 'module')) {
                 $component->module($this->module);
+            }
+            if ($relationship) {
+                $component->name($relationship . '[' . $component->getName() . ']');
+                $component->parentRelationship($relationship);
             }
             $slot .= $component->view();
         }

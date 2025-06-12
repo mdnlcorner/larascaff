@@ -1,9 +1,4 @@
-import {
-    CarouselOptions,
-    CarouselItem,
-    IndicatorItem,
-    RotationItems,
-} from './types';
+import { CarouselItem, CarouselOptions, IndicatorItem, RotationItems } from './types';
 
 export declare interface CarouselInterface {
     _items: CarouselItem[];

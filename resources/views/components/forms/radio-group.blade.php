@@ -5,7 +5,7 @@
     <div class="flex items-center gap-x-3">
         @foreach ($options as $key => $val)
             <div class="flex items-center gap-x-2 ">
-                <input name="{{ $name }}" {{ $disabled ? 'disabled' : null }} @checked($val == (is_null($value) ? (getRecord($name) ?? '') : $value)) value="{{ $val }}" type="radio" id="{{ $key }}" {{ $attributes->twMerge([
+                <input data-input-name="{{ $name }}" name="{{ $name }}" {{ $disabled ? 'disabled' : null }} @checked($val == (is_null($value) ? (getRecord($name) ?? '') : $value)) value="{{ $val }}" type="radio" id="{{ $key }}" {{ $attributes->twMerge([
                     'w-4 h-4 border cursor-pointer border-border [&.is-invalid]:border-danger rounded-full appearance-none dark:bg-dark-800 bg-dark-100 focus:ring-2 checked:border-none  focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-dark-800',
                     $disabled ? 'cursor-not-allowed' : null,
                     // variant

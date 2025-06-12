@@ -1,55 +1,61 @@
 .datepicker {
-    @apply hidden py-2 absolute w-72 flex z-[999];
+    @apply absolute z-[999] flex hidden w-72 py-2;
     &.active {
         @apply block;
     }
     .datepicker-picker {
-        @apply dark:bg-dark-800 rounded-md p-3 bg-white shadow-md;
+        @apply rounded-md bg-white p-3 shadow-md dark:bg-dark-800;
     }
-    
+
     .datepicker-header {
-        @apply flex items-center justify-center gap-3 w-full;
+        @apply flex w-full items-center justify-center gap-3;
     }
     .datepicker-controls {
-        @apply flex items-center justify-between w-full gap-x-3;
+        @apply flex w-full items-center justify-between gap-x-3;
         .view-switch {
-            @apply hover:dark:bg-dark-900 h-10 hover:bg-dark-100 py-1 px-2 rounded-md
+            @apply h-10 rounded-md px-2 py-1 hover:bg-dark-100 hover:dark:bg-dark-900;
         }
         .next-button {
-            @apply p-2 w-10 hover:dark:bg-dark-900 hover:bg-dark-100 rounded-md;
+            @apply w-10 rounded-md p-2 hover:bg-dark-100 hover:dark:bg-dark-900;
         }
         .prev-button {
-            @apply p-2 w-10 hover:dark:bg-dark-900 hover:bg-dark-100 rounded-md;
+            @apply w-10 rounded-md p-2 hover:bg-dark-100 hover:dark:bg-dark-900;
         }
     }
     .datepicker-view {
-        @apply mt-6
+        @apply mt-6;
     }
-    .days-of-week,.datepicker-grid {
+    .days-of-week,
+    .datepicker-grid {
         @apply grid grid-cols-7 text-center;
     }
     .days-of-week {
-        @apply font-semibold text-sm;
+        @apply text-sm font-semibold;
     }
-    
+
     .day {
-        @apply p-1.5 text-sm hover:dark:bg-dark-900 hover:bg-dark-100 rounded-lg cursor-pointer;
+        @apply cursor-pointer rounded-lg p-1.5 text-sm hover:bg-dark-100 hover:dark:bg-dark-900;
     }
     .day.today {
         @apply bg-primary/50 text-white;
     }
-    
-    .day.prev, .day.next {
+
+    .day.prev,
+    .day.next {
         @apply text-muted-foreground;
     }
     .day.selected {
-        @apply bg-primary text-white hover:bg-primary
+        @apply bg-primary text-white hover:bg-primary;
     }
-    
-    .datepicker-view.months, .datepicker-view.years , .datepicker-view.decades {
+
+    .datepicker-view.months,
+    .datepicker-view.years,
+    .datepicker-view.decades {
         @apply grid grid-cols-4;
-        .month, .year, .decade {
-            @apply py-6 cursor-pointer hover:dark:bg-dark-900 hover:bg-dark-100 rounded-md;
+        .month,
+        .year,
+        .decade {
+            @apply cursor-pointer rounded-md py-6 hover:bg-dark-100 hover:dark:bg-dark-900;
             &.selected {
                 @apply bg-primary;
             }
@@ -58,13 +64,13 @@
 
     // daterange
     .day.range {
-        @apply dark:bg-primary/10 bg-primary/20 rounded-none;
+        @apply rounded-none bg-primary/20 dark:bg-primary/10;
     }
     .day.range-end {
         @apply rounded-l-none bg-primary text-white;
     }
     .day.range-start {
-        @apply rounded-r-none rounded-l-lg bg-primary text-white;
+        @apply rounded-l-lg rounded-r-none bg-primary text-white;
     }
     .day.range-start.day.range-end {
         @apply rounded-lg;

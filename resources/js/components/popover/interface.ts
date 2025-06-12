@@ -1,9 +1,5 @@
-import {
-    PopoverOptions,
-    PopoverTriggerType,
-    PopoverTriggerEventTypes,
-} from './types';
 import type { Instance as PopperInstance } from '@popperjs/core';
+import { PopoverOptions, PopoverTriggerEventTypes, PopoverTriggerType } from './types';
 
 export declare interface PopoverInterface {
     _targetEl: HTMLElement | null;
@@ -20,9 +16,7 @@ export declare interface PopoverInterface {
     _setupKeydownListener(): void;
     _removeKeydownListener(): void;
     _handleClickOutside(ev: Event, targetEl: HTMLElement): void;
-    _getTriggerEvents(
-        triggerType: PopoverTriggerType
-    ): PopoverTriggerEventTypes;
+    _getTriggerEvents(triggerType: PopoverTriggerType): PopoverTriggerEventTypes;
     isVisible(): boolean;
     show(): void;
     hide(): void;

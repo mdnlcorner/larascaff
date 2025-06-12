@@ -117,4 +117,14 @@ abstract class Page extends Controller
     {
         return compact('method', 'action', 'url', 'name');
     }
+
+    public function pageHandler(Request $request)
+    {
+        $request->validate(['module' => 'required', 'method' => 'required']);
+        if (! class_exists($request->module)) {
+            return responseError('Class does not exist');
+        }
+
+        return app()->call([app()->make($request->module), $request->method]);
+    }
 }

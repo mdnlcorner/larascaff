@@ -90,6 +90,11 @@ class Uploader extends Field
         return $this;
     }
 
+    public function getDisk(): string
+    {
+        return $this->disk;
+    }
+
     public function linkPreview(bool $linkPreview = true): static
     {
         $this->config['linkPreview'] = $linkPreview;
@@ -182,6 +187,9 @@ class Uploader extends Field
 
         $requestKey = array_key_first($files);
 
+        /**
+         * @var UploadedFile $file
+         */
         $file = is_array($request->input($requestKey))
             ? $request->file($requestKey)[0]
             : $request->file($requestKey);

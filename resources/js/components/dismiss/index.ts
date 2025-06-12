@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { DismissOptions } from './types';
+import instances from '../../dom/instances';
 import type { InstanceOptions } from '../../dom/types';
 import { DismissInterface } from './interface';
-import instances from '../../dom/instances';
+import type { DismissOptions } from './types';
 
 const Default: DismissOptions = {
     transition: 'transition-opacity',
@@ -28,22 +28,15 @@ class Dismiss implements DismissInterface {
         targetEl: HTMLElement | null = null,
         triggerEl: HTMLElement | null = null,
         options: DismissOptions = Default,
-        instanceOptions: InstanceOptions = DefaultInstanceOptions
+        instanceOptions: InstanceOptions = DefaultInstanceOptions,
     ) {
-        this._instanceId = instanceOptions.id
-            ? instanceOptions.id
-            : targetEl.id;
+        this._instanceId = instanceOptions.id ? instanceOptions.id : targetEl.id;
         this._targetEl = targetEl;
         this._triggerEl = triggerEl;
         this._options = { ...Default, ...options };
         this._initialized = false;
         this.init();
-        instances.addInstance(
-            'Dismiss',
-            this,
-            this._instanceId,
-            instanceOptions.override
-        );
+        instances.addInstance('Dismiss', this, this._instanceId, instanceOptions.override);
     }
 
     init() {
@@ -73,12 +66,7 @@ class Dismiss implements DismissInterface {
     }
 
     hide() {
-        this._targetEl.classList.add(
-            this._options.transition,
-            `duration-${this._options.duration}`,
-            this._options.timing,
-            'opacity-0'
-        );
+        this._targetEl.classList.add(this._options.transition, `duration-${this._options.duration}`, this._options.timing, 'opacity-0');
         setTimeout(() => {
             this._targetEl.classList.add('hidden');
         }, this._options.duration);
@@ -100,9 +88,7 @@ export function initDismisses() {
         if ($dismissEl) {
             new Dismiss($dismissEl as HTMLElement, $triggerEl as HTMLElement);
         } else {
-            console.error(
-                `The dismiss element with id "${targetId}" does not exist. Please check the data-dismiss-target attribute.`
-            );
+            console.error(`The dismiss element with id "${targetId}" does not exist. Please check the data-dismiss-target attribute.`);
         }
     });
 }

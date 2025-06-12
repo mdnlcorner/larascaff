@@ -2,32 +2,42 @@
 
 namespace Mulaidarinull\Larascaff\Info\Components;
 
+use Closure;
 use Illuminate\Support\Facades\Blade;
 
 class Icon extends Info
 {
     protected ?string $color = null;
 
-    protected ?string $icon = null;
+    protected Closure | string | null $icon = null;
 
-    public function color(string $color)
+    protected bool $boolean = false;
+
+    public function color(string $color): static
     {
         $this->color = $color;
 
         return $this;
     }
 
-    public function icon(string $icon)
+    public function boolean(bool $status = true): static
+    {
+        $this->boolean = $status;
+
+        return $this;
+    }
+
+    public function icon(Closure | string $icon): static
     {
         $this->icon = $icon;
 
         return $this;
     }
 
-    public function view()
+    public function view(): string
     {
         if (! $this->show) {
-            return;
+            return '';
         }
 
         return Blade::render(
@@ -38,7 +48,8 @@ class Icon extends Info
                 :columnSpan="$columnSpan" 
                 :value="$value" 
                 :color="$color" 
-                :icon="$icon" 
+                :icon="$icon"
+                :isBoolean="$isBoolean"
             />
             HTML,
             [
@@ -48,6 +59,7 @@ class Icon extends Info
                 'value' => $this->value,
                 'color' => $this->color,
                 'icon' => $this->icon,
+                'isBoolean' => $this->boolean,
             ]
         );
     }

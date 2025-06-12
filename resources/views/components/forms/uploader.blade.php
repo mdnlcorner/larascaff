@@ -41,7 +41,8 @@
         files: @js($files),
         path: @js($disk == 'local' ? 'storage/' . $path : $path),
         cropperOptions: @js($cropperOptions),
-        ...@js($config)
+        ...@js($config),
+        name: @js($name),
     })" 
     @class([
         'w-full form-wrapper',

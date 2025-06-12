@@ -73,7 +73,7 @@ class TextInput extends Field
         return $this;
     }
 
-    public function numberFormat(?string $thousandSeparator = '.', ?string $decimalSeparator = ',')
+    public function numberFormat(?string $thousandSeparator = '.', ?string $decimalSeparator = ','): static
     {
         $this->numberFormat = [$thousandSeparator, $decimalSeparator];
 

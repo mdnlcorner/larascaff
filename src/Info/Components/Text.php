@@ -14,35 +14,40 @@ class Text extends Info
 
     protected ?string $prependIcon = null;
 
-    public function appendIcon(string $appendIcon)
+    public function appendIcon(string $appendIcon): static
     {
         $this->appendIcon = $appendIcon;
 
         return $this;
     }
 
-    public function prependIcon(string $prependIcon)
+    public function prependIcon(string $prependIcon): static
     {
         $this->prependIcon = $prependIcon;
 
         return $this;
     }
 
-    public function numberFormat(?string $thousandSeparator = '.', ?string $decimalSeparator = ',')
+    public function numberFormat(?string $thousandSeparator = '.', ?string $decimalSeparator = ','): static
     {
         $this->numberFormat = [$thousandSeparator, $decimalSeparator];
 
         return $this;
     }
 
-    public function html(bool $html = true)
+    public function getNumberFormat(): ?array
+    {
+        return $this->numberFormat;
+    }
+
+    public function html(bool $html = true): static
     {
         $this->html = $html;
 
         return $this;
     }
 
-    public function view()
+    public function view(): string
     {
         return Blade::render(
             <<<'HTML'

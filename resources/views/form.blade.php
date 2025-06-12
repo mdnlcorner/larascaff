@@ -1,9 +1,12 @@
 <x-larascaff::modal-content 
-    size="{{ $size ?? 'xl' }}" 
-    title="{{ $title ?? 'Modal Title' }}" 
-    action="{{ $action ?? null }}"
-    actionLabel="{{ $actionLabel ?? 'Save' }}" size="{{ $size ?? 'md' }}" center="{{ $center ?? false }}"
-    method="{{ $method ?? 'POST' }}"
+    size="{{ $form->getModalSize() }}" 
+    title="{{ $form->getTitle() }}" 
+    action="{{ $action }}"
+    actionLabel="{{ $form->getActionLabel() }}"
+    center="{{ $center ?? false }}"
+    method="POST"
 >
-    {!! $slot !!}
+    <div class="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-{{ $form->getColumns() ?? '2' }}">
+        {!! $form->render() !!}
+    </div>
 </x-larascaff::modal-content>

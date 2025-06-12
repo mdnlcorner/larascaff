@@ -45,9 +45,9 @@ trait HasMenuPermission
         }
 
         return array_unique([
-            ...static::$permissions, 
-            ...static::getActions()->map(fn ($item) => $item['permission'])->toArray(), 
-            ...static::table(new \Mulaidarinull\Larascaff\Tables\Table(static::getInstanceModel(), static::getUrl()))->getActions()->map(fn ($item) => $item['permission'])->toArray()
+            ...static::$permissions,
+            ...static::getActions()->map(fn ($item) => $item['permission'])->toArray(),
+            ...static::table(new \Mulaidarinull\Larascaff\Tables\Table(static::getInstanceModel(), static::getUrl()))->getActions()->map(fn ($item) => $item['permission'])->toArray(),
         ]);
     }
 

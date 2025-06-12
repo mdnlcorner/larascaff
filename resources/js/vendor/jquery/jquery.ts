@@ -1,1 +1,1 @@
-export { default as jquery } from 'jquery'
+export { default as jquery } from 'jquery';

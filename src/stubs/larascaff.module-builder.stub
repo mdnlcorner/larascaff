@@ -3,7 +3,6 @@
 namespace {{ namespace }};
 
 use {{ modelNamespace }};
-use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Tables;
@@ -11,8 +10,6 @@ use Mulaidarinull\Larascaff\Tables;
 final class {{ class }} extends Module
 {
     protected static ?string $model = {{ model }}::class;
-    
-    protected static ?ModalSize $modalSize = ModalSize::Md;
 
     public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form
     {
@@ -34,11 +31,11 @@ final class {{ class }} extends Module
             })
             ->customizeColumn(function (Tables\EloquentTable $eloquentDataTable) {
                 $eloquentDataTable
-                    ->editColumn('created_at', function (Asset $asset) {
-                        return $asset->created_at?->format('d-m-Y H:i');
+                    ->editColumn('created_at', function ({{ model }} ${{ modelVariable }}) {
+                        return ${{ modelVariable }}->created_at?->format('d-m-Y H:i');
                     })
-                    ->editColumn('updated_at', function (Asset $asset) {
-                        return $asset->updated_at->format('d-m-Y H:i');
+                    ->editColumn('updated_at', function ({{ model }} ${{ modelVariable }}) {
+                        return ${{ modelVariable }}->updated_at->format('d-m-Y H:i');
                     });
             })
             ->columns(function (Tables\HtmlBuilder $builder) {

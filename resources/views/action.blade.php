@@ -6,7 +6,11 @@
     <x-larascaff::dropdown class="w-40">
         @foreach ($actions as $action)
             @if ($action['ajax'])
-                <x-larascaff::dropdown-link data-method="{{ $action['method'] }}" data-action="{{ $action['url'] }}">
+                <x-larascaff::dropdown-link 
+                    data-handler="{{ $action['handler'] }}"
+                    data-method="{{ $action['method'] }}" 
+                    data-url="{{ url('handler') }}"
+                >
                     <button type="buttton" @class([
                         'flex items-center w-full gap-x-1 text-left',
                         'text-' . $action['color'] => $action['color'],
@@ -36,7 +40,10 @@
     <div class="flex items-center gap-x-2">
         @foreach ($actions as $action)
             @if ($action['ajax'])
-                <button type="buttton" data-method="{{ $action['method'] }}" data-action="{{ $action['url'] }}"
+                <button type="buttton"  
+                    data-handler="{{ $action['handler'] }}"
+                    data-method="{{ $action['method'] }}"
+                    data-url="{{ url('handler') }}"
                 @class([
                     'flex items-center w-full gap-x-1 text-left hover:underline',
                     'text-' . $action['color'] => $action['color'],

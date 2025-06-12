@@ -1,16 +1,16 @@
 import { AccordionInterface } from '../components/accordion/interface';
 import { CarouselInterface } from '../components/carousel/interface';
+import { CopyClipboardInterface } from '../components/clipboard/interface';
 import { CollapseInterface } from '../components/collapse/interface';
 import { DialInterface } from '../components/dial/interface';
 import { DismissInterface } from '../components/dismiss/interface';
 import { DrawerInterface } from '../components/drawer/interface';
 import { DropdownInterface } from '../components/dropdown/interface';
+import { InputCounterInterface } from '../components/input-counter/interface';
 import { ModalInterface } from '../components/modal/interface';
 import { PopoverInterface } from '../components/popover/interface';
 import { TabsInterface } from '../components/tabs/interface';
 import { TooltipInterface } from '../components/tooltip/interface';
-import { InputCounterInterface } from '../components/input-counter/interface';
-import { CopyClipboardInterface } from '../components/clipboard/interface';
 
 class Instances {
     private _instances: {
@@ -47,14 +47,9 @@ class Instances {
         };
     }
 
-    addInstance(
-        component: keyof Instances['_instances'],
-        instance: any,
-        id?: string,
-        override = false
-    ) {
+    addInstance(component: keyof Instances['_instances'], instance: any, id?: string, override = false) {
         if (!id) {
-            id = ''
+            id = '';
         }
         if (!this._instances[component]) {
             console.warn(`Larascaff: Component ${component} does not exist.`);
@@ -70,8 +65,7 @@ class Instances {
             this._instances[component][id].destroyAndRemoveInstance();
         }
 
-        this._instances[component][id ? id : this._generateRandomId()] =
-            instance;
+        this._instances[component][id ? id : this._generateRandomId()] = instance;
     }
 
     getAllInstances() {
@@ -98,10 +92,7 @@ class Instances {
         return this._instances[component][id] as any;
     }
 
-    destroyAndRemoveInstance(
-        component: keyof Instances['_instances'],
-        id: string
-    ) {
+    destroyAndRemoveInstance(component: keyof Instances['_instances'], id: string) {
         if (!this._componentAndInstanceCheck(component, id)) {
             return;
         }
@@ -116,10 +107,7 @@ class Instances {
         delete this._instances[component][id];
     }
 
-    destroyInstanceObject(
-        component: keyof Instances['_instances'],
-        id: string
-    ) {
+    destroyInstanceObject(component: keyof Instances['_instances'], id: string) {
         if (!this._componentAndInstanceCheck(component, id)) {
             return;
         }
@@ -142,10 +130,7 @@ class Instances {
         return Math.random().toString(36).substr(2, 9);
     }
 
-    private _componentAndInstanceCheck(
-        component: keyof Instances['_instances'],
-        id: string
-    ) {
+    private _componentAndInstanceCheck(component: keyof Instances['_instances'], id: string) {
         if (!this._instances[component]) {
             // console.warn(`Larascaff: Component ${component} does not exist.`);
             return false;

@@ -5,7 +5,7 @@ namespace Mulaidarinull\Larascaff\Forms\Components;
 use Illuminate\Support\Facades\Blade;
 use Mulaidarinull\Larascaff\Forms\Concerns;
 
-class Fieldset
+class Fieldset extends Layout
 {
     use Concerns\HasColumnSpan;
     use Concerns\HasComponent;

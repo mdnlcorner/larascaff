@@ -5,6 +5,7 @@ namespace Mulaidarinull\Larascaff\Forms\Components;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasColumnSpan;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasField;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
+use Mulaidarinull\Larascaff\Forms\Concerns\HasRelationship;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasValidation;
 
 class Field
@@ -12,6 +13,7 @@ class Field
     use HasColumnSpan;
     use HasField;
     use HasModule;
+    use HasRelationship;
     use HasValidation;
 
     protected string | array $name = '';

@@ -1,11 +1,11 @@
 <?php
 
-namespace Mulaidarinull\Larascaff\Forms\Components;
+namespace Mulaidarinull\Larascaff\Tables\Components;
 
 use Mulaidarinull\Larascaff\Enums\ColorVariant;
 use Mulaidarinull\Larascaff\Enums\IconPosition;
 
-class ListTab
+class Tab
 {
     protected ?\Closure $query = null;
 

@@ -1,4 +1,4 @@
-@props(['name', 'value' => null, 'label' => null, 'inline' => false, 'color' => null, 'icon', 'columnSpan' => 1])
+@props(['name', 'value', 'label', 'isBoolean', 'inline' => false, 'color' => null, 'icon', 'columnSpan' => 1])
 
 <?php
 $classMap = twMerge([$color == 'primary' ? 'text-primary' : ($color == 'warning' ? 'text-warning' : ($color == 'danger' ? 'text-danger' : ($color == 'info' ? 'text-info' : ($color == 'success' ? 'text-success' : ''))))]);
@@ -13,8 +13,8 @@ $record = $value ?? getRecord($name);
             <div class="{{ $classMap }} mb-2">{{ $item }}</div>
         @endforeach
     @else
-        @if (is_bool($record))
-            @if ($record === true)
+        @if (is_bool($record) || $isBoolean)
+            @if ($record === true || $record == 1)
                 @svg($icon ?? 'tabler-circle-check', twMerge(['text-success', $classMap]))
             @else
                 @svg($icon ?? 'tabler-xbox-x', twMerge(['text-danger',$classMap]))

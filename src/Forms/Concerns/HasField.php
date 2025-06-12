@@ -10,7 +10,7 @@ trait HasField
 
     protected ?string $placeholder = null;
 
-    protected string | int | array | null $value = null;
+    protected mixed $value = null;
 
     protected bool $disabled = false;
 
@@ -49,11 +49,6 @@ trait HasField
         return $this->type;
     }
 
-    public function getRelationship()
-    {
-        return $this->relationship ?? null;
-    }
-
     public function label(string $name)
     {
         $this->label = $name;
@@ -78,8 +73,27 @@ trait HasField
         return $this->placeholder;
     }
 
-    public function getValue(): string | int | array | null
+    public function getValue(): mixed
     {
+        if ($this->getParentRelationship()) {
+            preg_match_all('/\[(.*?)\]/', $this->getName(), $matches);
+
+            if ($matches[1]) {
+                if ($parentRelation = getRecord()->{$this->getParentRelationship()}) {
+                    $this->value($parentRelation->{$matches[1][0]});
+                    if (method_exists($this, 'numberFormat') && $this->numberFormat) {
+                        $this->value(number_format($this->value, 0, $this->numberFormat[1], $this->numberFormat[0]));
+                    }
+                }
+            }
+        } else {
+            if (method_exists($this, 'numberFormat')) {
+                $this->value(is_null($this->value) ? ($this->numberFormat ? number_format(getRecord($this->name), 0, $this->numberFormat[1], $this->numberFormat[0]) : getRecord($this->name)) ?? '' : $this->value);
+            } elseif (is_null($this->value)) {
+                $this->value(getRecord($this->name));
+            }
+        }
+
         return $this->value;
     }
 }

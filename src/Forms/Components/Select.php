@@ -6,12 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasRelationship;
 
 class Select extends Field
 {
-    use HasRelationship;
-
     protected array $options = [];
 
     protected bool $multiple = false;
@@ -40,7 +37,7 @@ class Select extends Field
 
     protected ?string $relationship = null;
 
-    public function relationship(?string $name, string $label = 'name'): static
+    public function relationship(?string $name = null, ?string $label = 'name'): static
     {
         $this->relationship = $name;
         $this->searchable = true;
@@ -304,9 +301,7 @@ class Select extends Field
 
     public function view(): string
     {
-
         $this->setRelationshipValue();
-        // dd($this->name);
         $this->setServerSideOptions();
 
         if ($this->modifyQuery) {
@@ -344,7 +339,7 @@ class Select extends Field
                 'multiple' => $this->multiple,
                 'searchable' => $this->searchable,
                 'serverSide' => $this->serverSide,
-                'value' => $this->value,
+                'value' => $this->getValue(),
                 'dependColumn' => $this->dependColumn,
                 'dependValue' => $this->dependValue,
                 'depend' => $this->depend,

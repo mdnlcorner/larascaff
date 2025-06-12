@@ -177,7 +177,6 @@ trait HasMedia
                     $media->delete();
                 }
             } else {
-                // dd($filename,123);
                 Storage::disk($disk)->delete($filename);
             }
         }

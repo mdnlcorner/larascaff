@@ -1,20 +1,20 @@
-import 'choices.js/public/assets/styles/choices.min.css'
-import '../../../scss/components/_choices.scss'
-import Choices, { Options, Choice } from 'choices.js'
+import Choices, { Choice, Options } from 'choices.js';
+import 'choices.js/public/assets/styles/choices.min.css';
+import '../../../scss/components/_choices.scss';
 
 type Config = {
-    serverSide?: boolean
-    value?: string | []
-    options?: Array<{ valu: string; label: string; selected: boolean; disabled: boolean }>
-    depend?: boolean
-    dependValue?: string
-    dependColumn?: string
-    columnLabel?: string
-    columnValue?: string
-    url?: string
-    modifyQuery?: string
-    limit?: number
-}
+    serverSide?: boolean;
+    value?: string | [];
+    options?: Array<{ valu: string; label: string; selected: boolean; disabled: boolean }>;
+    depend?: boolean;
+    dependValue?: string;
+    dependColumn?: string;
+    columnLabel?: string;
+    columnValue?: string;
+    url?: string;
+    modifyQuery?: string;
+    limit?: number;
+};
 
 const initSelect = (config: Partial<Options> & Config) => {
     return {
@@ -42,79 +42,79 @@ const initSelect = (config: Partial<Options> & Config) => {
                 searchFields: ['label', 'value'],
             });
 
-            this.select.dependValue = config.dependValue
+            this.select.dependValue = config.dependValue;
 
             this.select.refreshChoice = async (dependValue: string | null = null, withInitialOptions?: boolean) => {
-                this.select.clearStore()
-                this.select.clearChoices()
+                this.select.clearStore();
+                this.select.clearChoices();
 
                 if (withInitialOptions) {
-                    this.select.setChoices(this.options)
+                    this.select.setChoices(this.options);
                 }
-                if (!dependValue || (dependValue == this.select.dependValue)) {
-                    this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`
-                    return
+                if (!dependValue || dependValue == this.select.dependValue) {
+                    this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`;
+                    return;
                 }
                 if (dependValue == this.select.dependValue) {
-                    this.select.dependValue = null
+                    this.select.dependValue = null;
                 }
-                this.select.dependValue = dependValue
-                this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>Loading...</div>`
+                this.select.dependValue = dependValue;
+                this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>Loading...</div>`;
 
                 if (this.serverSide) {
-                    this.url.searchParams.set('serverSide', this.serverSide)
+                    this.url.searchParams.set('serverSide', this.serverSide);
                 }
                 if (config.modifyQuery) {
-                    this.url.searchParams.set('modifyQuery', config.modifyQuery)
+                    this.url.searchParams.set('modifyQuery', config.modifyQuery);
                 }
                 if (config.dependColumn) {
-                    this.url.searchParams.set('dependColumn', config.dependColumn)
+                    this.url.searchParams.set('dependColumn', config.dependColumn);
                 }
                 if (config.columnLabel) {
-                    this.url.searchParams.set('columnLabel', config.columnLabel)
+                    this.url.searchParams.set('columnLabel', config.columnLabel);
                 }
                 if (config.columnValue) {
-                    this.url.searchParams.set('columnValue', config.columnValue)
+                    this.url.searchParams.set('columnValue', config.columnValue);
                 }
                 if (config.limit) {
-                    this.url.searchParams.set('limit', config.limit)
+                    this.url.searchParams.set('limit', config.limit);
                 }
 
-                this.url.searchParams.delete('value')
-                this.url.searchParams.set('dependValue', dependValue)
+                this.url.searchParams.delete('value');
+                this.url.searchParams.set('dependValue', dependValue);
 
-                const req = await (await fetch(this.url)).json()
-                this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`
+                const req = await (await fetch(this.url)).json();
+                this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`;
                 if (req.length) {
-                    this.select.setChoices(req)
+                    this.select.setChoices(req);
                 }
-            }
+            };
 
-            this.select.setChoices(this.options)
+            this.select.setChoices(this.options);
 
             if (this.serverSide) {
-                this.url.searchParams.set('serverSide', this.serverSide)
+                this.url.searchParams.set('serverSide', this.serverSide);
                 if (config.dependColumn) {
-                    this.url.searchParams.set('dependColumn', config.dependColumn)
+                    this.url.searchParams.set('dependColumn', config.dependColumn);
                 }
                 if (config.modifyQuery) {
-                    this.url.searchParams.set('modifyQuery', config.modifyQuery)
+                    this.url.searchParams.set('modifyQuery', config.modifyQuery);
                 }
                 if (config.columnLabel) {
-                    this.url.searchParams.set('columnLabel', config.columnLabel)
+                    this.url.searchParams.set('columnLabel', config.columnLabel);
                 }
                 if (config.columnValue) {
-                    this.url.searchParams.set('columnValue', config.columnValue)
+                    this.url.searchParams.set('columnValue', config.columnValue);
                 }
                 if (config.limit) {
-                    this.url.searchParams.set('limit', config.limit)
+                    this.url.searchParams.set('limit', config.limit);
                 }
 
                 if (this.value) {
-                    this.url.searchParams.set('value', this.value)
+                    this.url.searchParams.set('value', this.value);
                 }
                 if (this.select.dependValue) {
-                    this.url.searchParams.set('dependValue', this.select.dependValue)
+                    this.url.searchParams.set('dependValue', this.select.dependValue);
                 }
 
                 // if (this.select._isSelectMultipleElement) {
@@ -122,13 +122,14 @@ const initSelect = (config: Partial<Options> & Config) => {
                 // } else {
                 //     this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>Loading...</div>`
                 // }
-                
+
                 // add search event listener
-                this.select.passedElement.element.addEventListener('search',
+                this.select.passedElement.element.addEventListener(
+                    'search',
                     window['Alpine'].debounce(async (e: any) => {
-                        this.select.clearChoices()
+                        this.select.clearChoices();
                         if (config.depend && !this.select.dependValue) {
-                            return
+                            return;
                         }
 
                         await this.select.setChoices([
@@ -139,43 +140,41 @@ const initSelect = (config: Partial<Options> & Config) => {
                             },
                         ]);
 
-                        this.url.searchParams.set('search', e.detail.value)
+                        this.url.searchParams.set('search', e.detail.value);
 
-                        const req = await (await fetch(this.url.href)).json()
-                        this.select.clearChoices()
+                        const req = await (await fetch(this.url.href)).json();
+                        this.select.clearChoices();
                         if (req.length) {
-                            this.select.setChoices(req)
+                            this.select.setChoices(req);
                         }
-                    }, 500)
-                )
+                    }, 500),
+                );
             }
 
             if (this.select._isSelectElement) {
-
-                this.value = this.options.filter((item: Choice) => item.selected)
+                this.value = this.options.filter((item: Choice) => item.selected);
                 if (!this.value.length && this.select._isSelectOneElement) {
-                    this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`
+                    this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`;
                 }
 
                 this.select.passedElement.element.addEventListener('showDropdown', async () => {
                     //
-                })
+                });
 
                 this.select.passedElement.element.addEventListener('removeItem', async () => {
                     if (typeof this.select.getValue(true) == 'undefined') {
-                        this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`
+                        this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`;
                     }
-                })
+                });
             }
 
-            
             if (!window['Select']) {
-                window['Select'] = {}
+                window['Select'] = {};
             }
-            window['Select'][this.$refs.input.name ?? this.$refs.input.id] = this.select
-        }
-    }
-}
+            window['Select'][this.$refs.input.name ?? this.$refs.input.id] = this.select;
+        },
+    };
+};
 
-window['initSelect'] = initSelect
-export default initSelect
+window['initSelect'] = initSelect;
+export default initSelect;

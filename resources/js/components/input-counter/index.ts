@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { InputCounterOptions } from './types';
+import instances from '../../dom/instances';
 import type { InstanceOptions } from '../../dom/types';
 import { InputCounterInterface } from './interface';
-import instances from '../../dom/instances';
+import type { InputCounterOptions } from './types';
 
 const Default: InputCounterOptions = {
     minValue: null,
@@ -32,11 +32,9 @@ class InputCounter implements InputCounterInterface {
         incrementEl: HTMLElement | null = null,
         decrementEl: HTMLElement | null = null,
         options: InputCounterOptions = Default,
-        instanceOptions: InstanceOptions = DefaultInstanceOptions
+        instanceOptions: InstanceOptions = DefaultInstanceOptions,
     ) {
-        this._instanceId = instanceOptions.id
-            ? instanceOptions.id
-            : targetEl.id;
+        this._instanceId = instanceOptions.id ? instanceOptions.id : targetEl.id;
 
         this._targetEl = targetEl;
         this._incrementEl = incrementEl;
@@ -45,12 +43,7 @@ class InputCounter implements InputCounterInterface {
         this._initialized = false;
 
         this.init();
-        instances.addInstance(
-            'InputCounter',
-            this,
-            this._instanceId,
-            instanceOptions.override
-        );
+        instances.addInstance('InputCounter', this, this._instanceId, instanceOptions.override);
     }
 
     init() {
@@ -66,18 +59,12 @@ class InputCounter implements InputCounterInterface {
                     }
 
                     // check for max value
-                    if (
-                        this._options.maxValue !== null &&
-                        parseInt(target.value) > this._options.maxValue
-                    ) {
+                    if (this._options.maxValue !== null && parseInt(target.value) > this._options.maxValue) {
                         target.value = this._options.maxValue.toString();
                     }
 
                     // check for min value
-                    if (
-                        this._options.minValue !== null &&
-                        parseInt(target.value) < this._options.minValue
-                    ) {
+                    if (this._options.minValue !== null && parseInt(target.value) < this._options.minValue) {
                         target.value = this._options.minValue.toString();
                     }
                 }
@@ -95,17 +82,11 @@ class InputCounter implements InputCounterInterface {
             this._targetEl.addEventListener('input', this._inputHandler);
 
             if (this._incrementEl) {
-                this._incrementEl.addEventListener(
-                    'click',
-                    this._incrementClickHandler
-                );
+                this._incrementEl.addEventListener('click', this._incrementClickHandler);
             }
 
             if (this._decrementEl) {
-                this._decrementEl.addEventListener(
-                    'click',
-                    this._decrementClickHandler
-                );
+                this._decrementEl.addEventListener('click', this._decrementClickHandler);
             }
 
             this._initialized = true;
@@ -117,16 +98,10 @@ class InputCounter implements InputCounterInterface {
             this._targetEl.removeEventListener('input', this._inputHandler);
 
             if (this._incrementEl) {
-                this._incrementEl.removeEventListener(
-                    'click',
-                    this._incrementClickHandler
-                );
+                this._incrementEl.removeEventListener('click', this._incrementClickHandler);
             }
             if (this._decrementEl) {
-                this._decrementEl.removeEventListener(
-                    'click',
-                    this._decrementClickHandler
-                );
+                this._decrementEl.removeEventListener('click', this._decrementClickHandler);
             }
             this._initialized = false;
         }
@@ -147,10 +122,7 @@ class InputCounter implements InputCounterInterface {
 
     increment() {
         // don't increment if the value is already at the maximum value
-        if (
-            this._options.maxValue !== null &&
-            this.getCurrentValue() >= this._options.maxValue
-        ) {
+        if (this._options.maxValue !== null && this.getCurrentValue() >= this._options.maxValue) {
             return;
         }
 
@@ -160,10 +132,7 @@ class InputCounter implements InputCounterInterface {
 
     decrement() {
         // don't decrement if the value is already at the minimum value
-        if (
-            this._options.minValue !== null &&
-            this.getCurrentValue() <= this._options.minValue
-        ) {
+        if (this._options.minValue !== null && this.getCurrentValue() <= this._options.minValue) {
             return;
         }
 
@@ -184,25 +153,16 @@ export function initInputCounters() {
     document.querySelectorAll('[data-input-counter]').forEach(($targetEl) => {
         const targetId = $targetEl.id;
 
-        const $incrementEl = document.querySelector(
-            '[data-input-counter-increment="' + targetId + '"]'
-        );
+        const $incrementEl = document.querySelector('[data-input-counter-increment="' + targetId + '"]');
 
-        const $decrementEl = document.querySelector(
-            '[data-input-counter-decrement="' + targetId + '"]'
-        );
+        const $decrementEl = document.querySelector('[data-input-counter-decrement="' + targetId + '"]');
 
         const minValue = $targetEl.getAttribute('data-input-counter-min');
         const maxValue = $targetEl.getAttribute('data-input-counter-max');
 
         // check if the target element exists
         if ($targetEl) {
-            if (
-                !instances.instanceExists(
-                    'InputCounter',
-                    $targetEl.getAttribute('id')
-                )
-            ) {
+            if (!instances.instanceExists('InputCounter', $targetEl.getAttribute('id'))) {
                 new InputCounter(
                     $targetEl as HTMLInputElement,
                     $incrementEl ? ($incrementEl as HTMLElement) : null,
@@ -210,13 +170,11 @@ export function initInputCounters() {
                     {
                         minValue: minValue ? parseInt(minValue) : null,
                         maxValue: maxValue ? parseInt(maxValue) : null,
-                    } as InputCounterOptions
+                    } as InputCounterOptions,
                 );
             }
         } else {
-            console.error(
-                `The target element with id "${targetId}" does not exist. Please check the data-input-counter attribute.`
-            );
+            console.error(`The target element with id "${targetId}" does not exist. Please check the data-input-counter attribute.`);
         }
     });
 }

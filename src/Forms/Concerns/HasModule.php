@@ -4,9 +4,9 @@ namespace Mulaidarinull\Larascaff\Forms\Concerns;
 
 trait HasModule
 {
-    protected $module = null;
+    protected ?string $module = null;
 
-    public function module($module)
+    public function module($module): static
     {
         $this->module = $module;
 

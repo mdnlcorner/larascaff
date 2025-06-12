@@ -6,7 +6,9 @@ trait HasRelationship
 {
     protected ?string $relationship = null;
 
-    public function relationship(?string $name = null)
+    protected ?string $parentRelationship = null;
+
+    public function relationship(?string $name = null, ?string $label = 'name'): static
     {
         $this->relationship = $name;
         if (is_null($name)) {
@@ -19,5 +21,17 @@ trait HasRelationship
     public function getRelationship()
     {
         return $this->relationship ?? null;
+    }
+
+    public function parentRelationship(string $name): static
+    {
+        $this->parentRelationship = $name;
+
+        return $this;
+    }
+
+    public function getParentRelationship(): ?string
+    {
+        return $this->parentRelationship;
     }
 }

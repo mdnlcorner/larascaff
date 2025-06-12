@@ -50,11 +50,7 @@ export declare interface ModalInterface {
     destroy(): void;
     removeInstance(): void;
     destroyAndRemoveInstance(): void;
-    addEventListenerInstance(
-        element: HTMLElement,
-        type: string,
-        handler: EventListenerOrEventListenerObject
-    ): void;
+    addEventListenerInstance(element: HTMLElement, type: string, handler: EventListenerOrEventListenerObject): void;
     removeAllEventListenerInstances(): void;
     getAllEventListenerInstances(): void;
 }

@@ -5,10 +5,17 @@
                 @isset($dataTable)<p class="items-center hidden gap-1 text-sm md:flex text-muted-foreground"><span>{{ $pageTitle }}</span> @svg("tabler-chevron-right", 'w-4 h-4') <span>List</span></p>@endisset
                 <h4>{{ $pageTitle }}</h4>
             </div>
-            <div class="flex items-center gap-2" data-table-actions="{{ json_encode($tableActions?? []) }}" data-actions="{{ json_encode($actions ?? []) }}">
+            <div class="flex items-center gap-2" data-table-actions="{{ json_encode($tableActions ?? []) }}" data-actions="{{ json_encode($actions ?? []) }}">
                 @foreach (($actions ?? []) as $item)
-                    @if ($item['show'])
-                        <x-larascaff::button variant="{{ $item['color'] }}" class="mb-3" data-method="{{ $item['method'] }}" data-action="{{ $item['url'] }}">{{ $item['label'] }}</x-larascaff::button>
+                    @if ($item['show']())
+                        <x-larascaff::button 
+                            data-handler="{{ json_encode($item['handler']) }}" 
+                            variant="{{ $item['color'] }}" class="mb-3" 
+                            data-method="{{ $item['method'] }}" 
+                            data-url="{{ $item['ajax'] ? url('handler') : $item['url'] }}" 
+                        >
+                            {{ $item['label'] }}
+                        </x-larascaff::button>
                     @endif
                 @endforeach
             </div>
@@ -20,7 +27,7 @@
             {!! $view !!}
         @endisset
         @isset($dataTable)
-            @isset($tabs)
+            @if($tabs->count())
                 <div class="flex justify-center pb-6">
                     <div class="px-3 py-2.5 rounded-xl bg-card border">
                         <div x-data="{
@@ -70,7 +77,7 @@
 
                     </div>
                 </div>
-            @endisset
+            @endif
             <div class="card">
                 <div class="border rounded-md dark:border-dark-800 border-dark-100">
                     @isset($filterTable)
