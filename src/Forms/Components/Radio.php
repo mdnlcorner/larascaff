@@ -25,7 +25,8 @@ class Radio extends Field
                 :readonly="$readonly" 
                 :options="$options" 
                 :name="$name" 
-                :label="$label" 
+                :label="$label"
+                :attr="$attr"
             />
             HTML,
             [
@@ -35,6 +36,7 @@ class Radio extends Field
                 'disabled' => $this->disabled,
                 'readonly' => $this->readonly,
                 'columnSpan' => $this->columnSpan,
+                'attr' => $this->attr,
             ]
         );
     }

@@ -1,7 +1,14 @@
-@props(['id' => 'id'.rand(), 'label' => null, 'variant' => 'primary', 'disabled' => false, 'error' => null])
+@props([
+    'id' => 'id'.rand(), 
+    'label' => null, 
+    'variant' => 'primary', 
+    'disabled' => false, 
+    'error' => null,
+    'attr' => '',
+])
 
 <div class="flex items-center gap-1 form-wrapper">
-    <input {{ $disabled ? 'disabled' : null }} type="radio" id="{{ $id }}" {{ $attributes->twMerge([
+    <input {{ $attr }} {{ $disabled ? 'disabled' : null }} type="radio" id="{{ $id }}" {{ $attributes->twMerge([
         'w-4 h-4 border cursor-pointer border-border rounded-full appearance-none dark:bg-dark-800 bg-dark-100 focus:ring-2 checked:border-none  focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-dark-800',
         $disabled ? 'cursor-not-allowed' : null,
         // variant

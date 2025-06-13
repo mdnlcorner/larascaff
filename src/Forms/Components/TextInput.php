@@ -105,6 +105,7 @@ class TextInput extends Field
                 :placeholder="$placeholder" 
                 :mask="$mask"
                 :numberFormat="$numberFormat"
+                :attr="$attr"
             />
             HTML,
             [
@@ -123,6 +124,7 @@ class TextInput extends Field
                 'prependIconBtn' => $this->prependIconBtn,
                 'prependIcon' => $this->prependIcon,
                 'numberFormat' => $this->numberFormat,
+                'attr' => $this->attr,
             ]
         );
     }

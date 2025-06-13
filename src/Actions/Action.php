@@ -269,11 +269,16 @@ class Action
 
         $this->module($request->post('_action_handler'));
 
+        $actions = [];
         // get actions
-        $actions = call_user_func([$request->post('_action_handler'), 'getActions']);
+        if (method_exists($request->post('_action_handler'), 'getActions')) {
+            $actions = call_user_func([$request->post('_action_handler'), 'getActions']);
+        }
 
         // get table actions
-        $actions = $actions->merge(call_user_func([$request->post('_action_handler'), 'getTableActions']));
+        if (method_exists($request->post('_action_handler'), 'getTableActions')) {
+            $actions = $actions->merge(call_user_func([$request->post('_action_handler'), 'getTableActions']));
+        }
         $actions = Arr::get($actions, $request->post('_action_name'), null);
 
         if (is_null($actions)) {

@@ -3,8 +3,9 @@
 namespace Mulaidarinull\Larascaff\Tables;
 
 use Closure;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Mulaidarinull\Larascaff\Info\Components\Icon;
 use Mulaidarinull\Larascaff\Tables\Columns\Column;
@@ -17,7 +18,7 @@ use Yajra\DataTables\Services\DataTable;
 
 class Table extends DataTable
 {
-    protected QueryBuilder | Model | null $query = null;
+    protected EloquentBuilder | Model | null $query = null;
 
     protected ?EloquentTable $eloquentTable = null;
 
@@ -31,7 +32,7 @@ class Table extends DataTable
     /** @var Collection<int, Tab> */
     protected Collection $tabs;
 
-    public function __construct(protected Model | QueryBuilder $model, protected string $url, protected ?string $actionHandler = null)
+    public function __construct(protected Model | EloquentBuilder $model, protected string $url, protected ?string $actionHandler = null)
     {
         $this->query = $model;
         $this->url = $url;
@@ -81,35 +82,51 @@ class Table extends DataTable
         return $this->actionHandler;
     }
 
-    public function resolveFilterTable(Filter $filter)
+    public function resolveTableFilters(): string
     {
-        if (request()->filled($filter->getName())) {
-            if($query = $filter->getQuery()) {
-                // $query($this->query);
-                dd($filter->getValue());
-            }
-        }
-    }
-
-    public function filterTable($filter = []): static
-    {
-        // $this->filterTable = $filter;
-        $this->query = $this->query->newQuery();
-        foreach ($filter as $item) {
-            if (request()->filled($item['name'])) {
-                if ($item['type'] == 'nullable') {
-                    if (request($item['name']) === '0') {
-                        $this->query->whereNull($item['name']);
-                    } elseif (request($item['name']) === '1') {
-                        $this->query->whereNotNull($item['name']);
-                    }
-                } else {
-                    $this->query->where($item['name'], request($item['name']));
+        $tableId = $this->htmlBuilder->getTableId();
+        $filterTable = '';
+        foreach ($this->getFilters() as $filter) {
+            if (request()->filled($filter->getName())) {
+                if ($query = $filter->getQuery()) {
+                    $this->resolveClosureParams($query);
                 }
             }
+            $filter->attr('data-filter=' . $tableId);
+            $filterTable .= $filter->view();
         }
 
-        return $this;
+        return $filterTable;
+    }
+
+    protected function resolveClosureParams(?callable $cb = null)
+    {
+        if (! $cb instanceof \Closure) {
+            throw new \Exception('Param must be callable');
+        }
+
+        $parameters = [];
+
+        $data = $this->getFilters()->map(fn ($item) => $item->getName());
+
+        foreach ((new \ReflectionFunction($cb))->getParameters() as $parameter) {
+            $default = match ($parameter->getName()) {
+                'query' => [$parameter->getName() => $this->query],
+                'data' => [$parameter->getName() => request()->only($data->toArray())],
+                default => []
+            };
+
+            $type = match ($parameter->getType()?->getName()) {
+                get_class($this->query) => [$parameter->getName() => $this->query],
+                EloquentBuilder::class => [$parameter->getName() => $this->query],
+                QueryBuilder::class => [$parameter->getName() => $this->query],
+                default => []
+            };
+
+            $parameters = [...$parameters, ...$default, ...$type];
+        }
+
+        return app()->call($cb, $parameters);
     }
 
     /**
@@ -179,7 +196,7 @@ class Table extends DataTable
         return $this;
     }
 
-    public function getQuery(): Model | QueryBuilder
+    public function getQuery(): Model | EloquentBuilder | QueryBuilder
     {
         return $this->query;
     }
@@ -242,7 +259,7 @@ class Table extends DataTable
         return $this->filters ??= collect([]);
     }
 
-    public function query(?callable $cb = null): QueryBuilder | static
+    public function query(?callable $cb = null): EloquentBuilder | static
     {
         if (is_callable($cb)) {
             $cb($this->query);
@@ -297,6 +314,7 @@ class Table extends DataTable
                 }
             }
 
+            // handle icon column
             if ($column instanceof IconColumn) {
                 $rawColumns[] = $column['data'];
                 $this->eloquentTable->editColumn($column['data'], function ($record) use ($column) {
@@ -325,7 +343,7 @@ class Table extends DataTable
             $this->eloquentTable->addIndexColumn();
             $indexColumns = [
                 Column::make('DT_RowIndex')->title('#')->orderable(false)->searchable(false),
-                Column::computed('id')->hidden(),
+                Column::make('id')->searchable(false)->hidden(),
             ];
         }
 
