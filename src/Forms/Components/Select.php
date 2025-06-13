@@ -33,7 +33,7 @@ class Select extends Field
 
     protected ?string $columnValue = null;
 
-    protected \Closure | string | null $modifyQuery = null;
+    protected \Closure | string | null $query = null;
 
     protected ?string $relationship = null;
 
@@ -82,7 +82,7 @@ class Select extends Field
     protected function setServerSideOptions(): void
     {
         if ($this->serverSide) {
-            $options = $this->serverSide->when($this->modifyQuery, $this->modifyQuery)
+            $options = $this->serverSide->when($this->query, $this->query)
                 ->when($this->value, function ($query) {
                     if (getRecord()->{$this->relationship} instanceof Model) {
                         $query->where($this->columnValue, '!=', getRecord()->{$this->relationship}->{$this->columnValue});
@@ -133,8 +133,8 @@ class Select extends Field
         try {
             $data = $request->get('serverSide')::query()
                 ->select($this->columnValue, $this->columnLabel)
-                ->when($request->filled('modifyQuery'), function (Builder $query) use ($request) {
-                    $moduleName = explode('@', $request->get('modifyQuery'));
+                ->when($request->filled('query'), function (Builder $query) use ($request) {
+                    $moduleName = explode('@', $request->get('query'));
 
                     try {
                         $module = $moduleName[0];
@@ -144,11 +144,11 @@ class Select extends Field
                             if (method_exists($component, 'getComponents')) {
                                 foreach ($component->getComponents() as $childComp) {
                                     if ($childComp->getName() == $name) {
-                                        $childComp->getModifyQuery()($query);
+                                        $childComp->getQuery()($query);
                                     }
                                 }
                             } elseif ($component->getName() == $name) {
-                                $component->getModifyQuery()($query);
+                                $component->getQuery()($query);
                             }
                         }
                     } catch (\Throwable $th) {
@@ -211,16 +211,16 @@ class Select extends Field
         }
     }
 
-    public function modifyQuery(\Closure $cb): static
+    public function query(\Closure $cb): static
     {
-        $this->modifyQuery = $cb;
+        $this->query = $cb;
 
         return $this;
     }
 
-    public function getModifyQuery(): \Closure | string | null
+    public function getQuery(): \Closure | string | null
     {
-        return $this->modifyQuery;
+        return $this->query;
     }
 
     /**
@@ -304,9 +304,9 @@ class Select extends Field
         $this->setRelationshipValue();
         $this->setServerSideOptions();
 
-        if ($this->modifyQuery) {
+        if ($this->query) {
             if (method_exists($this, 'getModule')) {
-                $this->modifyQuery = $this->getModule() . '@' . $this->name;
+                $this->query = $this->getModule() . '@' . $this->name;
             }
         }
 
@@ -324,7 +324,7 @@ class Select extends Field
                 :dependColumn="$dependColumn"
                 :dependValue="$dependValue"
                 :depend="$depend"
-                :modifyQuery="$modifyQuery"
+                :query="$query"
                 :columnLabel="$columnLabel"
                 :columnValue="$columnValue"
                 :columnSpan="$columnSpan"
@@ -344,7 +344,7 @@ class Select extends Field
                 'dependColumn' => $this->dependColumn,
                 'dependValue' => $this->dependValue,
                 'depend' => $this->depend,
-                'modifyQuery' => $this->modifyQuery,
+                'query' => $this->query,
                 'columnLabel' => $this->columnLabel,
                 'columnValue' => $this->columnValue,
                 'columnSpan' => $this->columnSpan,
