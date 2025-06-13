@@ -12,7 +12,7 @@ type Config = {
     columnLabel?: string;
     columnValue?: string;
     url?: string;
-    query?: string;
+    modifyQuery?: string;
     limit?: number;
 };
 
@@ -64,8 +64,8 @@ const initSelect = (config: Partial<Options> & Config) => {
                 if (this.serverSide) {
                     this.url.searchParams.set('serverSide', this.serverSide);
                 }
-                if (config.query) {
-                    this.url.searchParams.set('query', config.query);
+                if (config.modifyQuery) {
+                    this.url.searchParams.set('modifyQuery', config.modifyQuery);
                 }
                 if (config.dependColumn) {
                     this.url.searchParams.set('dependColumn', config.dependColumn);
@@ -97,8 +97,8 @@ const initSelect = (config: Partial<Options> & Config) => {
                 if (config.dependColumn) {
                     this.url.searchParams.set('dependColumn', config.dependColumn);
                 }
-                if (config.query) {
-                    this.url.searchParams.set('query', config.query);
+                if (config.modifyQuery) {
+                    this.url.searchParams.set('modifyQuery', config.modifyQuery);
                 }
                 if (config.columnLabel) {
                     this.url.searchParams.set('columnLabel', config.columnLabel);

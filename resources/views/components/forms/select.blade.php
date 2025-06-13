@@ -16,7 +16,7 @@
     'dependColumn' => null,
     'columnValue' => null,
     'columnLabel' => null,
-    'query' => null,
+    'modifyQuery' => null,
     'columnSpan' => '1',
     'limit' => 20,
     'attr' => '',
@@ -36,7 +36,7 @@
             placeholder: @js($placeholder),
             columnLabel: @js($columnLabel),
             columnValue: @js($columnValue),
-            query: @js($query),
+            modifyQuery: @js($modifyQuery),
             limit: @js($limit),
         })"
         @class(["w-full form-wrapper", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])
