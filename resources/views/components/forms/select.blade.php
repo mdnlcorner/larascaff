@@ -19,6 +19,7 @@
     'modifyQuery' => null,
     'columnSpan' => '1',
     'limit' => 20,
+    'attr' => '',
 ])
 @if ($searchable)
     <div 
@@ -41,7 +42,7 @@
         @class(["w-full form-wrapper", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])
     >
         <label for="{{ $id }}" class="inline-block mb-1 text-sm">{{ $label }}</label>
-        <select data-input-name="{{ $name }}" id="{{ $id }}" x-ref="input" {{ $attributes->merge() }} data-placeholder="{{ $placeholder }}"
+        <select {{ $attr }} data-input-name="{{ $name }}" id="{{ $id }}" x-ref="input" {{ $attributes->merge() }} data-placeholder="{{ $placeholder }}"
             name="{{ $multiple ? $name. '[]' : $name }}" {{ $multiple ? 'multiple' : '' }}></select>
     </div>
 @else

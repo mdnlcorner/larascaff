@@ -11,6 +11,7 @@ use Mulaidarinull\Larascaff\Tables\Columns\Column;
 use Mulaidarinull\Larascaff\Tables\Columns\IconColumn;
 use Mulaidarinull\Larascaff\Tables\Components\Tab;
 use Mulaidarinull\Larascaff\Tables\Enums\ActionsPosition;
+use Mulaidarinull\Larascaff\Tables\Filters\Filter;
 use Yajra\DataTables\Html\Builder;
 use Yajra\DataTables\Services\DataTable;
 
@@ -23,6 +24,9 @@ class Table extends DataTable
     protected Collection | array $tableActions = [];
 
     protected ActionsPosition $actionsPosition = ActionsPosition::AfterColumns;
+
+    /** @var Collection<int, Filter> */
+    protected Collection $filters;
 
     /** @var Collection<int, Tab> */
     protected Collection $tabs;
@@ -77,9 +81,19 @@ class Table extends DataTable
         return $this->actionHandler;
     }
 
+    public function resolveFilterTable(Filter $filter)
+    {
+        if (request()->filled($filter->getName())) {
+            if($query = $filter->getQuery()) {
+                // $query($this->query);
+                dd($filter->getValue());
+            }
+        }
+    }
+
     public function filterTable($filter = []): static
     {
-        $this->filterTable = $filter;
+        // $this->filterTable = $filter;
         $this->query = $this->query->newQuery();
         foreach ($filter as $item) {
             if (request()->filled($item['name'])) {
@@ -211,6 +225,21 @@ class Table extends DataTable
     public function getTabs(): Collection
     {
         return $this->tabs ??= collect([]);
+    }
+
+    public function filters(array $filters): static
+    {
+        $this->filters = collect($filters);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Filter>
+     */
+    public function getFilters(): Collection
+    {
+        return $this->filters ??= collect([]);
     }
 
     public function query(?callable $cb = null): QueryBuilder | static

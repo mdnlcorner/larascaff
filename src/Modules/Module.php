@@ -162,20 +162,41 @@ abstract class Module extends Controller
         // ====== End Widgets ======
 
         static::$datatable = new Table(static::getInstanceModel()->newQuery(), static::getUrl(), static::class);
-
-        if (method_exists($this, 'filterTable')) {
-            $filterTable = call_user_func([$this, 'filterTable']);
-            $this->pageData['filterTable'] = view('larascaff::filter', [
-                'filterTable' => $filterTable,
-            ]);
-            static::$datatable->filterTable($filterTable);
-        }
-
+        
         $this->pageData['tableActions'] = static::getTableActions(static::$datatable);
+        
+        $this->resolveFilters();
 
         $this->resolveTableTabs();
 
         return static::$datatable->render('larascaff::main-content', $this->pageData);
+    }
+
+    protected function resolveFilters()
+    {
+        // if (method_exists($this, 'filterTable')) {
+        //     $filterTable = call_user_func([$this, 'filterTable']);
+        //     $this->pageData['filterTable'] = view('larascaff::filter', [
+        //         'filterTable' => $filterTable,
+        //     ]);
+        //     static::$datatable->filterTable($filterTable);
+        // }
+
+        $tableId = static::$datatable->builder()->getTableId();
+        
+        $filterTable = '';
+        foreach(static::$datatable->getFilters() as $filter) {
+            $filter->value(request()->{$filter->getName()});
+            
+            static::$datatable->resolveFilterTable($filter);
+
+            $filter->attr('data-filter=' . $tableId );
+            $filterTable .= $filter->view();
+        }
+
+        $this->pageData['filterTable'] = view('larascaff::filter-table', [
+            'filterTable' => $filterTable,
+        ]);
     }
 
     protected function resolveTableTabs()

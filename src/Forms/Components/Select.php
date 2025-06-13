@@ -329,6 +329,7 @@ class Select extends Field
                 :columnValue="$columnValue"
                 :columnSpan="$columnSpan"
                 :limit="$limit"
+                :attr="$attr"
             />
             HTML,
             [
@@ -348,6 +349,7 @@ class Select extends Field
                 'columnValue' => $this->columnValue,
                 'columnSpan' => $this->columnSpan,
                 'limit' => $this->limit,
+                'attr' => $this->attr,
             ]
         );
     }

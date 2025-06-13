@@ -16,9 +16,9 @@ class Field
     use HasRelationship;
     use HasValidation;
 
-    protected string | array $name = '';
+    protected string $name = '';
 
-    public static function make($name): static
+    public static function make(string $name): static
     {
         $static = app(static::class);
         $static->name($name);

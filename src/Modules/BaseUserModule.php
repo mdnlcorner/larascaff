@@ -3,6 +3,7 @@
 namespace Mulaidarinull\Larascaff\Modules;
 
 use App\Models\User;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -90,6 +91,13 @@ class BaseUserModule extends Module
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
+            ->filters([
+                Tables\Filters\Filter::make('email_verified_at')
+                    ->label('Is Verified')
+                    ->query(function (Builder $query) {
+                        
+                    }),
+            ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()

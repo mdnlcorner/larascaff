@@ -16,9 +16,18 @@ trait HasField
 
     protected bool $readonly = false;
 
+    protected ?string $attr = '';
+
     public function disabled(bool $disabled = true)
     {
         $this->disabled = $disabled;
+
+        return $this;
+    }
+
+    public function attr(string $attr): static
+    {
+        $this->attr = $attr;
 
         return $this;
     }
