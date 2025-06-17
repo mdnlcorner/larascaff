@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Modules\Configuration;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\Actions\Action;
@@ -75,7 +76,7 @@ class BaseMenuModule extends Module
                         Cache::forget('urlMenu');
                     }),
             ])
-            ->query(function (\Illuminate\Database\Eloquent\Builder $query) {
+            ->query(function (Builder $query) {
                 $query->with('mainMenu', 'permissions');
             })
             ->columns([
@@ -106,7 +107,7 @@ class BaseMenuModule extends Module
                 ->relationship('mainMenu', 'name')
                 ->searchable()
                 ->placeholder('Choose Main Menu')
-                ->query(fn ($query) => $query->active()),
+                ->modifyQuery(fn ($query) => $query->active()),
             Forms\Components\Radio::make('active')->options(['Y' => 1, 'N' => 0]),
         ]);
     }
