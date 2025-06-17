@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
+use Mulaidarinull\Larascaff\Actions\Action;
 use Mulaidarinull\Larascaff\Actions\CreateAction;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Info\Components\Info;
@@ -15,6 +16,7 @@ use Mulaidarinull\Larascaff\Tables\Table;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 use Mulaidarinull\Larascaff\Traits\ParameterResolver;
+use Mulaidarinull\Larascaff\Widgets\StatWidget;
 
 abstract class Module extends Controller
 {
@@ -56,12 +58,18 @@ abstract class Module extends Controller
         return $form;
     }
 
+    /**
+     * @return list<Action>
+     */
     public static function actions(): array
     {
         return [];
     }
 
-    public static function tabs(): array
+    /**
+     * @return list<StatWidget>
+     */
+    public static function widgets(): array
     {
         return [];
     }
@@ -168,14 +176,18 @@ abstract class Module extends Controller
 
     protected function resolveWidgets()
     {
-        if (method_exists($this, $method = 'widgets')) {
-            $parameters = $this->resolveParameters($method, [static::getInstanceModel(), request()]);
-            $widgets = call_user_func_array([$this, $method], $parameters);
+        $parameters = $this->resolveParameters('widgets', [static::getInstanceModel(), request()]);
+        $widgets = call_user_func_array([$this, 'widgets'], $parameters);
 
-            $this->pageData['widgets'] = view('larascaff::widget', [
-                'widgets' => $widgets,
-            ]);
+        if (! count($widgets)) {
+            return null;
         }
+
+        $widgets = array_map(fn ($item) => $item->toArray(), $widgets);
+
+        $this->pageData['widgets'] = view('larascaff::widget-module', [
+            'widgets' => $widgets,
+        ]);
     }
 
     protected function resolveTableFilters()
