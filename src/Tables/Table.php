@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
+use Mulaidarinull\Larascaff\Contracts\HasColor;
+use Mulaidarinull\Larascaff\Contracts\HasIcon;
+use Mulaidarinull\Larascaff\Contracts\HasLabel;
 use Mulaidarinull\Larascaff\Info\Components\Icon;
 use Mulaidarinull\Larascaff\Tables\Columns\Column;
 use Mulaidarinull\Larascaff\Tables\Columns\IconColumn;
@@ -295,6 +298,26 @@ class Table extends DataTable
         }
     }
 
+    protected function resolveEnumFieldForRawColumns(): array
+    {
+        $rawColumns = [];
+
+        foreach ($this->eloquentTable->getQuery()->getModel()->getCasts() as $fieldName => $casts) {
+            if (enum_exists($casts)) {
+                foreach ((new \ReflectionEnum($casts::Close))->getInterfaces() as $interface => $interfaceReflection) {
+                    if ($interface == HasLabel::class) {
+                        $rawColumns[$fieldName]['label'] = HasLabel::class;
+                    }
+                    if ($interface == HasColor::class) {
+                        $rawColumns[$fieldName]['color'] = HasColor::class;
+                    }
+                }
+            }
+        }
+
+        return $rawColumns;
+    }
+
     /**
      * @param  list<Column>  $columns
      */
@@ -302,21 +325,30 @@ class Table extends DataTable
     {
         $this->generateHtmlBuilder();
 
+        $rawColumns = $this->resolveEnumFieldForRawColumns();
+
         foreach ($columns as $column) {
+            if (isset($column['badge']) && $column['badge'] === true) {
+                $rawColumns[$column['data']]['badge'] = $column['badge'];
+            }
+
+            if (isset($column['color'])) {
+                $rawColumns[$column['data']]['color'] = $column['color'];
+                // dd($column['color']);
+            }
+
             // handle column editing
-            if ($columnEditing = $column->getColumnEditing()) {
-                foreach ($columnEditing as $actionName => $colEdit) {
-                    if ($actionName == 'rawColumns') {
-                        $rawColumns[] = $column['data'];
-                    } else {
-                        $this->eloquentTable->{$actionName}($column['data'], $colEdit);
-                    }
+            foreach ($column->getColumnEditing() as $actionName => $closureAction) {
+                if ($actionName == 'rawColumns') {
+                    $rawColumns[$column['data']]['rawColumns'] = 'rawColumns';
+                } else {
+                    $rawColumns[$column['data']]['closure'] = $closureAction;
                 }
             }
 
             // handle icon column
             if ($column instanceof IconColumn) {
-                $rawColumns[] = $column['data'];
+                $rawColumns[$column['data']] = true;
                 $this->eloquentTable->editColumn($column['data'], function ($record) use ($column) {
                     if ($column->isBoolean()) {
                         return Icon::make('close')
@@ -331,7 +363,60 @@ class Table extends DataTable
             }
         }
 
-        $this->eloquentTable->rawColumns($rawColumns ?? []);
+        dd($rawColumns);
+        foreach ($rawColumns as $field => $actionTypes) {
+            $this->eloquentTable->editColumn($field, function ($record) use ($actionTypes, $field) {
+                $html = '';
+                $label = '';
+                $icon = '';
+                $color = '';
+                $hasBadge = false;
+                foreach ($actionTypes as $key => $actionType) {
+                    if ($actionType === HasLabel::class) {
+                        $label = $record->{$field}->getLabel();
+                    }
+
+                    if ($actionType === HasIcon::class) {
+                        $icon = $record->{$field}->getIcon();
+                    }
+
+                    if ($actionType === HasColor::class) {
+                        $color = $record->{$field}->getColor();
+                    }
+
+                    if ($actionType === 'badge') {
+                        $hasBadge = true;
+                    }
+
+                    if ($actionType === 'color') {
+                        dd($actionType, $key);
+                    }
+
+                    if ($actionType instanceof Closure) {
+                        $label = $actionType($record);
+                    }
+                }
+
+                if ($color) {
+                    $html = '<span class="' . 'text-' . $color . '">' . $label . '</span>';
+                }
+
+                if ($hasBadge) {
+                    if (! $color) {
+                        $color = 'primary';
+                    }
+                    $html = '<div class="inline-block px-2 py-1 text-'.$color.' text-xs font-semibold rounded-md ' . 'bg-' . $color . '/20 border border-' . $color . '">' . $label . '</div>';
+                }
+
+                if ($html == '') {
+                    return $label;
+                }
+
+                return $html;
+            });
+        }
+
+        $this->eloquentTable->rawColumns(array_keys($rawColumns) ?? []);
 
         $builderColumns = [];
         foreach ($this->htmlBuilder->getColumns() as $builderColumn) {
