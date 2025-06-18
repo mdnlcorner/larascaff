@@ -304,7 +304,7 @@ class Table extends DataTable
 
         foreach ($this->eloquentTable->getQuery()->getModel()->getCasts() as $fieldName => $casts) {
             if (enum_exists($casts)) {
-                foreach ((new \ReflectionEnum($casts::Close))->getInterfaces() as $interface => $interfaceReflection) {
+                foreach ((new \ReflectionEnum($casts::Closed))->getInterfaces() as $interface => $interfaceReflection) {
                     if ($interface == HasLabel::class) {
                         $rawColumns[$fieldName]['label'] = HasLabel::class;
                     }
@@ -334,7 +334,6 @@ class Table extends DataTable
 
             if (isset($column['color'])) {
                 $rawColumns[$column['data']]['color'] = $column['color'];
-                // dd($column['color']);
             }
 
             // handle column editing
@@ -363,7 +362,7 @@ class Table extends DataTable
             }
         }
 
-        dd($rawColumns);
+        // dd($rawColumns);
         foreach ($rawColumns as $field => $actionTypes) {
             $this->eloquentTable->editColumn($field, function ($record) use ($actionTypes, $field) {
                 $html = '';
@@ -371,25 +370,28 @@ class Table extends DataTable
                 $icon = '';
                 $color = '';
                 $hasBadge = false;
-                foreach ($actionTypes as $key => $actionType) {
+                foreach ($actionTypes as $type => $actionType) {
                     if ($actionType === HasLabel::class) {
                         $label = $record->{$field}->getLabel();
                     }
 
-                    if ($actionType === HasIcon::class) {
+
+                    if ($type == 'icon' && $actionType === HasIcon::class) {
                         $icon = $record->{$field}->getIcon();
                     }
 
-                    if ($actionType === HasColor::class) {
-                        $color = $record->{$field}->getColor();
+                    if ($type == 'color') {
+                        if ($actionType === HasColor::class) {
+                            $color = $record->{$field}->getColor();
+                        } else if ($actionType instanceof Closure) {
+                            $color = $actionType($record);
+                        } else if (is_string($actionType)) {
+                            $color = $actionType;
+                        }
                     }
 
                     if ($actionType === 'badge') {
                         $hasBadge = true;
-                    }
-
-                    if ($actionType === 'color') {
-                        dd($actionType, $key);
                     }
 
                     if ($actionType instanceof Closure) {
