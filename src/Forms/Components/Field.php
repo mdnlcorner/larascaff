@@ -17,15 +17,11 @@ class Field implements ContractsHasField
     use HasRelationship;
     use HasValidation;
 
-    public function __construct(protected string $name)
-    {
-        $this->name = $name;
-        $this->label = ucwords(str_replace('_', ' ', $name));
-    }
-
     public static function make(string $name): static
     {
         $static = app(static::class, ['name' => $name]);
+        $static->name = $name;
+        $static->label = ucwords(str_replace('_', ' ', $name));
 
         return $static;
     }
