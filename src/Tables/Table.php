@@ -14,6 +14,7 @@ use Mulaidarinull\Larascaff\Enums\ColorVariant;
 use Mulaidarinull\Larascaff\Info\Components\Icon;
 use Mulaidarinull\Larascaff\Tables\Columns\Column;
 use Mulaidarinull\Larascaff\Tables\Columns\IconColumn;
+use Mulaidarinull\Larascaff\Tables\Columns\ImageColumn;
 use Mulaidarinull\Larascaff\Tables\Components\Tab;
 use Mulaidarinull\Larascaff\Tables\Enums\ActionsPosition;
 use Mulaidarinull\Larascaff\Tables\Filters\Filter;
@@ -365,15 +366,21 @@ class Table extends DataTable
 
                     // define icon column
                     if ($type == 'iconColumn') {
-                        if ($actionType->isBoolean() || is_bool($record->{$actionType['data']})) {
+                        if ($actionType->isBoolean() || is_bool($record->{$field})) {
                             $label = Icon::make('close')
                                 ->label(null)
                                 ->boolean()
-                                ->value($record->{$actionType['data']})
+                                ->value($record->{$field})
                                 ->view();
                         } else {
-                            $label = $record->{$actionType['data']};
+                            $label = $record->{$field};
                         }
+                    }
+
+                    // define image column
+                    if ($type == 'imageColumn') {
+                        $actionType->record($record);
+                        $label = $actionType->view();
                     }
 
                     if (! isset($label)) {
@@ -426,6 +433,11 @@ class Table extends DataTable
             // define icon column
             if ($column instanceof IconColumn) {
                 $rawColumns[$column['data']]['iconColumn'] = $column;
+            }
+
+            // define image column
+            if ($column instanceof ImageColumn) {
+                $rawColumns[$column['data']]['imageColumn'] = $column;
             }
         }
     }

@@ -2,18 +2,14 @@
 
 namespace Mulaidarinull\Larascaff\Forms\Components;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Storage;
+use Mulaidarinull\Larascaff\Forms\Concerns\HasMedia;
 
 class Uploader extends Field
 {
-    protected string $path = 'storage';
+    use HasMedia;
 
     protected string $accept = 'image/png, image/jpeg, image/jpg, image/svg';
-
-    protected string $disk = 'local';
 
     protected ?string $field = null;
 
@@ -35,18 +31,6 @@ class Uploader extends Field
     protected array $cropperOptions = [
         'ascpectRatio' => '16:9',
     ];
-
-    public function path(string $path): static
-    {
-        $this->path = $path;
-
-        return $this;
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
-    }
 
     public function avatar(): static
     {
@@ -81,18 +65,6 @@ class Uploader extends Field
         $this->config['cropperOptions'] = $cropperOptions;
 
         return $this;
-    }
-
-    public function disk(string $disk): static
-    {
-        $this->disk = $disk;
-
-        return $this;
-    }
-
-    public function getDisk(): string
-    {
-        return $this->disk;
     }
 
     public function linkPreview(bool $linkPreview = true): static

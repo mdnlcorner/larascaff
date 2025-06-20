@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\Storage;
 
 class Uploader
 {
-
-
     public function tempUploadHandler(Request $request)
     {
         /** @var UploadedFile[] $files */
