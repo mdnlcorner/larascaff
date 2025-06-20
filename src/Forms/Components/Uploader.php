@@ -11,8 +11,6 @@ class Uploader extends Field
 
     protected string $accept = 'image/png, image/jpeg, image/jpg, image/svg';
 
-    protected ?string $field = null;
-
     protected bool $multiple = false;
 
     protected array $config = [
@@ -144,18 +142,6 @@ class Uploader extends Field
         return $this;
     }
 
-    public function field(?string $field = null): static
-    {
-        $this->field = $field ?? $this->name;
-
-        return $this;
-    }
-
-    public function getField(): ?string
-    {
-        return $this->field;
-    }
-
     public function view(): string
     {
         return Blade::render(
@@ -182,7 +168,7 @@ class Uploader extends Field
                 'columnSpan' => $this->columnSpan,
                 'path' => $this->path,
                 'config' => $this->config,
-                'files' => $this->files ?? getRecord()->getMediaUrl($this->field),
+                'files' => $this->files ?? getRecord()->getMediaUrl($this->name),
                 'disk' => $this->disk,
                 'cropperOptions' => $this->cropperOptions,
             ]

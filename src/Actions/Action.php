@@ -347,15 +347,15 @@ class Action
         try {
             $this->callModifyFormData($this->modifyFormData);
 
+            if ($this->name == 'edit') {
+                $this->oldModelValue = $record->replicate();
+            }
+
             if (! $this->isCustomAction) {
                 $record->fill($this->formData);
             }
 
             $this->callHook($this->beforeSave);
-
-            if ($this->name == 'edit') {
-                $this->oldModelValue = $record->replicate();
-            }
 
             if (! $this->isCustomAction) {
                 $record->save();
