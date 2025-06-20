@@ -6,8 +6,8 @@ use Mulaidarinull\Larascaff\Actions\Action;
 use Mulaidarinull\Larascaff\Actions\RouteHandler;
 use Mulaidarinull\Larascaff\Forms\Components\Repeater;
 use Mulaidarinull\Larascaff\Forms\Components\Select;
-use Mulaidarinull\Larascaff\Forms\Components\Uploader;
 use Mulaidarinull\Larascaff\Notifications\NotificationRoute;
+use Mulaidarinull\Larascaff\Pages\Uploader;
 
 Route::middleware(larascaffConfig()->getMiddleware())->group(function () {
     Route::middleware(larascaffConfig()->getAuthMiddleware())->group(function () {
