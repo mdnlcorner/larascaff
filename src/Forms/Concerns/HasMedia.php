@@ -6,7 +6,7 @@ trait HasMedia
 {
     protected string $disk = 'local';
 
-    protected string $path = 'storage';
+    protected string $path = '';
 
     public function path(string $path): static
     {

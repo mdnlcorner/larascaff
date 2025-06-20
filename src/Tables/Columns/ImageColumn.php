@@ -70,8 +70,18 @@ class ImageColumn extends Column
             return null;
         }
 
+        $baseUrl = Storage::disk($this->getDisk())->url(str($this->getPath())->finish('/'));
+
+        if (is_array($this->record->{$this->name})) {
+            foreach ($this->record->{$this->name} as $record) {
+                $sources[] = $baseUrl . $record;
+            }
+        } else {
+            $sources = [$baseUrl . $this->record?->{$this->name}];
+        }
+
         return view('larascaff::image', [
-            'source' => Storage::disk($this->getDisk())->url(str($this->getPath())->finish('/') . $this->record?->{$this->name}),
+            'sources' => $sources,
             'circle' => $this->circle,
             'imageSize' => $this->imageSize,
             'imageWidth' => $this->imageWidth,
