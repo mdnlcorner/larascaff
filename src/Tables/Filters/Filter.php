@@ -23,7 +23,7 @@ class Filter extends Checkbox implements HasFilter
     {
         $static = parent::make($name);
 
-        $static->checked = request()->filled($static->getName());
+        $static->checked = request()->get($static->getName());
 
         $static->query(function ($query, array $data) use ($static) {
             $query->where($static->getName(), $data[$static->getName()]);
