@@ -51,7 +51,7 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
         return [$this->getName() => convertDate(request()->{$this->getName()}, 'Y-m-d')];
     }
 
-    public function getformatPhp(): string
+    public function getFormatPhp(): string
     {
         return $this->formatPhp;
     }

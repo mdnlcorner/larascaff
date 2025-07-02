@@ -4,16 +4,13 @@ namespace Mulaidarinull\Larascaff\Forms\Contracts;
 
 interface HasDatepicker
 {
-    public function config(array $config): self;
+    public function config(array $config): static;
 
-    /**
-     * @return string
-     */
-    public function getFormatPhp();
+    public function getFormatPhp(): string;
 
-    public function icon(bool $icon);
+    public function icon(bool $icon): static;
 
-    public function format($format);
+    public function format(string $format): static;
 
-    public function unformat();
+    public function unformat(): array;
 }

@@ -423,21 +423,30 @@ export class HandleFormSubmit extends AjaxOption {
 }
 
 export function initFilter() {
-    const pageUrl = new URL(window['location'].href);
-    $('[data-filter]').on('change', function (this: HTMLInputElement, e: any) {
-        if (this.type == 'checkbox') {
-            if (this.checked) {
-                pageUrl.searchParams.set(this.name, '1');
-            } else {
-                pageUrl.searchParams.set(this.name, '0');
-            }
-        } else {
-            pageUrl.searchParams.set(this.name, this.value);
-        }
+    $(function() {
+        const pageUrl = new URL(window['location'].href);
 
-        window['history'].pushState({}, '', pageUrl);
-        window['LaravelDataTables'][this.dataset.filter ?? '']?.ajax.url(pageUrl.href).load();
-    });
+        $('[data-filter]').on('changeDate', function (this: HTMLInputElement) {
+            pageUrl.searchParams.set(this.name, this.value);
+            window['history'].pushState({}, '', pageUrl);
+            window['LaravelDataTables'][this.dataset.filter ?? '']?.ajax.url(pageUrl.href).load();
+        })
+        
+        $('[data-filter]').on('change', function (this: HTMLInputElement) {
+            if (this.type == 'checkbox') {
+                if (this.checked) {
+                    pageUrl.searchParams.set(this.name, '1');
+                } else {
+                    pageUrl.searchParams.set(this.name, '0');
+                }
+            } else {
+                pageUrl.searchParams.set(this.name, this.value);
+            }
+    
+            window['history'].pushState({}, '', pageUrl);
+            window['LaravelDataTables'][this.dataset.filter ?? '']?.ajax.url(pageUrl.href).load();
+        });
+    })
 }
 
 if (typeof window !== 'undefined') {

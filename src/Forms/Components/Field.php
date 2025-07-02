@@ -19,8 +19,10 @@ class Field implements ContractsHasField
 
     public static function make(string $name): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $static = resolve(static::class);
+
         $static->name = $name;
+
         $static->label = ucwords(str_replace('_', ' ', $name));
 
         return $static;

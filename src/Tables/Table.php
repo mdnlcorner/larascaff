@@ -11,12 +11,14 @@ use Mulaidarinull\Larascaff\Contracts\HasColor;
 use Mulaidarinull\Larascaff\Contracts\HasIcon;
 use Mulaidarinull\Larascaff\Contracts\HasLabel;
 use Mulaidarinull\Larascaff\Enums\ColorVariant;
+use Mulaidarinull\Larascaff\Forms\Components\DatepickerRange;
 use Mulaidarinull\Larascaff\Info\Components\Icon;
 use Mulaidarinull\Larascaff\Tables\Columns\Column;
 use Mulaidarinull\Larascaff\Tables\Columns\IconColumn;
 use Mulaidarinull\Larascaff\Tables\Columns\ImageColumn;
 use Mulaidarinull\Larascaff\Tables\Components\Tab;
 use Mulaidarinull\Larascaff\Tables\Enums\ActionsPosition;
+use Mulaidarinull\Larascaff\Tables\Filters\DatepickerRangeFilter;
 use Mulaidarinull\Larascaff\Tables\Filters\Filter;
 use Yajra\DataTables\Html\Builder;
 use Yajra\DataTables\Services\DataTable;
@@ -90,13 +92,22 @@ class Table extends DataTable
     public function resolveTableFilters(): string
     {
         $tableId = $this->htmlBuilder->getTableId();
+
         $filterTable = '';
+
         foreach ($this->getFilters() as $filter) {
-            if (request()->filled($filter->getName())) {
-                if ($query = $filter->getQuery()) {
-                    $this->resolveClosureParams($query);
-                }
+            $filled = false;
+
+            if ($filter instanceof DatepickerRange) {
+                $filled = request()->filled($filter->getName(0)) && request()->filled($filter->getName(1));
+            } else {
+                $filled = request()->filled($filter->getName());
             }
+
+            if ($filled && $query = $filter->getQuery()) {
+                $this->resolveClosureParams($query);
+            }
+
             $filter->attr('data-filter=' . $tableId);
             $filterTable .= $filter->view();
         }
@@ -112,12 +123,19 @@ class Table extends DataTable
 
         $parameters = [];
 
-        $data = $this->getFilters()->map(fn ($item) => $item->getName());
+        $data = [];
+        foreach ($this->getFilters() as $filter) {
+            if ($filter instanceof DatepickerRangeFilter) {
+                $data = array_merge($data, [$filter->getName(0), $filter->getName(1)]);
+            } else {
+                $data[] = $filter->getName();
+            }
+        }
 
         foreach ((new \ReflectionFunction($cb))->getParameters() as $parameter) {
             $default = match ($parameter->getName()) {
                 'query' => [$parameter->getName() => $this->query],
-                'data' => [$parameter->getName() => request()->only($data->toArray())],
+                'data' => [$parameter->getName() => request()->only($data)],
                 default => []
             };
 

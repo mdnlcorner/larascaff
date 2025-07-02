@@ -4,6 +4,8 @@ namespace Mulaidarinull\Larascaff\Forms\Concerns;
 
 trait HasField
 {
+    protected ?string $name = null;
+
     protected ?string $type = null;
 
     protected ?string $label = null;
