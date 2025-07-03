@@ -1,5 +1,5 @@
 import { initModals } from './components/modal';
-import { initActionByUrl, initActionModal, initFilter, initGlobalEvent, initNProgress } from './main';
+import { initActionByUrl, initActionModal, initGlobalEvent, initNProgress } from './main';
 import searchContent from './search-content';
 import sidebar from './sidebar';
 import './themeToggle';
@@ -7,7 +7,6 @@ import './themeToggle';
 initNProgress();
 initActionModal();
 initActionByUrl();
-initFilter();
 initGlobalEvent();
 initModals();
 searchContent();

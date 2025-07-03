@@ -21,8 +21,8 @@ class LarascaffServiceProvider extends ServiceProvider
 
         Blade::component('larascaff-layout', AppLayout::class);
         Blade::component('larascaff-guest-layout', GuestLayout::class);
-        Blade::directive('larascaffStyles', function (string $expression): string {
-            return "<?php echo \Mulaidarinull\Larascaff\Facades\LarascaffAsset::renderStyles({$expression}) ?>";
+        Blade::directive('larascaffStyles', function (): string {
+            return "<?= \Mulaidarinull\Larascaff\Facades\LarascaffAsset::renderStyles() ?>";
         });
     }
 

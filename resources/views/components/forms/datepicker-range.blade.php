@@ -40,7 +40,7 @@
                 ]) }} />
         </div>
         <div
-            class="min-w-8 text-muted-foreground flex items-center h-[2.39rem] py-1 border-t border-b px-1.5 overflow-hidden bg-dark-100 text-center dark:bg-dark-800 text-sm">
+            class="min-w-8 text-muted-foreground flex items-center z-10 h-[2.39rem] py-1 border-t border-b px-1.5 overflow-hidden bg-dark-100 text-center dark:bg-dark-800 text-sm">
             @svg('tabler-calendar', 'w-5 h-5')
         </div>
         <div class="w-full form-wrapper">
