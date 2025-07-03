@@ -21,7 +21,7 @@ class LarascaffServiceProvider extends ServiceProvider
 
         Blade::component('larascaff-layout', AppLayout::class);
         Blade::component('larascaff-guest-layout', GuestLayout::class);
-        Blade::directive('larascaffStyles', function (): string {
+        Blade::directive('colorVariants', function (): string {
             return "<?= \Mulaidarinull\Larascaff\Facades\LarascaffAsset::renderStyles() ?>";
         });
     }
