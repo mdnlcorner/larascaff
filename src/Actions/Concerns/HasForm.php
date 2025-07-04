@@ -13,11 +13,11 @@ trait HasForm
 
     protected bool $hasForm = true;
 
-    protected ?Closure $modifyFormData = null;
+    protected ?Closure $editFormData = null;
 
-    public function modifyFormData(Closure $callback): static
+    public function editFormData(Closure $callback): static
     {
-        $this->modifyFormData = $callback;
+        $this->editFormData = $callback;
 
         return $this;
     }
@@ -27,7 +27,7 @@ trait HasForm
         if ($callback) {
             $data = $this->resolveClosureParams($callback);
             if (! $data) {
-                throw new \Exception('Closure in modifyFormData must return array $data');
+                throw new \Exception('Closure in editFormData must return array $data');
             }
             $this->formData = $data;
         }

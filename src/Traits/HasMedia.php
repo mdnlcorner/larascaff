@@ -2,27 +2,11 @@
 
 namespace Mulaidarinull\Larascaff\Traits;
 
-use App\Models\Media;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;
 
 trait HasMedia
 {
-    public function media(): MorphMany
-    {
-        return $this->morphMany(Media::class, 'model');
-    }
-
-    /**
-     * @return MorphOne<Media, $this>
-     */
-    public function singleMedia(): MorphOne
-    {
-        return $this->morphOne(Media::class, 'model');
-    }
-
     public function storeMedia(string $path, string | array $tmpFiles, string $field, string $disk = 'public')
     {
         if (! $tmpFiles) {
@@ -88,17 +72,17 @@ trait HasMedia
 
             foreach ($existingMedia as $item) {
                 if (! in_array($item, $tmpFiles)) {
-                    $this->deleteMedia(str($path)->finish('/') . $item, $field);
+                    $this->deleteMedia(str($path)->finish('/') . $item, $disk);
                 }
             }
         } else {
             if (is_null($tmpFiles)) {
                 if (is_array($this->{$field})) {
                     foreach ($this->{$field} as $media) {
-                        $this->deleteMedia($path . '/' . $media, $field);
+                        $this->deleteMedia(str($path)->finish('/') . $media, $disk);
                     }
                 } else {
-                    $this->deleteMedia($path . '/' . $this->{$field}, $field);
+                    $this->deleteMedia(str($path)->finish('/') . $this->{$field}, $disk);
                 }
 
                 unset($this->oldModelValue);
@@ -118,7 +102,7 @@ trait HasMedia
                     name: $uploadeFile->getFilename()
                 );
 
-                $this->deleteMedia($path . '/' . ($this->oldModelValue ?? $this)->{$field}, $field);
+                $this->deleteMedia(str($path)->finish('/') . ($this->oldModelValue ?? $this)->{$field}, $disk);
 
                 unset($this->oldModelValue);
 
@@ -128,19 +112,12 @@ trait HasMedia
         }
     }
 
-    public function deleteMedia($filename = null, ?string $field = null, string $disk = 'public')
+    public function deleteMedia($filename = null, string $disk = 'public')
     {
-        // if filename is null, delete all image
-        if (! $filename) {
-            foreach ($this->media as $media) {
-                Storage::disk($disk)->delete($media->path . '/' . $media->filename);
-            }
-        } else {
-            Storage::disk($disk)->delete($filename);
-        }
+        Storage::disk($disk)->delete($filename);
     }
 
-    public function getMediaUrl(string $field, string $disk = 'public')
+    public function getMediaUrl(string $field)
     {
         if (is_string($this->{$field})) {
             return [$this->{$field}];
