@@ -142,6 +142,36 @@ class Uploader extends Field
         return $this;
     }
 
+    protected function resolvePath(): string
+    {
+        $path = str($this->path)->ltrim('/')->finish('/');
+
+        if ($this->disk == 'public') {
+            $path = $path->start('storage/');
+        }
+
+        return $path->toString();
+    }
+
+    protected function resolveConfig(): array
+    {
+        $config = $this->config;
+
+        if (isset($config['stylePanelLayout']) && $config['stylePanelLayout'] == 'compact circle') {
+            if (! isset($config['imageResizeTargetHeight'])) {
+                $config['imageResizeTargetHeight'] = 200;
+            }
+            if (! isset($config['imageResizeTargetWidth'])) {
+                $config['imageResizeTargetWidth'] = 200;
+            }
+            if (! isset($config['imageCropAspectRatio'])) {
+                $config['imageCropAspectRatio'] = '1:1';
+            }
+        }
+
+        return $config;
+    }
+
     public function view(): string
     {
         return Blade::render(
@@ -166,8 +196,8 @@ class Uploader extends Field
                 'multiple' => $this->multiple,
                 'accept' => $this->accept,
                 'columnSpan' => $this->columnSpan,
-                'path' => $this->path,
-                'config' => $this->config,
+                'path' => $this->resolvePath(),
+                'config' => $this->resolveConfig(),
                 'files' => $this->files ?? getRecord()->getMediaUrl($this->name),
                 'disk' => $this->disk,
                 'cropperOptions' => $this->cropperOptions,

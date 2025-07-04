@@ -4,7 +4,7 @@ namespace Mulaidarinull\Larascaff\Forms\Concerns;
 
 trait HasMedia
 {
-    protected string $disk = 'local';
+    protected string $disk = 'public';
 
     protected string $path = '';
 
