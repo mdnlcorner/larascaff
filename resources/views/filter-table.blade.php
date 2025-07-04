@@ -3,9 +3,15 @@
     <div x-data="{
         init() 
         {
-            const pageUrl = new URL(window['location'].href);
+            const reloader = (pageUrl, filter) => {
+                window['history'].pushState({}, '', pageUrl);
+                window['LaravelDataTables'][filter ?? '']?.ajax.url(pageUrl.href).load();
+            }
+
             $el.querySelectorAll('[data-filter]').forEach(el => {
                 el.addEventListener('change', function () {
+                    const pageUrl = new URL(window.location.href);
+
                     if (this.type == 'checkbox') {
                         if (this.checked) {
                             pageUrl.searchParams.set(this.name, '1');
@@ -16,14 +22,15 @@
                         pageUrl.searchParams.set(this.name, this.value);
                     }
             
-                    window['history'].pushState({}, '', pageUrl);
-                    window['LaravelDataTables'][this.dataset.filter ?? '']?.ajax.url(pageUrl.href).load();
+                    reloader(pageUrl, this.dataset.filter)
                 });
 
                 el.addEventListener('changeDate', function () {
+                    const pageUrl = new URL(window.location.href);
+
                     pageUrl.searchParams.set(this.name, this.value);
-                    window['history'].pushState({}, '', pageUrl);
-                    window['LaravelDataTables'][this.dataset.filter ?? '']?.ajax.url(pageUrl.href).load();
+
+                    reloader(pageUrl, this.dataset.filter)
                 })
             })
         },

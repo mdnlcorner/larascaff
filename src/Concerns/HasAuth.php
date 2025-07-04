@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Concerns;
 
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Mulaidarinull\Larascaff\Auth;
@@ -10,66 +11,66 @@ trait HasAuth
 {
     protected bool $hasLogin = true;
 
-    protected string $loginUrl = '/login';
+    protected string $loginUrl = 'login';
 
     /**
-     * @var \Closure | string | array<class-string, string> | null
+     * @var Closure | string | array<class-string, string> | null
      */
-    protected \Closure | string | array | null $loginForm = null;
+    protected Closure | string | array | null $loginForm = null;
 
     /**
-     * @var \Closure | string | array<class-string, string> | null
+     * @var Closure | string | array<class-string, string> | null
      */
-    protected \Closure | string | array | null $loginAction = null;
+    protected Closure | string | array | null $loginAction = null;
 
-    protected string $logoutUrl = '/logout';
+    protected string $logoutUrl = 'logout';
 
     /**
-     * @var \Closure | string | array<class-string, string> | null
+     * @var Closure | string | array<class-string, string> | null
      */
-    protected \Closure | string | array | null $logoutAction = [Auth\AuthenticatedSessionController::class, 'destroy'];
+    protected Closure | string | array | null $logoutAction = [Auth\AuthenticatedSessionController::class, 'destroy'];
 
     protected bool $hasRegistration = false;
 
     protected string $registrationUrl = 'register';
 
     /**
-     * @var \Closure | string | array<class-string, string> | null
+     * @var Closure | string | array<class-string, string> | null
      */
-    protected \Closure | string | array | null $registrationForm = null;
+    protected Closure | string | array | null $registrationForm = null;
 
     /**
-     * @var \Closure | string | array<class-string, string> | null
+     * @var Closure | string | array<class-string, string> | null
      */
-    protected \Closure | string | array | null $registrationAction = null;
+    protected Closure | string | array | null $registrationAction = null;
 
     protected bool $hasPasswordReset = false;
 
     protected string $passwordResetUrl = 'forgot-password';
 
     /**
-     * @var \Closure | string | array<class-string, string> | null
+     * @var Closure | string | array<class-string, string> | null
      */
-    protected \Closure | string | array | null $passwordResetForm = null;
+    protected Closure | string | array | null $passwordResetForm = null;
 
     /**
-     * @var \Closure | string | array<class-string, string> | null
+     * @var Closure | string | array<class-string, string> | null
      */
-    protected \Closure | string | array | null $passwordResetAction = null;
+    protected Closure | string | array | null $passwordResetAction = null;
 
     protected string $newPasswordUrl = 'reset-password';
 
     /**
-     * @var \Closure | string | array<class-string, string> | null
+     * @var Closure | string | array<class-string, string> | null
      */
-    protected \Closure | string | array | null $newPasswordForm = null;
+    protected Closure | string | array | null $newPasswordForm = null;
 
     /**
-     * @var \Closure | string | array<class-string, string> | null
+     * @var Closure | string | array<class-string, string> | null
      */
-    protected \Closure | string | array | null $newPasswordAction = null;
+    protected Closure | string | array | null $newPasswordAction = null;
 
-    public function login(?string $url = null, \Closure | array | string | null $form = null, \Closure | array | string | null $action = null): static
+    public function login(?string $url = null, Closure | array | string | null $form = null, Closure | array | string | null $action = null): static
     {
         $this->hasLogin = true;
 
@@ -82,7 +83,7 @@ trait HasAuth
         return $this;
     }
 
-    public function logout(?string $url, \Closure | array | string | null $action)
+    public function logout(?string $url, Closure | array | string | null $action)
     {
         $this->logoutUrl = $url ?? $this->logoutUrl;
 
@@ -94,7 +95,7 @@ trait HasAuth
         return Str::start($this->logoutUrl, '/');
     }
 
-    public function getLogoutAction(): \Closure | string | array
+    public function getLogoutAction(): Closure | string | array
     {
         return $this->logoutAction;
     }
@@ -109,17 +110,17 @@ trait HasAuth
         return Str::start($this->loginUrl, '/');
     }
 
-    public function getLoginForm(): \Closure | string | array
+    public function getLoginForm(): Closure | string | array
     {
         return $this->loginForm;
     }
 
-    public function getLoginAction(): \Closure | string | array
+    public function getLoginAction(): Closure | string | array
     {
         return $this->loginAction;
     }
 
-    public function registration(?string $url = null, \Closure | array | string | null $form = null, \Closure | array | string | null $action = null): static
+    public function registration(?string $url = null, Closure | array | string | null $form = null, Closure | array | string | null $action = null): static
     {
         $this->hasRegistration = true;
 
@@ -142,17 +143,17 @@ trait HasAuth
         return Str::start($this->registrationUrl, '/');
     }
 
-    public function getRegistrationForm(): \Closure | string | array
+    public function getRegistrationForm(): Closure | string | array
     {
         return $this->registrationForm;
     }
 
-    public function getRegistrationAction(): \Closure | string | array
+    public function getRegistrationAction(): Closure | string | array
     {
         return $this->registrationAction;
     }
 
-    public function passwordReset(?string $passwordResetUrl = null, \Closure | string | array | null $passwordResetForm = null, \Closure | string | array | null $passwordResetAction = null, ?string $newPasswordUrl = null, \Closure | string | array | null $newPasswordForm = null, \Closure | string | array | null $newPasswordAction = null): static
+    public function passwordReset(?string $passwordResetUrl = null, Closure | string | array | null $passwordResetForm = null, Closure | string | array | null $passwordResetAction = null, ?string $newPasswordUrl = null, Closure | string | array | null $newPasswordForm = null, Closure | string | array | null $newPasswordAction = null): static
     {
         $this->hasPasswordReset = true;
 
@@ -181,12 +182,12 @@ trait HasAuth
         return Str::start($this->passwordResetUrl, '/');
     }
 
-    public function getPasswordResetForm(): \Closure | string | array
+    public function getPasswordResetForm(): Closure | string | array
     {
         return $this->passwordResetForm;
     }
 
-    public function getPasswordResetAction(): \Closure | string | array
+    public function getPasswordResetAction(): Closure | string | array
     {
         return $this->passwordResetAction;
     }
@@ -196,12 +197,12 @@ trait HasAuth
         return Str::start($this->newPasswordUrl, '/');
     }
 
-    public function getNewPasswordForm(): \Closure | string | array
+    public function getNewPasswordForm(): Closure | string | array
     {
         return $this->newPasswordForm;
     }
 
-    public function getNewPasswordAction(): \Closure | string | array
+    public function getNewPasswordAction(): Closure | string | array
     {
         return $this->newPasswordAction;
     }

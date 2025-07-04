@@ -1,7 +1,7 @@
 <x-larascaff-layout>
     <section>
         <div class="flex flex-col gap-4 mb-3 md:justify-between md:items-center md:flex-row">
-            <div>
+            <div class="pb-2">
                 @isset($dataTable)<p class="items-center hidden gap-1 text-sm md:flex text-muted-foreground"><span>{{ $pageTitle }}</span> @svg("tabler-chevron-right", 'w-4 h-4') <span>List</span></p>@endisset
                 <h4>{{ $pageTitle }}</h4>
             </div>
@@ -31,20 +31,21 @@
                 <div class="flex justify-center pb-6">
                     <div class="px-3 py-2.5 rounded-xl bg-card border">
                         <div x-data="{
-                            init: function() {
+                            init() {
                                 const togglers = $el.querySelectorAll('[data-tabname]')
                                 togglers.forEach(toggler => {
                                     toggler.addEventListener('click', function(e) {
                                         e.preventDefault()
-                                        const location = window.location
-                                        const reloadUrl = `${location.origin}${location.pathname}?activeTab=${this.dataset.tabname}`
                                         
-                                        window.LaravelDataTables[(window.datatableId)].ajax.url(reloadUrl).load()
+                                        const pageUrl = new URL(window.location.href);
+                                        
+                                        pageUrl.searchParams.set('activeTab', this.dataset.tabname)
                                         
                                         togglers.forEach(_t => _t.classList.remove('active'))
                                         this.classList.add('active')
                                         
-                                        window.history.pushState({}, '', reloadUrl)
+                                        window.history.pushState({}, '', pageUrl)
+                                        window.LaravelDataTables[(window.datatableId)].ajax.url(pageUrl).load()
                                     })
                                 })
                             }
@@ -88,8 +89,8 @@
                 </div>
             </div>
             @push('js')
-            <script type="module" src="{{ asset('larascaff/components/datatable.js') }}"></script>
-            {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
+                <script type="module" src="{{ asset('larascaff/components/datatable.js') }}"></script>
+                {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
             @endpush
             @push('css')
                 <link rel="stylesheet" href="{{ asset('larascaff/components/datatable.css') }}">
