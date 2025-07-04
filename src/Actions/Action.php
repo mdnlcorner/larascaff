@@ -345,7 +345,7 @@ class Action
         DB::beginTransaction();
 
         try {
-            $this->callModifyFormData($this->modifyFormData);
+            $this->callEditFormData($this->editFormData);
 
             if ($this->name == 'edit') {
                 $this->oldModelValue = $record->replicate();

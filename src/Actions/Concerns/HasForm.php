@@ -22,7 +22,7 @@ trait HasForm
         return $this;
     }
 
-    protected function callModifyFormData($callback)
+    protected function callEditFormData($callback)
     {
         if ($callback) {
             $data = $this->resolveClosureParams($callback);

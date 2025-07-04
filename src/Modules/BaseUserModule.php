@@ -91,7 +91,7 @@ class BaseUserModule extends Module
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
-                    ->modifyFormData(function (array $data, User $record) {
+                    ->editFormData(function (array $data, User $record) {
                         if (! $data['password']) {
                             $data['password'] = $record->password;
                         }
