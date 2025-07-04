@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Forms\Components;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Blade;
 
 class Select extends Field
 {
-    protected array $options = [];
+    protected array | Closure $options = [];
 
     protected bool $multiple = false;
 
@@ -278,8 +279,11 @@ class Select extends Field
         return $this;
     }
 
-    public function options($options): static
+    public function options(array | Closure $options): static
     {
+        if ($options instanceof Closure) {
+            $options = $options();
+        }
         $this->options = $options;
 
         return $this;
@@ -329,6 +333,7 @@ class Select extends Field
                 :columnValue="$columnValue"
                 :columnSpan="$columnSpan"
                 :limit="$limit"
+                :attr="$attr"
             />
             HTML,
             [
@@ -348,6 +353,7 @@ class Select extends Field
                 'columnValue' => $this->columnValue,
                 'columnSpan' => $this->columnSpan,
                 'limit' => $this->limit,
+                'attr' => $this->attr,
             ]
         );
     }

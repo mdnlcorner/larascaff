@@ -8,15 +8,18 @@ class AssetManager
 {
     public function renderStyles()
     {
-        $variables = [];
+        $colorVariants = [];
+        $view = '';
         foreach (LarascaffColor::getColors() as $name => $shades) {
             foreach ($shades as $shade => $color) {
-                $variables["{$name}-{$shade}"] = $color;
+                $view .= "--{$name}-{$shade}:{$color};";
+                if ($shade == 500) {
+                    $colorVariants[$name] = $color;
+                }
             }
         }
 
-        return view('larascaff::assets', [
-            'cssVariables' => $variables,
-        ])->render();
+        return '<style>:root {' . $view . '}</style>' . PHP_EOL .
+        "<script data-color-variants type='application/json'>" . json_encode($colorVariants) . '</script>';
     }
 }

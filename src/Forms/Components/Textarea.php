@@ -28,6 +28,7 @@ class Textarea extends Field
                 :placeholder="$placeholder" 
                 :rows="$rows" 
                 :value="$value"
+                :attr="$attr"
             />
             HTML,
             [
@@ -39,6 +40,7 @@ class Textarea extends Field
                 'disabled' => $this->disabled,
                 'readonly' => $this->readonly,
                 'rows' => $this->rows,
+                'attr' => $this->attr,
             ]
         );
     }

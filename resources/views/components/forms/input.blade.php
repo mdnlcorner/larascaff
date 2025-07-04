@@ -13,7 +13,8 @@
     'prependIcon' => null,
     'revealable' => false,
     'mask' => '',
-    'numberFormat' => null
+    'numberFormat' => null,
+    'attr' => ''
 ])
 <div x-data="{
     value: @js($value),
@@ -37,7 +38,7 @@
             @svg($prependIcon, 'w-5 h-5')
         </div>
         @endif
-        <input x-model="value" @if ($numberFormat) onkeyup="this.value = numberFormat(this.value,'{{ $numberFormat[0] ?? '.' }}','{{ $numberFormat[1] ?? ',' }}')" @endif  @if ($mask) x-mask:dynamic="{{ $mask }}" @endif data-input-name="{{ $name }}" name="{{ $name }}" :type="type" id="{{ $id }}" {{ $attributes->twMerge([
+        <input {{ $attr }} x-model="value" @if ($numberFormat) onkeyup="this.value = numberFormat(this.value,'{{ $numberFormat[0] ?? '.' }}','{{ $numberFormat[1] ?? ',' }}')" @endif  @if ($mask) x-mask:dynamic="{{ $mask }}" @endif data-input-name="{{ $name }}" name="{{ $name }}" :type="type" id="{{ $id }}" {{ $attributes->twMerge([
                 'disabled:cursor-not-allowed [&.is-invalid]:border-danger [&.is-invalid]:focus-visible:ring-danger/60 read-only:dark:bg-dark-800 px-3 py-2 text-sm read-only:bg-dark-100 w-full bg-transparent border rounded-md border-border focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-primary focus-visible:ring-offset-white placeholder:text-muted-foreground dark:focus-visible:ring-offset-dark-900 focus-visible:ring-offset-2',
                 $error ? 'border-danger focus-visible:ring-danger/60' : null,
                 $prependIcon ? 'ps-10' : ($prependIconBtn ? 'ps-12' : null),

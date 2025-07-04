@@ -269,11 +269,16 @@ class Action
 
         $this->module($request->post('_action_handler'));
 
+        $actions = [];
         // get actions
-        $actions = call_user_func([$request->post('_action_handler'), 'getActions']);
+        if (method_exists($request->post('_action_handler'), 'getActions')) {
+            $actions = call_user_func([$request->post('_action_handler'), 'getActions']);
+        }
 
         // get table actions
-        $actions = $actions->merge(call_user_func([$request->post('_action_handler'), 'getTableActions']));
+        if (method_exists($request->post('_action_handler'), 'getTableActions')) {
+            $actions = $actions->merge(call_user_func([$request->post('_action_handler'), 'getTableActions']));
+        }
         $actions = Arr::get($actions, $request->post('_action_name'), null);
 
         if (is_null($actions)) {
@@ -340,17 +345,17 @@ class Action
         DB::beginTransaction();
 
         try {
-            $this->callModifyFormData($this->modifyFormData);
+            $this->callEditFormData($this->editFormData);
+
+            if ($this->name == 'edit') {
+                $this->oldModelValue = $record->replicate();
+            }
 
             if (! $this->isCustomAction) {
                 $record->fill($this->formData);
             }
 
             $this->callHook($this->beforeSave);
-
-            if ($this->name == 'edit') {
-                $this->oldModelValue = $record->replicate();
-            }
 
             if (! $this->isCustomAction) {
                 $record->save();

@@ -14,9 +14,7 @@
         @if ($config->getFavicon())
             <link rel="icon" href="{{ $config->getFavicon() }} ">
         @endif
-        <!-- Scripts -->
         <script>
-            // On page load or when changing themes, best to add inline in `head` to avoid FOUC
             if (localStorage.getItem('color-theme') === 'dark' || (localStorage.getItem('color-theme') === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
             } else if (localStorage.getItem('color-theme') === 'light') {
@@ -39,7 +37,7 @@
         <script type="module" src="{{ asset('larascaff/vendor/alpine.js') }}"></script>
         <script type="module" src="{{ asset('larascaff/js/bootstrap.js') }}" ></script>
         
-        @larascaffStyles
+        @colorVariants
         
         @vite(['resources/css/app.css','resources/js/app.js'])
         @stack('jsModule')

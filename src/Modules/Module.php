@@ -5,9 +5,9 @@ namespace Mulaidarinull\Larascaff\Modules;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
+use Mulaidarinull\Larascaff\Actions\Action;
 use Mulaidarinull\Larascaff\Actions\CreateAction;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Info\Components\Info;
@@ -16,6 +16,7 @@ use Mulaidarinull\Larascaff\Tables\Table;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 use Mulaidarinull\Larascaff\Traits\ParameterResolver;
+use Mulaidarinull\Larascaff\Widgets\StatWidget;
 
 abstract class Module extends Controller
 {
@@ -57,12 +58,18 @@ abstract class Module extends Controller
         return $form;
     }
 
+    /**
+     * @return list<Action>
+     */
     public static function actions(): array
     {
         return [];
     }
 
-    public static function tabs(): array
+    /**
+     * @return list<StatWidget>
+     */
+    public static function widgets(): array
     {
         return [];
     }
@@ -142,7 +149,7 @@ abstract class Module extends Controller
         return $actions;
     }
 
-    public function index(Request $request)
+    public function index()
     {
         $this->pageData = [
             'pageTitle' => static::getPageTitle(),
@@ -150,32 +157,50 @@ abstract class Module extends Controller
             'actions' => static::getActions(true),
         ];
 
-        // ====== Widgets ======
-        if (method_exists($this, $method = 'widgets')) {
-            $parameters = $this->resolveParameters($method, [static::getInstanceModel(), $request]);
-            $widgets = call_user_func_array([$this, $method], $parameters);
+        $this->resolveWidgets();
 
-            $this->pageData['widgets'] = view('larascaff::widget', [
-                'widgets' => $widgets,
-            ]);
-        }
-        // ====== End Widgets ======
+        $this->initializeTable();
 
-        static::$datatable = new Table(static::getInstanceModel()->newQuery(), static::getUrl(), static::class);
-
-        if (method_exists($this, 'filterTable')) {
-            $filterTable = call_user_func([$this, 'filterTable']);
-            $this->pageData['filterTable'] = view('larascaff::filter', [
-                'filterTable' => $filterTable,
-            ]);
-            static::$datatable->filterTable($filterTable);
-        }
-
-        $this->pageData['tableActions'] = static::getTableActions(static::$datatable);
+        $this->resolveTableFilters();
 
         $this->resolveTableTabs();
 
         return static::$datatable->render('larascaff::main-content', $this->pageData);
+    }
+
+    protected function initializeTable()
+    {
+        static::$datatable = new Table(static::getInstanceModel()->newQuery(), static::getUrl(), static::class);
+        $this->pageData['tableActions'] = static::getTableActions();
+    }
+
+    protected function resolveWidgets()
+    {
+        $parameters = $this->resolveParameters('widgets', [static::getInstanceModel(), request()]);
+        $widgets = call_user_func_array([$this, 'widgets'], $parameters);
+
+        if (! count($widgets)) {
+            return null;
+        }
+
+        $widgets = array_map(fn ($item) => $item->toArray(), $widgets);
+
+        $this->pageData['widgets'] = view('larascaff::widget-module', [
+            'widgets' => $widgets,
+        ]);
+    }
+
+    protected function resolveTableFilters()
+    {
+        $filterTable = static::$datatable->resolveTableFilters();
+
+        if ($filterTable == '') {
+            return;
+        }
+
+        $this->pageData['filterTable'] = view('larascaff::filter-table', [
+            'filterTable' => $filterTable,
+        ]);
     }
 
     protected function resolveTableTabs()
@@ -205,13 +230,13 @@ abstract class Module extends Controller
         }
     }
 
-    public static function getTableActions(?Table $table = null)
+    public static function getTableActions()
     {
-        if (! $table) {
-            $table = new Table(static::getInstanceModel()->newQuery(), static::getUrl(), static::class);
+        if (! static::$datatable) {
+            static::$datatable = new Table(static::getInstanceModel()->newQuery(), static::getUrl(), static::class);
         }
 
-        return call_user_func_array([static::class, 'table'], [$table])->getActions();
+        return call_user_func_array([static::class, 'table'], [static::$datatable])->getActions();
     }
 
     public function getRecord($id): Model

@@ -30,9 +30,9 @@ trait HasMedia
         if ($input instanceof Uploader) {
             if (request()->post('_id')) {
                 $model->oldModelValue = $this->oldModelValue;
-                $model->updateMedia($input->getPath(), $data[$input->getName()] ?? null, $input->getField());
+                $model->updateMedia($input->getPath(), $data[$input->getName()] ?? null, $input->getName());
             } elseif (isset($data[$input->getName()])) {
-                $model->storeMedia($input->getPath(), $data[$input->getName()] ?? null, $input->getField());
+                $model->storeMedia($input->getPath(), $data[$input->getName()] ?? null, $input->getName());
             }
         }
     }

@@ -7,7 +7,8 @@
     'config' => [],
     'name',
     'value' => null,
-    'columnSpan' => '1'
+    'columnSpan' => '1',
+    'attr' => '',
 ])
 <div 
     x-ignore 
@@ -29,7 +30,7 @@
                 @svg('tabler-calendar', 'w-5 h-5')
             </div>
         @endif
-        <input x-ref="input" data-input-name="{{ $name }}" name="{{ $name }}" type="input" readonly id="{{ $id }}" value="{{ $value ?? getRecord($name) }}"
+        <input x-ref="input" {{ $attr }} data-input-name="{{ $name }}" name="{{ $name }}" type="input" readonly id="{{ $id }}" value="{{ $value ?? getRecord($name) }}"
             {{ $attributes->twMerge([
                 'disabled:cursor-not-allowed [&.is-invalid]:border-danger [&.is-invalid]:focus-visible:ring-danger/60 border-border w-full bg-transparent border rounded-md focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-primary focus-visible:ring-offset-white placeholder:text-muted-foreground dark:focus-visible:ring-offset-dark-900 focus-visible:ring-offset-2',
                 $icon ? 'ps-10' : null,

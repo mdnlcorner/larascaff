@@ -4,6 +4,8 @@ namespace Mulaidarinull\Larascaff\Forms\Concerns;
 
 trait HasField
 {
+    protected ?string $name = null;
+
     protected ?string $type = null;
 
     protected ?string $label = null;
@@ -16,9 +18,18 @@ trait HasField
 
     protected bool $readonly = false;
 
+    protected ?string $attr = '';
+
     public function disabled(bool $disabled = true)
     {
         $this->disabled = $disabled;
+
+        return $this;
+    }
+
+    public function attr(string $attr): static
+    {
+        $this->attr = $attr;
 
         return $this;
     }

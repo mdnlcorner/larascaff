@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Modules\Configuration;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Mavinoo\Batch\BatchFacade;
 use Mulaidarinull\Larascaff\Actions\Action;
@@ -75,7 +76,7 @@ class BaseMenuModule extends Module
                         Cache::forget('urlMenu');
                     }),
             ])
-            ->query(function (\Illuminate\Database\Eloquent\Builder $query) {
+            ->query(function (Builder $query) {
                 $query->with('mainMenu', 'permissions');
             })
             ->columns([

@@ -3,6 +3,7 @@
 namespace Mulaidarinull\Larascaff\Modules;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -61,25 +62,6 @@ class BaseUserModule extends Module
         ]);
     }
 
-    public function filterTable()
-    {
-        return [
-            [
-                'type' => 'select',
-                'name' => 'gender',
-                'options' => [
-                    'Male' => 'Male',
-                    'Female' => 'Female',
-                ],
-            ],
-            [
-                'type' => 'nullable',
-                'name' => 'email_verified_at',
-                'label' => 'Is Verified',
-            ],
-        ];
-    }
-
     public static function routes(): array
     {
         return [
@@ -90,10 +72,26 @@ class BaseUserModule extends Module
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
+            ->filters([
+                Tables\Filters\Filter::make('email_verified_at')
+                    ->label('Is Verified')
+                    ->query(function (Builder $query, array $data) {
+                        if ($data['email_verified_at'] == '1') {
+                            $query->whereNotNull('email_verified_at');
+                        } elseif ($data['email_verified_at'] == '0') {
+                            $query->whereNull('email_verified_at');
+                        }
+                    }),
+                Tables\Filters\SelectFilter::make('gender')
+                    ->options(['Choose Gender' => '', 'Male' => 'male', 'Female' => 'female'])
+                    ->query(function (Builder $query, array $data) {
+                        $query->where('gender', $data['gender']);
+                    }),
+            ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
-                    ->modifyFormData(function (array $data, User $record) {
+                    ->editFormData(function (array $data, User $record) {
                         if (! $data['password']) {
                             $data['password'] = $record->password;
                         }

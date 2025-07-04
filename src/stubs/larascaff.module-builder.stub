@@ -26,24 +26,19 @@ final class {{ class }} extends Module
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->customQuery(function (\Illuminate\Database\Eloquent\Builder $query) {
+            ->query(function (\Illuminate\Database\Eloquent\Builder $query) {
                 //
             })
-            ->customizeColumn(function (Tables\EloquentTable $eloquentDataTable) {
-                $eloquentDataTable
-                    ->editColumn('created_at', function ({{ model }} ${{ modelVariable }}) {
-                        return ${{ modelVariable }}->created_at?->format('d-m-Y H:i');
-                    })
-                    ->editColumn('updated_at', function ({{ model }} ${{ modelVariable }}) {
+            ->columns([
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->editColumn(function ({{ model }} ${{ modelVariable }}) {
+                        return ${{ modelVariable }}->created_at->format('d-m-Y H:i');
+                    }),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->editColumn(function ({{ model }} ${{ modelVariable }}) {
                         return ${{ modelVariable }}->updated_at->format('d-m-Y H:i');
-                    });
-            })
-            ->columns(function (Tables\HtmlBuilder $builder) {
-                $builder->columnsWithActions([
-                    Tables\Column::make('name'),
-                    Tables\Column::make('created_at'),
-                    Tables\Column::make('updated_at'),
-                ]);
-            });
+                    }),
+            ]);
     }
 }

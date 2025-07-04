@@ -29,28 +29,14 @@ type ChartType = {
 export default function initChart({ color, ...config }: StatType | ChartType) {
     return {
         init: function () {
-            const colorMap = {
-                primary: {
-                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                    borderColor: 'rgba(99, 102, 241,1)',
-                },
-                success: {
-                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                    borderColor: 'rgba(16, 185, 129,1)',
-                },
-                danger: {
-                    backgroundColor: 'rgba(244, 63, 94, 0.2)',
-                    borderColor: 'rgba(244, 63, 94,1)',
-                },
-                warning: {
-                    backgroundColor: 'rgba(245, 158, 11, 0.2)',
-                    borderColor: 'rgba(245, 158, 11,1)',
-                },
-                info: {
-                    backgroundColor: 'rgba(14, 165, 233, 0.2)',
-                    borderColor: 'rgba(14, 165, 233, 1)',
-                },
-            };
+            const colorVariants = {}
+            for (let [key, value] of Object.entries(JSON.parse(document.querySelector('[data-color-variants]')?.innerHTML ?? '{}'))) {
+                colorVariants[key] = {
+                    backgroundColor: 'rgba(' + value + ', 0.2)',
+                    borderColor: 'rgba(' + value + ')',
+                }
+            }
+
             if (config.type == 'statistic') {
                 new Chart(this.$refs.canvas, {
                     type: 'line',
@@ -87,8 +73,8 @@ export default function initChart({ color, ...config }: StatType | ChartType) {
                             {
                                 fill: 'start',
                                 data: config.data,
-                                backgroundColor: [colorMap[color].backgroundColor],
-                                borderColor: [colorMap[color].borderColor],
+                                backgroundColor: [colorVariants[color].backgroundColor],
+                                borderColor: [colorVariants[color].borderColor],
                                 borderWidth: 2,
                                 tension: 0.5,
                             },
@@ -97,13 +83,13 @@ export default function initChart({ color, ...config }: StatType | ChartType) {
                 });
             } else if (config.type == 'chart') {
                 const datasets = config.datasets.map((item) => {
-                    item.backgroundColor = item.backgroundColor ? colorMap[item.backgroundColor].backgroundColor : colorMap[color].backgroundColor;
-                    item.borderColor = item.borderColor ? colorMap[item.borderColor].borderColor : colorMap[color].borderColor;
+                    item.backgroundColor = item.backgroundColor ? colorVariants[item.backgroundColor].backgroundColor : colorVariants[color].backgroundColor;
+                    item.borderColor = item.borderColor ? colorVariants[item.borderColor].borderColor : colorVariants[color].borderColor;
                     item.borderWidth = item.borderWidth ?? 2;
                     item.tension = item.tension ?? 0.3;
                     item.pointBackgroundColor = item.pointBackgroundColor
-                        ? colorMap[item.pointBackgroundColor].borderColor
-                        : colorMap[color].borderColor;
+                        ? colorVariants[item.pointBackgroundColor].borderColor
+                        : colorVariants[color].borderColor;
                     return item;
                 });
 

@@ -7,8 +7,9 @@ use Mulaidarinull\Larascaff\Forms\Concerns\HasField;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasRelationship;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasValidation;
+use Mulaidarinull\Larascaff\Forms\Contracts\HasField as ContractsHasField;
 
-class Field
+class Field implements ContractsHasField
 {
     use HasColumnSpan;
     use HasField;
@@ -16,25 +17,25 @@ class Field
     use HasRelationship;
     use HasValidation;
 
-    protected string | array $name = '';
-
-    public static function make($name): static
+    public static function make(string $name): static
     {
-        $static = app(static::class);
-        $static->name($name);
+        $static = resolve(static::class);
+
+        $static->name = $name;
+
         $static->label = ucwords(str_replace('_', ' ', $name));
 
         return $static;
     }
 
-    public function name(string | array $name): static
+    public function name(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function getName(): string | array
+    public function getName(): string
     {
         return $this->name;
     }

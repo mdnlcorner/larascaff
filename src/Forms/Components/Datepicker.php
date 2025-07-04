@@ -51,7 +51,7 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
         return [$this->getName() => convertDate(request()->{$this->getName()}, 'Y-m-d')];
     }
 
-    public function getformatPhp(): string
+    public function getFormatPhp(): string
     {
         return $this->formatPhp;
     }
@@ -76,7 +76,8 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
                 :icon="$icon" 
                 :name="$name" 
                 :label="$label" 
-                :placeholder="$placeholder" 
+                :placeholder="$placeholder"
+                :attr="$attr"
             />
             HTML,
             [
@@ -87,6 +88,7 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
                 'config' => $this->config,
                 'value' => $this->value,
                 'columnSpan' => $this->columnSpan,
+                'attr' => $this->attr,
             ]
         );
     }

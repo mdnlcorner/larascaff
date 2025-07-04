@@ -23,7 +23,7 @@ trait ParameterResolver
             }
 
             if (! $found) {
-                $parameters[] = app()->make($className);
+                $parameters[] = app($className);
             }
         }
 

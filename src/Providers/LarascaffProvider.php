@@ -17,5 +17,5 @@ abstract class LarascaffProvider extends ServiceProvider
         //
     }
 
-    public function config(LarascaffConfig $config) {}
+    abstract public function config(LarascaffConfig $config): LarascaffConfig;
 }

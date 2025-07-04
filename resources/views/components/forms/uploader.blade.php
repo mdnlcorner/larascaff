@@ -7,30 +7,9 @@
     'files' => [],
     'multiple' => false,
     'columnSpan' => '1',
-    'disk' => 'local',
+    'disk' => 'public',
     'cropperOptions' => [],
 ])
-@php
-    $path = explode('/', $path);
-    if ($path[0] == '') {
-        array_shift($path);
-    }
-    if($path[count($path) - 1] == '') {
-        array_pop($path);
-    }
-    $path = implode('/',$path). '/';
-    if (isset($config['stylePanelLayout']) && $config['stylePanelLayout'] == 'compact circle') {
-        if (!isset($config['imageResizeTargetHeight'])) {
-            $config['imageResizeTargetHeight'] = 200;
-        }
-        if (!isset($config['imageResizeTargetWidth'])) {
-            $config['imageResizeTargetWidth'] = 200;
-        }
-        if (!isset($config['imageCropAspectRatio'])) {
-            $config['imageCropAspectRatio'] = '1:1';
-        }
-    }
-@endphp
 <div 
     x-ignore 
     x-load 
@@ -39,7 +18,7 @@
     x-data="initUploader({
         tempUploadUrl: '{{ url()->temporarySignedRoute('temp-upload', now()->addMinutes(180)) }}',
         files: @js($files),
-        path: @js($disk == 'local' ? 'storage/' . $path : $path),
+        path: @js($path),
         cropperOptions: @js($cropperOptions),
         ...@js($config),
         name: @js($name),

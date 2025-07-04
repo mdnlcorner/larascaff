@@ -6,35 +6,32 @@ use Illuminate\Support\Facades\Blade;
 
 class Checkbox extends Field
 {
-    protected string $variant = 'primary';
-
-    public function variant(string $variant): static
-    {
-        $this->variant = $variant;
-
-        return $this;
-    }
-
-    public function unformat(): array
-    {
-        return [$this->getName() => request()->{$this->getName()} ?? 0];
-    }
+    protected ?bool $checked = null;
 
     public function view(): string
     {
         return Blade::render(
             <<<'HTML'
-            <x-larascaff::forms.checkbox :columnSpan="$columnSpan" :disabled="$disabled" :readonly="$readonly" :variant="$variant" :value="$value" :checked="$checked" :name="$name" :label="$label" />
+            <x-larascaff::forms.checkbox 
+                :columnSpan="$columnSpan" 
+                :disabled="$disabled" 
+                :readonly="$readonly" 
+                :value="$value" 
+                :checked="$checked" 
+                :name="$name" 
+                :label="$label"
+                :attr="$attr"
+            />
             HTML,
             [
                 'name' => $this->name,
                 'label' => $this->label,
                 'value' => $this->value,
-                'variant' => $this->variant,
-                'checked' => getRecord($this->name) ? true : false,
+                'checked' => is_null($this->checked) ? (getRecord($this->name) ? true : false) : $this->checked,
                 'disabled' => $this->disabled,
                 'readonly' => $this->readonly,
                 'columnSpan' => $this->columnSpan,
+                'attr' => $this->attr,
             ]
         );
     }

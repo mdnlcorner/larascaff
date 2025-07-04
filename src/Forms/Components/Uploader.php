@@ -2,20 +2,14 @@
 
 namespace Mulaidarinull\Larascaff\Forms\Components;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Storage;
+use Mulaidarinull\Larascaff\Forms\Concerns\HasMedia;
 
 class Uploader extends Field
 {
-    protected string $path = 'storage';
+    use HasMedia;
 
     protected string $accept = 'image/png, image/jpeg, image/jpg, image/svg';
-
-    protected string $disk = 'local';
-
-    protected ?string $field = null;
 
     protected bool $multiple = false;
 
@@ -35,18 +29,6 @@ class Uploader extends Field
     protected array $cropperOptions = [
         'ascpectRatio' => '16:9',
     ];
-
-    public function path(string $path): static
-    {
-        $this->path = $path;
-
-        return $this;
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
-    }
 
     public function avatar(): static
     {
@@ -81,18 +63,6 @@ class Uploader extends Field
         $this->config['cropperOptions'] = $cropperOptions;
 
         return $this;
-    }
-
-    public function disk(string $disk): static
-    {
-        $this->disk = $disk;
-
-        return $this;
-    }
-
-    public function getDisk(): string
-    {
-        return $this->disk;
     }
 
     public function linkPreview(bool $linkPreview = true): static
@@ -172,76 +142,34 @@ class Uploader extends Field
         return $this;
     }
 
-    public function tempUploadHandler(Request $request)
+    protected function resolvePath(): string
     {
-        /** @var UploadedFile[] $files */
-        $files = $request->allFiles();
+        $path = str($this->path)->ltrim('/')->finish('/');
 
-        if (empty($files)) {
-            abort(422, 'No files were uploaded.');
+        if ($this->disk == 'public') {
+            $path = $path->start('storage/');
         }
 
-        if (count($files) > 1) {
-            abort(422, 'Only 1 file can be uploaded at a time.');
-        }
-
-        $requestKey = array_key_first($files);
-
-        /**
-         * @var UploadedFile $file
-         */
-        $file = is_array($request->input($requestKey))
-            ? $request->file($requestKey)[0]
-            : $request->file($requestKey);
-
-        // Store the file in a temporary location and return the location
-        // for FilePond to use.
-        $filename = $file->store(
-            path: 'tmp'
-        );
-
-        return response()->json(['filename' => $filename]);
+        return $path->toString();
     }
 
-    public function uploadHandler(Request $request)
+    protected function resolveConfig(): array
     {
-        /** @var UploadedFile[] $files */
-        $files = $request->allFiles();
+        $config = $this->config;
 
-        foreach ($files as $name => $file) {
-            $request->validate([
-                $name => 'image|mimes:jpeg,png,jpg,gif,svg|max:5000',
-            ]);
-        }
-        if (empty($files)) {
-            abort(422, 'No files were uploaded.');
-        }
-
-        if (count($files) > 1) {
-            abort(422, 'Only 1 file can be uploaded at a time.');
+        if (isset($config['stylePanelLayout']) && $config['stylePanelLayout'] == 'compact circle') {
+            if (! isset($config['imageResizeTargetHeight'])) {
+                $config['imageResizeTargetHeight'] = 200;
+            }
+            if (! isset($config['imageResizeTargetWidth'])) {
+                $config['imageResizeTargetWidth'] = 200;
+            }
+            if (! isset($config['imageCropAspectRatio'])) {
+                $config['imageCropAspectRatio'] = '1:1';
+            }
         }
 
-        $requestKey = array_key_first($files);
-
-        $file = is_array($request->input($requestKey))
-            ? $request->file($requestKey)[0]
-            : $request->file($requestKey);
-
-        $filename = Storage::disk(config('larascaff.default_filesystem_disk'))->put($request->path, $file);
-
-        return response()->json(['filename' => $filename]);
-    }
-
-    public function field(?string $field = null): static
-    {
-        $this->field = $field ?? $this->name;
-
-        return $this;
-    }
-
-    public function getField(): ?string
-    {
-        return $this->field;
+        return $config;
     }
 
     public function view(): string
@@ -268,9 +196,9 @@ class Uploader extends Field
                 'multiple' => $this->multiple,
                 'accept' => $this->accept,
                 'columnSpan' => $this->columnSpan,
-                'path' => $this->path,
-                'config' => $this->config,
-                'files' => $this->files ?? getRecord()->getMediaUrl($this->field),
+                'path' => $this->resolvePath(),
+                'config' => $this->resolveConfig(),
+                'files' => $this->files ?? getRecord()->getMediaUrl($this->name),
                 'disk' => $this->disk,
                 'cropperOptions' => $this->cropperOptions,
             ]
