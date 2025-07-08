@@ -93,18 +93,6 @@ components.forEach(component => {
     })
 })
 
-const vendors = ['alpine']
-
-vendors.forEach(vendor => {
-    compile({
-        ...defaultOptions,
-        entryPoints: [
-            `./resources/js/vendor/${vendor}/index.ts`,
-        ],
-        outfile: `./dist/vendor/${vendor}.js`,
-    })
-})
-
 compile({
     ...defaultOptions,
     entryPoints: [

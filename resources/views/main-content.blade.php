@@ -79,7 +79,19 @@
                     </div>
                 </div>
             @endif
-            <div class="card">
+            <div x-data="{
+                init() {
+                    setTimeout(() => {
+                        const table = window.LaravelDataTables['{{ $dataTable->getTableId() }}'];
+
+                        $(table.table().node).on('xhr.dt', (e, setting, json, data) => {
+                            console.log(json)
+                        })
+                        }, 200
+                    )
+                },
+            }"
+            class="card">
                 <div class="border rounded-md dark:border-dark-800 border-dark-100">
                     @isset($filterTable)
                         {!! $filterTable !!}

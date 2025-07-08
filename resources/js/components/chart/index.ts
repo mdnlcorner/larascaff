@@ -29,12 +29,12 @@ type ChartType = {
 export default function initChart({ color, ...config }: StatType | ChartType) {
     return {
         init: function () {
-            const colorVariants = {}
+            const colorVariants = {};
             for (let [key, value] of Object.entries(JSON.parse(document.querySelector('[data-color-variants]')?.innerHTML ?? '{}'))) {
                 colorVariants[key] = {
                     backgroundColor: 'rgba(' + value + ', 0.2)',
                     borderColor: 'rgba(' + value + ')',
-                }
+                };
             }
 
             if (config.type == 'statistic') {
@@ -83,7 +83,9 @@ export default function initChart({ color, ...config }: StatType | ChartType) {
                 });
             } else if (config.type == 'chart') {
                 const datasets = config.datasets.map((item) => {
-                    item.backgroundColor = item.backgroundColor ? colorVariants[item.backgroundColor].backgroundColor : colorVariants[color].backgroundColor;
+                    item.backgroundColor = item.backgroundColor
+                        ? colorVariants[item.backgroundColor].backgroundColor
+                        : colorVariants[color].backgroundColor;
                     item.borderColor = item.borderColor ? colorVariants[item.borderColor].borderColor : colorVariants[color].borderColor;
                     item.borderWidth = item.borderWidth ?? 2;
                     item.tension = item.tension ?? 0.3;

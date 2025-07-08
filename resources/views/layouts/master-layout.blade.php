@@ -34,10 +34,10 @@
                 }
             })
         </script>
-        <script type="module" src="{{ asset('larascaff/vendor/alpine.js') }}"></script>
-        <script type="module" src="{{ asset('larascaff/js/bootstrap.js') }}" ></script>
         
         @colorVariants
+        
+        <script type="module" src="{{ asset('larascaff/js/bootstrap.js') }}" ></script>
         
         @vite(['resources/css/app.css','resources/js/app.js'])
         @stack('jsModule')

@@ -8,13 +8,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
-use Mulaidarinull\Larascaff\Traits\ParameterResolver;
 
 abstract class Page extends Controller
 {
     use HasMenuPermission;
     use HasPermission;
-    use ParameterResolver;
 
     protected static ?string $view = null;
 
@@ -68,7 +66,20 @@ abstract class Page extends Controller
         return $view;
     }
 
-    public function index(Request $request)
+    protected function resolveClosureParams(string $method)
+    {
+        $parameters = [];
+        foreach ((new \ReflectionMethod($this, $method))->getParameters() as $parameter) {
+            if (! class_exists($parameter->getType()->getName())) {
+                throw new \Exception('Parameter must be class');
+            }
+            $parameters[$parameter->getName()] = resolve($parameter->getType()->getName());
+        }
+
+        return app()->call([$this, $method], $parameters);
+    }
+
+    public function index()
     {
         $data = [
             'pageTitle' => static::getPageTitle(),
@@ -77,14 +88,12 @@ abstract class Page extends Controller
 
         $viewData = [];
         if (method_exists($this, $method = 'viewData')) {
-            $parameters = $this->resolveParameters($method, [$request]);
-            $viewData = call_user_func_array([$this, $method], $parameters);
+            $viewData = $this->resolveClosureParams($method);
         }
         $data['view'] = view(static::getView(), $viewData);
 
         if (method_exists($this, $method = 'widgets')) {
-            $parameters = $this->resolveParameters($method, []);
-            $widgets = call_user_func_array([$this, $method], $parameters);
+            $widgets = $this->resolveClosureParams($method);
 
             $data['widgets'] = view('larascaff::widget', [
                 'widgets' => $widgets,
