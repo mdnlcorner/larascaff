@@ -81,14 +81,14 @@
             @endif
             <div x-data="{
                 init() {
-                    setTimeout(() => {
+                    {{-- setTimeout(() => {
                         const table = window.LaravelDataTables['{{ $dataTable->getTableId() }}'];
 
                         $(table.table().node).on('xhr.dt', (e, setting, json, data) => {
-                            console.log(json)
+                            
                         })
                         }, 200
-                    )
+                    ) --}}
                 },
             }"
             class="card">
@@ -102,7 +102,7 @@
             </div>
             @push('js')
                 <script type="module" src="{{ asset('larascaff/components/datatable.js') }}"></script>
-                {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
+                {!! $dataTable->scripts(attributes: ['type' => 'module']) !!}
             @endpush
             @push('css')
                 <link rel="stylesheet" href="{{ asset('larascaff/components/datatable.css') }}">
