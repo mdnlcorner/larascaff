@@ -65,7 +65,7 @@ abstract class Module extends Controller
     }
 
     /**
-     * @return list<StatWidget>
+     * @return list<class-string<Widget>>
      */
     public static function widgets(): array
     {
@@ -181,9 +181,9 @@ abstract class Module extends Controller
 
     protected function resolveWidgets()
     {
-        $widgets = $this->widgets();
+        $widgets = collect($this->widgets())->map(fn ($item) => new $item);
 
-        if (! count($widgets)) {
+        if (! $widgets->count()) {
             return null;
         }
 
