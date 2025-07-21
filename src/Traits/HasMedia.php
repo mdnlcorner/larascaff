@@ -117,8 +117,12 @@ trait HasMedia
         Storage::disk($disk)->delete($filename);
     }
 
-    public function getMediaUrl(string $field)
+    public function getMedia(string $field)
     {
+        if (is_null($field)) {
+            return [];
+        }
+        
         if (is_string($this->{$field})) {
             return [$this->{$field}];
         }

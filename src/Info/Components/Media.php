@@ -3,15 +3,19 @@
 namespace Mulaidarinull\Larascaff\Info\Components;
 
 use Illuminate\Support\Facades\Blade;
+use Mulaidarinull\Larascaff\Forms\Concerns\HasMedia;
 
 class Media extends Info
 {
+    use HasMedia;
+
     protected bool $rounded = false;
 
-    public static function make(?string $name = null): static
+    public static function make(string $name = null): static
     {
         $static = app(static::class);
         $static->name = $name;
+        $static->label = $name;
 
         return $static;
     }
@@ -32,7 +36,9 @@ class Media extends Info
                 :label="$label" 
                 :columnSpan="$columnSpan" 
                 :value="$value" 
-                :rounded="$rounded" 
+                :rounded="$rounded"
+                :disk="$disk"
+                :path="$path"
             />
             HTML,
             [
@@ -41,6 +47,8 @@ class Media extends Info
                 'columnSpan' => $this->columnSpan,
                 'value' => $this->value,
                 'rounded' => $this->rounded,
+                'disk' => $this->disk,
+                'path' => $this->path,
             ]
         );
     }

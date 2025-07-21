@@ -198,7 +198,7 @@ class Uploader extends Field
                 'columnSpan' => $this->columnSpan,
                 'path' => $this->resolvePath(),
                 'config' => $this->resolveConfig(),
-                'files' => $this->files ?? getRecord()->getMediaUrl($this->name),
+                'files' => $this->files ?? getRecord()->getMedia($this->name),
                 'disk' => $this->disk,
                 'cropperOptions' => $this->cropperOptions,
             ]

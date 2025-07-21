@@ -181,13 +181,11 @@ abstract class Module extends Controller
 
     protected function resolveWidgets()
     {
-        $widgets = call_user_func([$this, 'widgets']);
+        $widgets = $this->widgets();
 
         if (! count($widgets)) {
             return null;
         }
-
-        $widgets = array_map(fn ($item) => $item->toArray(), $widgets);
 
         $this->pageData['widgets'] = view('larascaff::widget-module', [
             'widgets' => $widgets,

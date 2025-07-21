@@ -123,7 +123,7 @@
             <button data-dropdown-toggle="dropdown_user" data-dropdown-placement="bottom-end"
                 class="group ml-3 relative flex items-center gap-x-1.5" type="button">
                 <div class="avatar avatar-circle avatar-indicator avatar-indicator-online">
-                    <img class="w-8 h-8 rounded-full" src="{{ isset(user()->getMediaUrl('avatar')[0]) ? url(Storage::disk(config('larascaff.default_filesystem_disk'))->url('profile/'.user()->getMediaUrl('avatar')[0])) : 'https://ui-avatars.com/api/?name='.user('name') }}" alt="Avatar 1" />
+                    <img class="w-8 h-8 rounded-full" src="{{ isset(user()->getMedia('avatar')[0]) ? url(Storage::disk(config('larascaff.default_filesystem_disk'))->url('profile/'.user()->getMediaUrl('avatar')[0])) : 'https://ui-avatars.com/api/?name='.user('name') }}" alt="Avatar 1" />
                 </div>
             </button>
             <x-larascaff::dropdown id="dropdown_user" class="w-56 ">
