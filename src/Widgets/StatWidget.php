@@ -2,16 +2,21 @@
 
 namespace Mulaidarinull\Larascaff\Widgets;
 
-class StatWidget extends Widget
+abstract class StatWidget extends Widget
 {
     /** @return list<Stat> */
-    public function getStats(): array
+    public static function getStats(): array
     {
-        return $this->stats;
+        return [];
     }
 
-    public function count(): int
+    public static function count(): int
     {
-        return count($this->getStats());
+        return count(static::getStats());
+    }
+
+    public static function getWidgetType(): string
+    {
+        return 'statistic';
     }
 }

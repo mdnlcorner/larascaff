@@ -44,7 +44,6 @@
     "autoprefixer": "^10.4.20",
     "axios": "^1.6.4",
     "chart.js": "^3.5.1",
-    "chartjs-plugin-datalabels": "^2.0.0",
     "choices.js": "^10.2.0",
     "codemirror": "^6.0.1",
     "cropperjs": "^1.6.2",

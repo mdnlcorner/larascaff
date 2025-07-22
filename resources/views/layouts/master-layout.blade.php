@@ -35,7 +35,8 @@
             })
         </script>
         
-        @colorVariants
+        @larascaffColors
+        @larascaffPlugins
         
         <script type="module" src="{{ asset('larascaff/js/bootstrap.js') }}" ></script>
         

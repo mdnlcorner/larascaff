@@ -29,7 +29,7 @@ class MakeWidget extends BaseCommand implements PromptsForMissingInput
             ),
             'type' => fn() => select(
                 label: 'Widget type',
-                options: ['stat', 'chart', 'table']
+                options: ['Stat', 'Chart', 'Table']
             )
         ];
     }
@@ -63,8 +63,8 @@ class MakeWidget extends BaseCommand implements PromptsForMissingInput
         ];
 
         $stubFile = match ($this->argument('type')) {
-            'chart' => $this->resolveStubPath('/../../stubs/larascaff.widget-chart.stub'),
-            'table' => $this->resolveStubPath('/../../stubs/larascaff.widget-table.stub'),
+            'Chart' => $this->resolveStubPath('/../../stubs/larascaff.widget-chart.stub'),
+            'Table' => $this->resolveStubPath('/../../stubs/larascaff.widget-table.stub'),
             default => $this->resolveStubPath('/../../stubs/larascaff.widget-stat.stub'),
         };
 

@@ -181,9 +181,9 @@ abstract class Module extends Controller
 
     protected function resolveWidgets()
     {
-        $widgets = collect($this->widgets())->map(fn ($item) => new $item);
+        $widgets = $this->widgets();
 
-        if (! $widgets->count()) {
+        if (! count($widgets)) {
             return null;
         }
 
