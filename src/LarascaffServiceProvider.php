@@ -69,10 +69,11 @@ class LarascaffServiceProvider extends ServiceProvider
             $this->commands([
                 Console\Commands\MakeModule::class,
                 Console\Commands\MakePage::class,
+                Console\Commands\MakeComponent::class,
+                Console\Commands\MakeWidget::class,
                 Console\Commands\Install::class,
                 Console\Commands\LinkAsset::class,
                 Console\Commands\UnlinkAsset::class,
-                Console\Commands\MakeComponent::class,
                 Console\Commands\DeleteTempUploadFiles::class,
             ]);
         }
