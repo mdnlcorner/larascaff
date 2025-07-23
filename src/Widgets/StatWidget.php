@@ -15,7 +15,7 @@ abstract class StatWidget extends Widget
         return count(static::getStats());
     }
 
-    public static function getWidgetType(): string
+    final public static function getWidgetType(): string
     {
         return 'statistic';
     }

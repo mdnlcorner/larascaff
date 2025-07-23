@@ -27,7 +27,7 @@ class AssetManager
 
     public function register(array $plugins)
     {
-        $this->plugins = $plugins;
+        $this->plugins = [...$this->plugins, ...$plugins];
     }
 
     public function getRegisteredPlugins()

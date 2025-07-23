@@ -17,7 +17,7 @@
         }
     </script>
 
-    @colorVariants
+    @larascaffColors
     
     @vite(['resources/css/app.css'])
 </head>

@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
-use Mulaidarinull\Larascaff\Widgets\Widget;
 
 abstract class Page extends Controller
 {
@@ -26,17 +25,6 @@ abstract class Page extends Controller
     public static function makeMenu()
     {
         return static::makeMenuHandler();
-    }
-
-    /** @return list<class-string<Widget>> */
-    public static function widgets(): array
-    {
-        return [];
-    }
-
-    public static function viewData(): array
-    {
-        return [];
     }
 
     public static function getPageTitle()
@@ -98,13 +86,17 @@ abstract class Page extends Controller
             'url' => static::getUrl(),
         ];
 
-        $data['view'] = view(static::getView(), $this->viewData());
+        $viewData = [];
+        if (method_exists($this, $method = 'viewData')) {
+            $viewData = $this->resolveClosureParams($method);
+        }
+        $data['view'] = view(static::getView(), $viewData);
 
-        $widgets = $this->widgets();
-
-        $data['widgets'] = view('larascaff::widget', [
-            'widgets' => $widgets,
-        ]);
+        $widgets = [];
+        if (method_exists($this, $method = 'widgets')) {
+            $widgets = $this->resolveClosureParams($method);
+        }
+        $data['widgets'] = view('larascaff::widget', ['widgets' => $widgets]);
 
         return view('larascaff::main-content', $data);
     }

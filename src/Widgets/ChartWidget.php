@@ -19,12 +19,12 @@ abstract class ChartWidget extends Widget
         return [];
     }
 
-    public static function getHeading(): string
+    public static function getHeading(): ?string
     {
         return static::$heading;
     }
 
-    public static function getDescription(): string
+    public static function getDescription(): ?string
     {
         return static::$description;
     }
@@ -41,7 +41,7 @@ abstract class ChartWidget extends Widget
 
     abstract public static function getType(): string | ChartType;
 
-    public static function getWidgetType(): string
+    final public static function getWidgetType(): string
     {
         return 'chart';
     }

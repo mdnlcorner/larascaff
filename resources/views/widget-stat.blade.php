@@ -9,7 +9,9 @@
                 <div class="overflow-hidden text-3xl font-semibold text-ellipsis">{{ $stat['value'] }}</div>
                 @isset($stat['description'])
                 <div class="flex">
-                    <div class="flex {{ $stat['descriptionIcon']['position']->value == 'before' ? 'flex-row-reverse' : '' }} items-center gap-x-2">
+                    
+                    <div class="flex {{ isset($stat['descriptionIcon']) ? ($stat['descriptionIcon']['position']->value == 'before' ? 'flex-row-reverse' : '') : '' }} items-center gap-x-2">
+                    
                         <div @class(["text-sm", "text-" . $stat['color']->value])>{{ $stat['description'] }}</div>
                         @isset($stat['descriptionIcon'])
                             @svg($stat['descriptionIcon']['icon'], implode(' ', ["w-4", "text-". $stat['color']->value]))

@@ -10,9 +10,14 @@
                 $chart = $widget::getData();
             @endphp
             <div class="p-4 bg-white border rounded-lg dark:bg-dark-900 dark:border-dark-800">
-                <div class="-mx-4 border-b dark:border-dark-800">
-                    <div class="px-4 mb-3 font-semibold">{{ $widget::getHeading() }}</div>
-                </div>
+                @if ($widget::getHeading())
+                    <div class="pb-4 -mx-4 border-b dark:border-dark-800">
+                        <div class="px-4">
+                            <div class="font-semibold">{{ $widget::getHeading() }}</div>
+                            <div class="text-sm text-muted">{{ $widget::getDescription() }}</div>
+                        </div>
+                    </div>
+                @endif
                 <div class="pt-4">
                     <x-larascaff::chart 
                         :widget-type="$widget::getWidgetType()" 
