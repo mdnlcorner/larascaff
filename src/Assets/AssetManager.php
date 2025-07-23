@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Assets;
 
+use Composer\InstalledVersions;
 use Mulaidarinull\Larascaff\Facades\LarascaffColor;
 
 class AssetManager
@@ -30,13 +31,22 @@ class AssetManager
         $this->plugins = [...$this->plugins, ...$plugins];
     }
 
-    public function getRegisteredPlugins()
+    public function getRegisteredPlugins(): string
     {
         $plugins = '';
         foreach($this->plugins as $plugin) {
-            $plugins .= '<script type="module" src="'.$plugin->getPath().'"></script>';
+            $plugins .= $plugin->renderHtml();
         }
 
         return $plugins;
+    }
+
+    public function getVersion(): string
+    {
+        try {
+            return InstalledVersions::getVersion('mulaidarinull/larascaff');
+        } catch (\Throwable $th) {
+            return InstalledVersions::getVersion('mulaidarinull/larascaff');
+        }
     }
 }
