@@ -1,4 +1,6 @@
-
+@php
+    $tableLoaded = false;
+@endphp
 @foreach ($widgets as $widget)
     @if ($widget::getWidgetType() == 'statistic')
         @include('larascaff::widget-stat', ['statWidgets' => $widget])
@@ -29,5 +31,22 @@
                 </div>
             </div>
         </div>
+    @elseif($widget::getWidgetType() == 'table')
+        {{-- {!! $resolveTableWidget($widget) !!} --}}
+        {{-- @dump($resolveTableWidget($widget)) --}}
+        {!! $resolveTableWidget($widget)->table() !!}
+        {!! $resolveTableWidget($widget)->scripts(attributes: ['type' => 'module']) !!}
+        @if ($tableLoaded == false)
+        
+            @push('js')
+            <script type="module" src="{{ asset('larascaff/components/datatable.js') }}"></script>
+            @endpush
+            @push('css')
+                <link rel="stylesheet" href="{{ asset('larascaff/components/datatable.css') }}">
+            @endpush
+            @php
+                $tableLoaded = true;
+            @endphp
+        @endif
     @endif
 @endforeach

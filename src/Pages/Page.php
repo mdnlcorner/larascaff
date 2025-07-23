@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
+use Mulaidarinull\Larascaff\Tables\Table;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
+use Mulaidarinull\Larascaff\Widgets\TableWidget;
 
 abstract class Page extends Controller
 {
@@ -96,7 +98,26 @@ abstract class Page extends Controller
         if (method_exists($this, $method = 'widgets')) {
             $widgets = $this->resolveClosureParams($method);
         }
-        $data['widgets'] = view('larascaff::widget', ['widgets' => $widgets]);
+
+        $resolveTableWidget = function(string $tableWidget) {
+            $table = new Table($tableWidget::getModel()::query(), static::getUrl(), $tableWidget);
+            call_user_func_array([$tableWidget, 'table'], [$table]);
+            
+            return $table->html();
+            // return $table->render('larascaff::widget-table');
+        };
+
+        if (request()->ajax() && request()->expectsJson()) {
+            foreach($widgets as $tableWidget) {
+                if ($tableWidget::getWidgetType() == 'table') {
+                    $table = new Table($tableWidget::getModel()::query(), static::getUrl(), $tableWidget);
+                    call_user_func_array([$tableWidget, 'table'], [$table]);
+                    return $table->render();
+                }
+            }
+        }
+
+        $data['widgets'] = view('larascaff::widget', ['widgets' => $widgets, 'resolveTableWidget' => $resolveTableWidget]);
 
         return view('larascaff::main-content', $data);
     }

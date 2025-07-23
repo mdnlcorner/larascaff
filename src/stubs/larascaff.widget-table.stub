@@ -1,0 +1,16 @@
+<?php
+
+namespace {{ namespace }};
+
+use Mulaidarinull\Larascaff\Tables;
+use Mulaidarinull\Larascaff\Widgets\TableWidget;
+
+class {{ class }} extends TableWidget
+{
+    protected static ?string $heading = 'Table Heading';
+
+    public static function table(Tables\Table $table): Tables\Table
+    {
+        return $table;
+    }
+}

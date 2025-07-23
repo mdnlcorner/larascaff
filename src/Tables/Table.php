@@ -282,11 +282,15 @@ class Table extends DataTable
         return $this->filters ??= collect([]);
     }
 
-    public function query(?callable $cb = null): EloquentBuilder | static
+    public function query(callable | EloquentBuilder | null $cb = null): EloquentBuilder | static
     {
         if (is_callable($cb)) {
             $cb($this->query);
 
+            return $this;
+        } else if ($cb instanceof Builder) {
+            $this->query = $cb;
+            
             return $this;
         }
 
