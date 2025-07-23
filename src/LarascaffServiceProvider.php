@@ -4,6 +4,7 @@ namespace Mulaidarinull\Larascaff;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Mulaidarinull\Larascaff\Assets\AssetManager;
 use Mulaidarinull\Larascaff\Colors\ColorManager;
 use Mulaidarinull\Larascaff\Models\Record;
 use Mulaidarinull\Larascaff\View\Components\AppLayout;
@@ -21,8 +22,11 @@ class LarascaffServiceProvider extends ServiceProvider
 
         Blade::component('larascaff-layout', AppLayout::class);
         Blade::component('larascaff-guest-layout', GuestLayout::class);
-        Blade::directive('colorVariants', function (): string {
-            return "<?= \Mulaidarinull\Larascaff\Facades\LarascaffAsset::renderStyles() ?>";
+        Blade::directive('larascaffColors', function (): string {
+            return "<?= \Mulaidarinull\Larascaff\Facades\LarascaffAsset::renderColorVariants() ?>";
+        });
+        Blade::directive('larascaffPlugins', function (): string {
+            return "<?= \Mulaidarinull\Larascaff\Facades\LarascaffAsset::getRegisteredPlugins() ?>";
         });
     }
 
@@ -69,10 +73,11 @@ class LarascaffServiceProvider extends ServiceProvider
             $this->commands([
                 Console\Commands\MakeModule::class,
                 Console\Commands\MakePage::class,
+                Console\Commands\MakeComponent::class,
+                Console\Commands\MakeWidget::class,
                 Console\Commands\Install::class,
                 Console\Commands\LinkAsset::class,
                 Console\Commands\UnlinkAsset::class,
-                Console\Commands\MakeComponent::class,
                 Console\Commands\DeleteTempUploadFiles::class,
             ]);
         }

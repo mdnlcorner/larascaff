@@ -1,0 +1,30 @@
+<?php
+
+namespace {{ namespace }};
+
+use Mulaidarinull\Larascaff\Enums\ColorVariant;
+use Mulaidarinull\Larascaff\Widgets\ChartWidget;
+
+class {{ class }} extends ChartWidget
+{
+    protected static ?string $heading = 'Chart Heading';
+
+    public static function getType(): string | ChartType
+    {
+        return ChartType::Line;
+    }
+
+    public static function getData(): array
+    {
+        return [
+            'datasets' => [
+                [
+                    'label' => 'Chart type label',
+                    'data' => [10, 20, 8, 5, 9, 12],
+                    'fill' => 'start'
+                ],
+            ],
+            'labels' => ['Label1', 'Label2', 'Label3', 'label4', 'label5', 'label6'],
+        ];
+    }
+}

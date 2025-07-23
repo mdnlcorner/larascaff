@@ -2,58 +2,21 @@
 
 namespace Mulaidarinull\Larascaff\Widgets;
 
-use Mulaidarinull\Larascaff\Enums\ColorVariant;
-use Mulaidarinull\Larascaff\Enums\IconPosition;
-
-class StatWidget
+abstract class StatWidget extends Widget
 {
-    protected array $options = [
-        'color' => ColorVariant::Primary,
-    ];
-
-    public function __construct(protected string $label, protected mixed $value)
+    /** @return list<Stat> */
+    public static function getStats(): array
     {
-        $this->options['label'] = $label;
-        $this->options['value'] = $value;
+        return [];
     }
 
-    public static function make(string $label, mixed $value): static
+    public static function count(): int
     {
-        $static = app(static::class, ['label' => $label, 'value' => $value]);
-
-        return $static;
+        return count(static::getStats());
     }
 
-    public function color(ColorVariant $color): static
+    final public static function getWidgetType(): string
     {
-        $this->options['color'] = $color;
-
-        return $this;
-    }
-
-    public function chart(array $options): static
-    {
-        $this->options['chart'] = $options;
-
-        return $this;
-    }
-
-    public function description(string $description): static
-    {
-        $this->options['description'] = $description;
-
-        return $this;
-    }
-
-    public function descriptionIcon(string $icon, ?IconPosition $position = null): static
-    {
-        $this->options['descriptionIcon'] = ['icon' => $icon, 'position' => $position ?? IconPosition::After];
-
-        return $this;
-    }
-
-    public function toArray(): array
-    {
-        return $this->options;
+        return 'statistic';
     }
 }

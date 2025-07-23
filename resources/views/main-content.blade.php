@@ -79,7 +79,19 @@
                     </div>
                 </div>
             @endif
-            <div class="card">
+            <div x-data="{
+                init() {
+                    {{-- setTimeout(() => {
+                        const table = window.LaravelDataTables['{{ $dataTable->getTableId() }}'];
+
+                        $(table.table().node).on('xhr.dt', (e, setting, json, data) => {
+                            
+                        })
+                        }, 200
+                    ) --}}
+                },
+            }"
+            class="card">
                 <div class="border rounded-md dark:border-dark-800 border-dark-100">
                     @isset($filterTable)
                         {!! $filterTable !!}
@@ -90,7 +102,7 @@
             </div>
             @push('js')
                 <script type="module" src="{{ asset('larascaff/components/datatable.js') }}"></script>
-                {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
+                {!! $dataTable->scripts(attributes: ['type' => 'module']) !!}
             @endpush
             @push('css')
                 <link rel="stylesheet" href="{{ asset('larascaff/components/datatable.css') }}">

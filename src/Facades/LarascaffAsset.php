@@ -5,9 +5,10 @@ namespace Mulaidarinull\Larascaff\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \Illuminate\View\View renderStyles(array $data = [], array $mergeData=[])
+ * @method static string renderColorVariants()
+ * @method static string register(array $plugins = [])
  *
- * @see \Mulaidarinull\Larascaff\AssetManager
+ * @see \Mulaidarinull\Larascaff\Assets\AssetManager
  */
 class LarascaffAsset extends Facade
 {

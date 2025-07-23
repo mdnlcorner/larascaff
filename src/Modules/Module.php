@@ -15,14 +15,12 @@ use Mulaidarinull\Larascaff\Tables\Components\Tab;
 use Mulaidarinull\Larascaff\Tables\Table;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
-use Mulaidarinull\Larascaff\Traits\ParameterResolver;
 use Mulaidarinull\Larascaff\Widgets\StatWidget;
 
 abstract class Module extends Controller
 {
     use HasMenuPermission;
     use HasPermission;
-    use ParameterResolver;
 
     protected static ?string $model = null;
 
@@ -32,7 +30,7 @@ abstract class Module extends Controller
 
     protected static ?string $pageTitle = null;
 
-    protected static ?Table $datatable = null;
+    private static ?Table $datatable = null;
 
     private array $pageData = [];
 
@@ -67,7 +65,7 @@ abstract class Module extends Controller
     }
 
     /**
-     * @return list<StatWidget>
+     * @return list<class-string<Widget>>
      */
     public static function widgets(): array
     {
@@ -157,15 +155,22 @@ abstract class Module extends Controller
             'actions' => static::getActions(true),
         ];
 
-        $this->resolveWidgets();
-
         $this->initializeTable();
 
         $this->resolveTableFilters();
 
         $this->resolveTableTabs();
 
+        $this->resolveWidgets();
+
         return static::$datatable->render('larascaff::main-content', $this->pageData);
+    }
+
+    public static function getTableQuery(): Builder
+    {
+        $query = static::$datatable->getQuery();
+
+        return $query->newQuery();
     }
 
     protected function initializeTable()
@@ -176,14 +181,11 @@ abstract class Module extends Controller
 
     protected function resolveWidgets()
     {
-        $parameters = $this->resolveParameters('widgets', [static::getInstanceModel(), request()]);
-        $widgets = call_user_func_array([$this, 'widgets'], $parameters);
+        $widgets = $this->widgets();
 
         if (! count($widgets)) {
             return null;
         }
-
-        $widgets = array_map(fn ($item) => $item->toArray(), $widgets);
 
         $this->pageData['widgets'] = view('larascaff::widget-module', [
             'widgets' => $widgets,

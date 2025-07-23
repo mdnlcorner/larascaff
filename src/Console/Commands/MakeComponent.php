@@ -8,7 +8,8 @@ use function Laravel\Prompts\text;
 
 class MakeComponent extends BaseCommand implements PromptsForMissingInput
 {
-    protected $signature = 'make:larascaff-component {name : The name of component}';
+    protected $signature = 'make:larascaff-component
+    {name : The name of component}';
 
     protected $description = 'Create a component';
 

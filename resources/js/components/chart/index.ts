@@ -1,10 +1,9 @@
-import Chart from 'chart.js/auto';
-import ChartDataLabels, { Context } from 'chartjs-plugin-datalabels';
+import Chart, { ChartTypeRegistry } from 'chart.js/auto';
 
 type StatType = {
     data: [];
     color: string;
-    type: 'statistic';
+    widgetType: 'statistic';
 };
 
 type DatasetsType = Array<{
@@ -19,9 +18,9 @@ type DatasetsType = Array<{
 
 type ChartType = {
     labels: Array<string>;
-    data: [];
     color: string;
-    type: 'chart';
+    widgetType: 'chart';
+    type: keyof ChartTypeRegistry;
     datasets: DatasetsType;
     dataLabel?: boolean;
 };
@@ -29,15 +28,15 @@ type ChartType = {
 export default function initChart({ color, ...config }: StatType | ChartType) {
     return {
         init: function () {
-            const colorVariants = {}
-            for (let [key, value] of Object.entries(JSON.parse(document.querySelector('[data-color-variants]')?.innerHTML ?? '{}'))) {
+            const colorVariants = {};
+            for (const [key, value] of Object.entries(JSON.parse(document.querySelector('[data-color-variants]')?.innerHTML ?? '{}'))) {
                 colorVariants[key] = {
                     backgroundColor: 'rgba(' + value + ', 0.2)',
                     borderColor: 'rgba(' + value + ')',
-                }
+                };
             }
 
-            if (config.type == 'statistic') {
+            if (config.widgetType == 'statistic') {
                 new Chart(this.$refs.canvas, {
                     type: 'line',
                     options: {
@@ -81,9 +80,11 @@ export default function initChart({ color, ...config }: StatType | ChartType) {
                         ],
                     },
                 });
-            } else if (config.type == 'chart') {
+            } else if (config.widgetType == 'chart') {
                 const datasets = config.datasets.map((item) => {
-                    item.backgroundColor = item.backgroundColor ? colorVariants[item.backgroundColor].backgroundColor : colorVariants[color].backgroundColor;
+                    item.backgroundColor = item.backgroundColor
+                        ? colorVariants[item.backgroundColor].backgroundColor
+                        : colorVariants[color].backgroundColor;
                     item.borderColor = item.borderColor ? colorVariants[item.borderColor].borderColor : colorVariants[color].borderColor;
                     item.borderWidth = item.borderWidth ?? 2;
                     item.tension = item.tension ?? 0.3;
@@ -93,40 +94,19 @@ export default function initChart({ color, ...config }: StatType | ChartType) {
                     return item;
                 });
 
-                let plugins: Array<any> = [];
-                let pluginsConfig: any = {};
+                const plugins: Array<any> = [];
+                const pluginsConfig: any = {};
 
-                if (config.dataLabel) {
-                    plugins.push(ChartDataLabels);
-                    pluginsConfig.datalabels = {
-                        display: true,
-                        align: 'end',
-                        anchor: 'end',
-                        color: function (ctx: any) {
-                            return 'white';
-                        },
-                        borderColor: function (ctx: Context) {
-                            return ctx.dataset.borderColor as string;
-                        },
-                        borderWidth: 2,
-                        borderRadius: (ctx: Context) => {
-                            return ctx.active ? 5 : 20;
-                        },
-                        padding: 3,
-                        backgroundColor: (ctx: Context) => {
-                            return ctx.dataset.borderColor as string;
-                        },
-                        font: (ctx: Context) => {
-                            return {
-                                weight: ctx.active ? 'bold' : 'normal',
-                                size: ctx.active ? 14 : 10,
-                            };
-                        },
-                    };
-                }
+                 (window['chartjsPlugins'] ?? []).forEach((item: any) => {
+                    plugins.push(item)
+                 })
+
+                 for (const [key, value] of Object.entries(window['chartjsPluginsConfig'] ?? {})) {
+                    pluginsConfig[key] = value
+                 }
 
                 new Chart(this.$refs.canvas, {
-                    type: 'line',
+                    type: config.type,
                     plugins: plugins,
                     options: {
                         responsive: true,

@@ -1,3 +1,8 @@
+import mask from '@alpinejs/mask';
+import AlpineLazyLoadAssets from 'alpine-lazy-load-assets';
+import Alpine from 'alpinejs';
+import slug from 'alpinejs-slug';
+import AsyncAlpine from 'async-alpine';
 import iziToast, { IziToastPosition } from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import $ from 'jquery';
@@ -7,6 +12,11 @@ import Modal from '../js/components/modal';
 import '../scss/components/_nprogress.scss';
 import '../scss/components/_swall.scss';
 import { initDropdowns } from './components/dropdown';
+
+Alpine.plugin(AsyncAlpine);
+Alpine.plugin(AlpineLazyLoadAssets);
+Alpine.plugin(mask);
+Alpine.plugin(slug);
 
 export function initNProgress(config = {}) {
     NProgress.configure({ showSpinner: false, ...config });
@@ -173,10 +183,6 @@ export function initActionByUrl() {
         });
         successActionHandler(req);
     }
-
-    // document.addEventListener('hiddenModal', function (e) {
-    //     window['history'].replaceState({}, '', url.pathname)
-    // })
 }
 
 export function confirmation(cb: (res: SweetAlertResult) => void, configs = {}) {
@@ -432,4 +438,9 @@ if (typeof window !== 'undefined') {
     window['showToast'] = showToast;
     window['reloadDatatable'] = reloadDatatable;
     window['debounce'] = debounce;
+    window['Alpine'] = Alpine;
+    window['$'] = $;
+    window['jQuery'] = $;
 }
+
+Alpine.start();
