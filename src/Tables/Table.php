@@ -288,9 +288,9 @@ class Table extends DataTable
             $cb($this->query);
 
             return $this;
-        } else if ($cb instanceof Builder) {
+        } elseif ($cb instanceof Builder) {
             $this->query = $cb;
-            
+
             return $this;
         }
 
@@ -315,7 +315,8 @@ class Table extends DataTable
                     'next' => '→',
                     'previous' => '←',
                 ]])
-                ->minifiedAjax()
+                ->searchDelay(800)
+                ->minifiedAjax(url($this->url))
                 ->selectStyleSingle()
                 ->orderBy(1, 'desc')
                 ->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');

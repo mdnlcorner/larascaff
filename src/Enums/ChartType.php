@@ -2,7 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Enums;
 
-Enum ChartType: string
+enum ChartType: string
 {
     case Bar = 'bar';
 

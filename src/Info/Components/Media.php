@@ -11,7 +11,7 @@ class Media extends Info
 
     protected bool $rounded = false;
 
-    public static function make(string $name = null): static
+    public static function make(?string $name = null): static
     {
         $static = app(static::class);
         $static->name = $name;

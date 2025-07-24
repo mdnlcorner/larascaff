@@ -12,7 +12,7 @@ class Js extends Asset
 
         return $this;
     }
-    
+
     public function isModule(): bool
     {
         return $this->isModule;
@@ -21,9 +21,9 @@ class Js extends Asset
     public function renderHtml(): string
     {
         $module = $this->isModule() ? 'type="module"' : '';
-        
+
         $modulePreload = $this->isModule() ? "<link rel=\"modulepreload\" href=\"{$this->getPath()}\"></link>" : '';
 
-        return "{$modulePreload}". PHP_EOL ."<script {$module} src=\"{$this->getPath()}\"></script>";
+        return "{$modulePreload}" . PHP_EOL . "<script {$module} src=\"{$this->getPath()}\"></script>";
     }
 }

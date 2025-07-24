@@ -61,7 +61,6 @@ class Stat implements ArrayAccess
      * Determine if an item exists at an offset.
      *
      * @param  TKey  $key
-     * @return bool
      */
     public function offsetExists($key): bool
     {
@@ -84,7 +83,6 @@ class Stat implements ArrayAccess
      *
      * @param  TKey|null  $key
      * @param  TValue  $value
-     * @return void
      */
     public function offsetSet($key, $value): void
     {
@@ -99,7 +97,6 @@ class Stat implements ArrayAccess
      * Unset the item at a given offset.
      *
      * @param  TKey  $key
-     * @return void
      */
     public function offsetUnset($key): void
     {

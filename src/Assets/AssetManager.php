@@ -34,7 +34,7 @@ class AssetManager
     public function getRegisteredPlugins(): string
     {
         $plugins = '';
-        foreach($this->plugins as $plugin) {
+        foreach ($this->plugins as $plugin) {
             $plugins .= $plugin->renderHtml();
         }
 

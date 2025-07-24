@@ -1,52 +1,9 @@
-@php
-    $tableLoaded = false;
-@endphp
 @foreach ($widgets as $widget)
     @if ($widget::getWidgetType() == 'statistic')
         @include('larascaff::widget-stat', ['statWidgets' => $widget])
     @elseif($widget::getWidgetType() == 'chart')
-        <div @class([
-            'grid grid-cols-1 md:grid-cols-2 gap-6 mb-6',
-        ])>
-            @php
-                $chart = $widget::getData();
-            @endphp
-            <div class="p-4 bg-white border rounded-lg dark:bg-dark-900 dark:border-dark-800">
-                @if ($widget::getHeading())
-                    <div class="pb-4 -mx-4 border-b dark:border-dark-800">
-                        <div class="px-4">
-                            <div class="font-semibold">{{ $widget::getHeading() }}</div>
-                            <div class="text-sm text-muted">{{ $widget::getDescription() }}</div>
-                        </div>
-                    </div>
-                @endif
-                <div class="pt-4">
-                    <x-larascaff::chart 
-                        :widget-type="$widget::getWidgetType()" 
-                        :type="$widget::getType()" 
-                        :data-label="$chart['dataLabel'] ?? false" 
-                        :labels="$chart['labels']" 
-                        :color="$widget::getColor()"
-                        :datasets="$chart['datasets']" />
-                </div>
-            </div>
-        </div>
+        @include('larascaff::widget-chart', ['widget' => $widget])
     @elseif($widget::getWidgetType() == 'table')
-        {{-- {!! $resolveTableWidget($widget) !!} --}}
-        {{-- @dump($resolveTableWidget($widget)) --}}
-        {!! $resolveTableWidget($widget)->table() !!}
-        {!! $resolveTableWidget($widget)->scripts(attributes: ['type' => 'module']) !!}
-        @if ($tableLoaded == false)
-        
-            @push('js')
-            <script type="module" src="{{ asset('larascaff/components/datatable.js') }}"></script>
-            @endpush
-            @push('css')
-                <link rel="stylesheet" href="{{ asset('larascaff/components/datatable.css') }}">
-            @endpush
-            @php
-                $tableLoaded = true;
-            @endphp
-        @endif
+        @include('larascaff::widget-table', ['widget' => $widget])
     @endif
 @endforeach
