@@ -100,7 +100,7 @@ abstract class Page extends Controller
         }
 
         $resolveTableWidget = function (string $tableWidget, bool $isAjax = false) {
-            $table = new Table($tableWidget::getModel()::query(), static::getUrl() . '?type=' . $tableWidget::getModel(), $tableWidget);
+            $table = new Table($tableWidget::getModel()::query(), static::getUrl(), $tableWidget);
             call_user_func_array([$tableWidget, 'table'], [$table]);
 
             if ($isAjax) {
@@ -113,10 +113,10 @@ abstract class Page extends Controller
         if (request()->ajax() && request()->expectsJson()) {
             foreach ($widgets as $tableWidget) {
                 if ($tableWidget::getWidgetType() == 'table') {
-                    
+
                     $table = $resolveTableWidget(tableWidget: $tableWidget, isAjax: true);
 
-                    if (get_class($table->getQuery()->getModel()) == request()->get('type')) {
+                    if ($table->builder()->getTableId() == request()->get('tableId')) {
                         return $table->render('larascaff::widget');
                     }
                 }

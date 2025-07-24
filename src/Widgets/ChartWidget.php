@@ -9,7 +9,7 @@ use Mulaidarinull\Larascaff\Widgets\Concerns\WidgetOption;
 abstract class ChartWidget extends Widget
 {
     use WidgetOption;
-    
+
     protected static string | ColorVariant $color = ColorVariant::Primary;
 
     /** @return array<string,array> */

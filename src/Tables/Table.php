@@ -300,7 +300,7 @@ class Table extends DataTable
     protected function generateHtmlBuilder()
     {
         if (! $this->htmlBuilder) {
-            $model = explode('Models\\', get_class($this->query->getModel()));
+            $tableId = str(get_class($this->query->getModel()))->afterLast('App\\Models\\')->replace('\\', '_')->lower()->append('-table')->toString();
             $this->htmlBuilder = $this->builder()
                 ->parameters([
                     'searchDelay' => 1000,
@@ -316,10 +316,10 @@ class Table extends DataTable
                     'previous' => '←',
                 ]])
                 ->searchDelay(800)
-                ->minifiedAjax(url($this->url))
+                ->minifiedAjax(url($this->url . '?tableId=' . $tableId))
                 ->selectStyleSingle()
                 ->orderBy(1, 'desc')
-                ->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
+                ->setTableId($tableId);
         }
     }
 

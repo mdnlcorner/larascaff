@@ -8,7 +8,7 @@ use Mulaidarinull\Larascaff\Widgets\Concerns\WidgetOption;
 abstract class TableWidget extends Widget
 {
     use WidgetOption;
-    
+
     protected static ?string $model = null;
 
     public static function getWidgetType(): string
