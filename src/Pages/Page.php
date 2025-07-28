@@ -101,6 +101,8 @@ abstract class Page extends Controller
 
         $resolveTableWidget = function (string $tableWidget, bool $isAjax = false) {
             $table = new Table($tableWidget::getModel()::query(), static::getUrl(), $tableWidget);
+            $table->widget(true);
+
             call_user_func_array([$tableWidget, 'table'], [$table]);
 
             if ($isAjax) {

@@ -39,12 +39,25 @@ class Table extends DataTable
     /** @var Collection<int, Tab> */
     protected Collection $tabs;
 
-    public function __construct(protected Model | EloquentBuilder $model, protected string $url, protected ?string $actionHandler = null)
+    /** @var class-string<Model> */
+    protected $model = null;
+
+    protected bool $isWidget = false;
+
+    public function __construct(Model | EloquentBuilder $model, protected string $url, protected ?string $actionHandler = null)
     {
+        $this->model = get_class($model);
         $this->query = $model;
         $this->url = $url;
         $this->actionHandler = $actionHandler;
         $this->generateTable();
+    }
+
+    public function widget(bool $status = true): static
+    {
+        $this->isWidget = $status;
+
+        return $this;
     }
 
     public function dataTable(): EloquentTable
@@ -157,11 +170,14 @@ class Table extends DataTable
      */
     public function actions(array $actions, ActionsPosition $position = ActionsPosition::AfterColumns): static
     {
+        $this->tableActions = [];
+
         foreach ($actions as $action) {
             foreach ($action->getOptions() as $key => $value) {
                 $this->tableActions[$key] = $value;
             }
         }
+
         $this->tableActions = collect($this->tableActions)
             ->map(function ($item) {
                 $item['url'] = url($this->url . $item['path']);
@@ -180,7 +196,11 @@ class Table extends DataTable
                     return true;
                 }
 
-                return user()->can($item['permission'] . ' ' . $this->url);
+                if ($item['permission']) {
+                    return user()->can($item['permission'] . ' ' . $this->url);
+                }
+
+                return true;
             });
 
         $this->generateHtmlBuilder();
@@ -316,7 +336,7 @@ class Table extends DataTable
                     'previous' => '←',
                 ]])
                 ->searchDelay(800)
-                ->minifiedAjax(url($this->url . '?tableId=' . $tableId))
+                ->minifiedAjax($this->isWidget ? url($this->url . '?tableId=' . $tableId) : '')
                 ->selectStyleSingle()
                 ->orderBy(1, 'desc')
                 ->setTableId($tableId);

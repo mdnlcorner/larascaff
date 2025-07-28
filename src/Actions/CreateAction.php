@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 
 class CreateAction extends Action
 {
-    public static function make(string $name = 'create'): static
+    public static function make(?string $name = 'create'): static
     {
-        $static = parent::make($name);
+        $static = parent::make('create');
 
         return $static;
     }
@@ -16,8 +16,9 @@ class CreateAction extends Action
     protected function setup(string $name)
     {
         parent::setup($name);
-        $this->permission('create')
-            ->method('POST');
+
+        $this->permission($name);
+
         if ($this->getModule()) {
             $this->action = function (Request $request, $record) {
                 return $this->actionHandler($request, $record);

@@ -7,7 +7,7 @@ use Mulaidarinull\Larascaff\Info\Components\Info;
 
 class ViewAction extends Action
 {
-    public static function make(string $name = 'view'): static
+    public static function make(?string $name = 'view'): static
     {
         return parent::make('view');
     }
@@ -15,7 +15,9 @@ class ViewAction extends Action
     protected function setup(string $name)
     {
         $this->label = str($name)->headline()->value();
+
         $this->name = $name;
+
         $this->permission('read');
 
         $this->handle();

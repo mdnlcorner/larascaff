@@ -12,7 +12,7 @@ class DeleteAction extends Action
 {
     protected bool $confirmation = true;
 
-    public static function make(string $name = 'delete'): static
+    public static function make(?string $name = 'delete'): static
     {
         return parent::make('delete');
     }
@@ -20,7 +20,9 @@ class DeleteAction extends Action
     protected function setup(string $name)
     {
         parent::setup($name);
-        $this->permission('delete');
+
+        $this->permission($name);
+
         $this->form(false);
 
         if ($this->getModule()) {

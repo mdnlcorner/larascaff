@@ -3,7 +3,6 @@
 namespace Mulaidarinull\Larascaff\Modules\Configuration;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Mulaidarinull\Larascaff\Enums\ColorVariant;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
@@ -48,11 +47,10 @@ class BaseRoleModule extends Module
                             Forms\Components\TextInput::make('name')
                                 ->validations(['required', Rule::unique('roles')]),
                             Forms\Components\TextInput::make('guard_name')
-                                ->validations(['required'])
+                                ->validations(['required']),
                         ]);
                     })
                     ->afterSave(function ($record, Role $replica) {
-                        dd($replica, $record->permissions->pluck('id'));
                         $replica->permissions()->attach($record->permissions->pluck('id'));
                     }),
                 Tables\Actions\Action::make('permissions')
@@ -62,7 +60,7 @@ class BaseRoleModule extends Module
                             RolePermissionFormComponent::make()
                                 ->shareData(function (Role $role) {
                                     $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
-                                    $roles = Role::query()->where('id', '!=', $role->id)->get()->map(fn($role) => ['label' => $role->name, 'value' => $role->id]);
+                                    $roles = Role::query()->where('id', '!=', $role->id)->get()->map(fn ($role) => ['label' => $role->name, 'value' => $role->id]);
 
                                     return [
                                         'data' => $role,
@@ -75,8 +73,6 @@ class BaseRoleModule extends Module
                             ->columns(1);
                     })
                     ->action(function (Request $request, Role $role) {
-                        Gate::authorize('update-permissions ' . static::getUrl());
-
                         $role->syncPermissions($request->permissions);
 
                         return responseSuccess();

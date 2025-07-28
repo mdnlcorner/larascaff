@@ -27,7 +27,7 @@ class Action
 
     protected ?Action $instance = null;
 
-    protected ?string $permission = null;
+    protected string | bool $permission = false;
 
     protected ?Closure $show = null;
 
@@ -61,7 +61,7 @@ class Action
 
     protected ?Model $replica = null;
 
-    public static function make(string $name): static
+    public static function make(?string $name = 'action'): static
     {
         $static = app(static::class);
         $static->setup($name);
@@ -78,7 +78,11 @@ class Action
     protected function setup(string $name)
     {
         $this->label = str($name)->headline()->value();
+
         $this->name = $name;
+
+        $this->permission(false);
+
         if (request()->has(['_action_handler', '_action_name', '_action_type', '_id']) && request()->ajax()) {
             $this->module(request()->post('_action_handler'));
             $this->fillFormData();
@@ -89,21 +93,21 @@ class Action
         }
     }
 
-    public function permission(string $permission): static
+    public function permission(string | bool $permission): static
     {
         $this->permission = $permission;
 
         return $this;
     }
 
-    public function getPermission(): string
+    public function getPermission(): string | bool
     {
         return $this->permission;
     }
 
     public function show(\Closure | bool $show): static
     {
-        $this->show = is_bool($show) ? fn() => $show : $show;
+        $this->show = is_bool($show) ? fn () => $show : $show;
 
         return $this;
     }
@@ -195,7 +199,7 @@ class Action
         $this->options['blank'] = $this->blank;
         $this->options['ajax'] = $this->ajax;
         $this->options['path'] = $this->path;
-        $this->options['show'] = $this->show ?? fn() => true;
+        $this->options['show'] = $this->show ?? fn () => true;
         $this->options['method'] = $this->method;
         $this->options['icon'] = $this->icon ?? ($this->permission == 'update' ? 'tabler-edit' : ($this->permission == 'read' ? 'tabler-eye' : ($this->permission == 'delete' ? 'tabler-trash' : null)));
         $this->options['color'] = $this->color ?? ($this->permission == 'update' ? 'warning' : ($this->permission == 'delete' ? 'danger' : 'primary'));
@@ -336,7 +340,9 @@ class Action
 
     protected function actionHandler(Request $request, Model $record, ?Closure $action = null): \Illuminate\Http\JsonResponse
     {
-        Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
+        if ($this->getPermission()) {
+            Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
+        }
 
         $this->inspectFormBuilder($this->getForm()->getComponents());
 
@@ -352,7 +358,7 @@ class Action
             if ($this->name == 'edit') {
                 $this->oldModelValue = $record->replicate();
             }
-            
+
             if (! $this->isCustomAction) {
                 if ($this->name == 'replicate') {
                     $this->replica = $record->replicate()->fill($this->formData);

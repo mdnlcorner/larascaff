@@ -2,13 +2,12 @@
 
 namespace Mulaidarinull\Larascaff\Tables\Actions;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 
 class ReplicateAction extends Action
 {
-    public static function make(string $name = 'replicate'): static
+    public static function make(?string $name = 'replicate'): static
     {
         return parent::make('replicate');
     }
@@ -16,11 +15,13 @@ class ReplicateAction extends Action
     protected function setup(string $name)
     {
         parent::setup($name);
-        $this->permission('replicate');
+
+        $this->permission($name);
+
         $this->icon('tabler-copy');
 
         if ($this->getModule()) {
-            $this->form(function(Form $form) {
+            $this->form(function (Form $form) {
                 return $form->schema([]);
             });
 
