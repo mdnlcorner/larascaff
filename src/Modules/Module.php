@@ -15,7 +15,6 @@ use Mulaidarinull\Larascaff\Tables\Components\Tab;
 use Mulaidarinull\Larascaff\Tables\Table;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
-use Mulaidarinull\Larascaff\Widgets\StatWidget;
 
 abstract class Module extends Controller
 {

@@ -14,7 +14,7 @@ class DeleteAction extends Action
 
     public static function make(string $name = 'delete'): static
     {
-        return parent::make($name);
+        return parent::make('delete');
     }
 
     protected function setup(string $name)

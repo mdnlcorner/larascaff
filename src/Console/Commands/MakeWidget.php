@@ -23,14 +23,14 @@ class MakeWidget extends BaseCommand implements PromptsForMissingInput
     protected function promptForMissingArgumentsUsing()
     {
         return [
-            'name' => fn() => text(
+            'name' => fn () => text(
                 label: 'Widget name',
                 placeholder: 'The name of Widget',
             ),
-            'type' => fn() => select(
+            'type' => fn () => select(
                 label: 'Widget type',
                 options: ['Stat', 'Chart', 'Table']
-            )
+            ),
         ];
     }
 
@@ -46,7 +46,7 @@ class MakeWidget extends BaseCommand implements PromptsForMissingInput
             return;
         }
 
-        $this->pathList = array_map(fn($item) => ucfirst($item), explode('/', $name));
+        $this->pathList = array_map(fn ($item) => ucfirst($item), explode('/', $name));
         $this->widgetName = array_pop($this->pathList);
         $this->path = implode('/', $this->pathList);
 

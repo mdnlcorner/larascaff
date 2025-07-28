@@ -5,6 +5,7 @@ namespace Mulaidarinull\Larascaff\Modules\Configuration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Mulaidarinull\Larascaff\Enums\ColorVariant;
 use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Forms;
 use Mulaidarinull\Larascaff\Models\Configuration\Menu;
@@ -20,10 +21,7 @@ class BaseRoleModule extends Module
     {
         return $form->schema([
             Forms\Components\TextInput::make('name')
-                ->validations([
-                    'required',
-                    Rule::unique('roles')->ignore(static::getInstanceModel()),
-                ]),
+                ->validations(['required', Rule::unique('roles')->ignore(static::getInstanceModel())]),
             Forms\Components\TextInput::make('guard_name')
                 ->validations(['required']),
         ]);
@@ -43,6 +41,20 @@ class BaseRoleModule extends Module
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ReplicateAction::make()
+                    ->color(ColorVariant::Info)
+                    ->form(function (Forms\Components\Form $form) {
+                        return $form->schema([
+                            Forms\Components\TextInput::make('name')
+                                ->validations(['required', Rule::unique('roles')]),
+                            Forms\Components\TextInput::make('guard_name')
+                                ->validations(['required'])
+                        ]);
+                    })
+                    ->afterSave(function ($record, Role $replica) {
+                        dd($replica, $record->permissions->pluck('id'));
+                        $replica->permissions()->attach($record->permissions->pluck('id'));
+                    }),
                 Tables\Actions\Action::make('permissions')
                     ->label('Permission')
                     ->form(function (Forms\Components\Form $form) {
@@ -50,7 +62,7 @@ class BaseRoleModule extends Module
                             RolePermissionFormComponent::make()
                                 ->shareData(function (Role $role) {
                                     $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
-                                    $roles = Role::query()->where('id', '!=', $role->id)->get()->map(fn ($role) => ['label' => $role->name, 'value' => $role->id]);
+                                    $roles = Role::query()->where('id', '!=', $role->id)->get()->map(fn($role) => ['label' => $role->name, 'value' => $role->id]);
 
                                     return [
                                         'data' => $role,

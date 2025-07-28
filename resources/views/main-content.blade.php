@@ -81,17 +81,18 @@
             @endif
             <div x-data="{
                 init() {
-                    {{-- setTimeout(() => {
-                        const table = window.LaravelDataTables['{{ $dataTable->getTableId() }}'];
+                        {{-- setTimeout(() => {
+                            const table = window.LaravelDataTables['{{ $dataTable->getTableId() }}'];
 
-                        $(table.table().node).on('xhr.dt', (e, setting, json, data) => {
-                            
-                        })
-                        }, 200
-                    ) --}}
-                },
-            }"
-            class="card">
+                            $(table.table().node).on('xhr.dt', (e, setting, json, data) => {
+                                
+                            })
+                            }, 200
+                        ) --}}
+                    },
+                }"
+                class="card"
+            >
                 <div class="border rounded-md dark:border-dark-800 border-dark-100">
                     @isset($filterTable)
                         {!! $filterTable !!}

@@ -59,6 +59,8 @@ class Action
 
     protected ?Notification $successNotification = null;
 
+    protected ?Model $replica = null;
+
     public static function make(string $name): static
     {
         $static = app(static::class);
@@ -101,7 +103,7 @@ class Action
 
     public function show(\Closure | bool $show): static
     {
-        $this->show = is_bool($show) ? fn () => $show : $show;
+        $this->show = is_bool($show) ? fn() => $show : $show;
 
         return $this;
     }
@@ -193,7 +195,7 @@ class Action
         $this->options['blank'] = $this->blank;
         $this->options['ajax'] = $this->ajax;
         $this->options['path'] = $this->path;
-        $this->options['show'] = $this->show ?? fn () => true;
+        $this->options['show'] = $this->show ?? fn() => true;
         $this->options['method'] = $this->method;
         $this->options['icon'] = $this->icon ?? ($this->permission == 'update' ? 'tabler-edit' : ($this->permission == 'read' ? 'tabler-eye' : ($this->permission == 'delete' ? 'tabler-trash' : null)));
         $this->options['color'] = $this->color ?? ($this->permission == 'update' ? 'warning' : ($this->permission == 'delete' ? 'danger' : 'primary'));
@@ -350,15 +352,23 @@ class Action
             if ($this->name == 'edit') {
                 $this->oldModelValue = $record->replicate();
             }
-
+            
             if (! $this->isCustomAction) {
-                $record->fill($this->formData);
+                if ($this->name == 'replicate') {
+                    $this->replica = $record->replicate()->fill($this->formData);
+                } else {
+                    $record->fill($this->formData);
+                }
             }
 
             $this->callHook($this->beforeSave);
 
             if (! $this->isCustomAction) {
-                $record->save();
+                if ($this->name == 'replicate') {
+                    $this->replica->save();
+                } else {
+                    $record->save();
+                }
             }
 
             if ($action && is_callable($action)) {
@@ -406,6 +416,7 @@ class Action
                 'data' => [$parameter->getName() => $this->getFormData()],
                 'form' => [$parameter->getName() => app()->make(Form::class)->module($this->getModule())],
                 'info' => [$parameter->getName() => app()->make(Info::class)->module($this->getModule())],
+                'replica' => [$parameter->getName() => $this->replica],
                 default => []
             };
 
@@ -416,7 +427,7 @@ class Action
                 default => []
             };
 
-            $parameters = [...$parameters, ...$default, ...$type];
+            $parameters = [...$parameters, ...$type, ...$default];
         }
 
         return app()->call($cb, $parameters);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Pluralizer;
+use Mulaidarinull\Larascaff\Tables\Table;
 use Mulaidarinull\Larascaff\Traits\HasMenuPermission;
 use Mulaidarinull\Larascaff\Traits\HasPermission;
 
@@ -19,6 +20,8 @@ abstract class Page extends Controller
     protected static ?string $url = null;
 
     protected static ?string $pageTitle = null;
+
+    private array $pageData = [];
 
     final const NAMESPACE = 'App\\Larascaff\\Pages\\';
 
@@ -81,24 +84,48 @@ abstract class Page extends Controller
 
     public function index()
     {
-        $data = [
+        $this->pageData = [
             'pageTitle' => static::getPageTitle(),
             'url' => static::getUrl(),
         ];
 
-        $viewData = [];
         if (method_exists($this, $method = 'viewData')) {
             $viewData = $this->resolveClosureParams($method);
         }
-        $data['view'] = view(static::getView(), $viewData);
+        $this->pageData['view'] = view(static::getView(), $viewData ?? []);
 
         $widgets = [];
         if (method_exists($this, $method = 'widgets')) {
             $widgets = $this->resolveClosureParams($method);
         }
-        $data['widgets'] = view('larascaff::widget', ['widgets' => $widgets]);
 
-        return view('larascaff::main-content', $data);
+        $resolveTableWidget = function (string $tableWidget, bool $isAjax = false) {
+            $table = new Table($tableWidget::getModel()::query(), static::getUrl(), $tableWidget);
+            call_user_func_array([$tableWidget, 'table'], [$table]);
+
+            if ($isAjax) {
+                return $table;
+            }
+
+            return $table->html();
+        };
+
+        if (request()->ajax() && request()->expectsJson()) {
+            foreach ($widgets as $tableWidget) {
+                if ($tableWidget::getWidgetType() == 'table') {
+
+                    $table = $resolveTableWidget(tableWidget: $tableWidget, isAjax: true);
+
+                    if ($table->builder()->getTableId() == request()->get('tableId')) {
+                        return $table->render('larascaff::widget');
+                    }
+                }
+            }
+        }
+
+        $this->pageData['widgets'] = view('larascaff::widget', ['widgets' => $widgets, 'resolveTableWidget' => $resolveTableWidget]);
+
+        return view('larascaff::main-content', $this->pageData);
     }
 
     public static function registerRoutes()

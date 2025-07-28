@@ -122,7 +122,7 @@ trait HasMedia
         if (is_null($field)) {
             return [];
         }
-        
+
         if (is_string($this->{$field})) {
             return [$this->{$field}];
         }

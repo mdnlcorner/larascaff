@@ -282,10 +282,14 @@ class Table extends DataTable
         return $this->filters ??= collect([]);
     }
 
-    public function query(?callable $cb = null): EloquentBuilder | static
+    public function query(callable | EloquentBuilder | null $cb = null): EloquentBuilder | static
     {
         if (is_callable($cb)) {
             $cb($this->query);
+
+            return $this;
+        } elseif ($cb instanceof Builder) {
+            $this->query = $cb;
 
             return $this;
         }
@@ -296,7 +300,7 @@ class Table extends DataTable
     protected function generateHtmlBuilder()
     {
         if (! $this->htmlBuilder) {
-            $model = explode('Models\\', get_class($this->query->getModel()));
+            $tableId = str(get_class($this->query->getModel()))->afterLast('App\\Models\\')->replace('\\', '_')->lower()->append('-table')->toString();
             $this->htmlBuilder = $this->builder()
                 ->parameters([
                     'searchDelay' => 1000,
@@ -311,10 +315,11 @@ class Table extends DataTable
                     'next' => '→',
                     'previous' => '←',
                 ]])
-                ->minifiedAjax()
+                ->searchDelay(800)
+                ->minifiedAjax(url($this->url . '?tableId=' . $tableId))
                 ->selectStyleSingle()
                 ->orderBy(1, 'desc')
-                ->setTableId(strtolower((str_replace('\\', '_', array_pop($model)))) . '-table');
+                ->setTableId($tableId);
         }
     }
 

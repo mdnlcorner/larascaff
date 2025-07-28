@@ -9,7 +9,7 @@ class ViewAction extends Action
 {
     public static function make(string $name = 'view'): static
     {
-        return parent::make($name);
+        return parent::make('view');
     }
 
     protected function setup(string $name)
@@ -17,6 +17,12 @@ class ViewAction extends Action
         $this->label = str($name)->headline()->value();
         $this->name = $name;
         $this->permission('read');
+
+        $this->handle();
+    }
+
+    protected function handle()
+    {
         if (request()->has(['_action_handler', '_action_name', '_action_type', '_id']) && request()->ajax()) {
             $this->module(request()->post('_action_handler'));
             $this->formData = request()->except([
