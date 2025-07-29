@@ -15,7 +15,8 @@ class EditAction extends Action
     {
         parent::setup($name);
 
-        $this->permission('update');
+        $this->permission('update')
+            ->notificationTitle('Updated Successfully');
 
         if ($this->getModule()) {
             $this->action = function (Request $request, $record) {

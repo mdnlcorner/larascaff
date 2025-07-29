@@ -2,19 +2,25 @@
 
 namespace Mulaidarinull\Larascaff\Notifications;
 
+use ArrayAccess;
 use Mulaidarinull\Larascaff\Enums\NotificationPosition;
+use Mulaidarinull\Larascaff\Enums\NotificationType;
+use Mulaidarinull\Larascaff\Traits\HasArrayAccess;
 
-class Notification
+class Notification implements ArrayAccess
 {
-    protected string $title = 'Saved';
-
-    protected string $body = '';
-
-    protected NotificationPosition $position = NotificationPosition::TopRight;
+    use HasArrayAccess;
 
     public static function make(): static
     {
         $static = app(static::class);
+
+        $static->options = [
+            'title' => 'Saved',
+            'body' => null,
+            'position' => NotificationPosition::TopRight,
+            'type' => NotificationType::Success,
+        ];
 
         return $static;
     }
@@ -22,7 +28,7 @@ class Notification
     public function title(?string $title): static
     {
         if ($title) {
-            $this->title = $title;
+            $this->options['title'] = $title;
         }
 
         return $this;
@@ -30,24 +36,28 @@ class Notification
 
     public function body(?string $body): static
     {
-        $this->body = $body;
+        if ($body) {
+            $this->options['body'] = $body;
+        }
 
         return $this;
     }
 
-    public function position(NotificationPosition $position): static
+    public function position(?NotificationPosition $position): static
     {
-        $this->position = $position;
+        if ($position) {
+            $this->options['position'] = $position;
+        }
 
         return $this;
     }
 
-    public function getNotification(): array
+    public function type(?NotificationType $type): static
     {
-        return [
-            'title' => $this->title,
-            'body' => $this->body,
-            'position' => $this->position->value,
-        ];
+        if ($type) {
+            $this->options['type'] = $type;
+        }
+
+        return $this;
     }
 }

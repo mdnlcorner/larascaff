@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Mulaidarinull\Larascaff\Enums\NotificationPosition;
+use Mulaidarinull\Larascaff\Enums\NotificationType;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
 use Mulaidarinull\Larascaff\Info\Components\Info;
@@ -53,11 +55,15 @@ class Action
 
     protected ?string $title = null;
 
-    protected string $successNotificationTitle = '';
+    protected ?string $notificationTitle = null;
 
-    protected string $successNotificationBody = '';
+    protected ?string $notificationBody = null;
 
-    protected ?Notification $successNotification = null;
+    protected ?NotificationType $notificationType = null;
+
+    protected ?NotificationPosition $notificationPosition = null;
+
+    protected ?Notification $notification = null;
 
     protected ?Model $replica = null;
 
@@ -212,41 +218,57 @@ class Action
         $this->options['hasConfirmation'] = $this->confirmation;
         $this->options['withValidations'] = $this->withValidations;
         $this->options['beforeFormFilled'] = $this->beforeFormFilled;
-        $this->options['successNotification'] = $this->getSuccessNotification();
+        $this->options['notification'] = $this->getNotification();
 
         return [$this->name => $this->options];
     }
 
-    public function successNotification(Notification $notification): static
+    public function notification(Notification $notification): static
     {
-        $this->successNotification = $notification;
+        $this->notification = $notification;
 
         return $this;
     }
 
-    public function successNotificationTitle(string $title): static
+    public function notificationTitle(string $title): static
     {
-        $this->successNotificationTitle = $title;
+        $this->notificationTitle = $title;
 
         return $this;
     }
 
-    public function successNotificationBody(string $body): static
+    public function notificationBody(string $body): static
     {
-        $this->successNotificationBody = $body;
+        $this->notificationBody = $body;
 
         return $this;
     }
 
-    public function getSuccessNotification(): Notification
+    public function notificationType(NotificationType $type): static
     {
-        if (is_null($this->successNotification)) {
-            return Notification::make()
-                ->title($this->successNotificationTitle)
-                ->body($this->successNotificationBody);
+        $this->notificationType = $type;
+
+        return $this;
+    }
+
+    public function notificationPosition(NotificationPosition $position): static
+    {
+        $this->notificationPosition = $position;
+
+        return $this;
+    }
+
+    public function getNotification(): Notification
+    {
+        if (is_null($this->notification)) {
+            $this->notification = Notification::make()
+                ->title($this->notificationTitle)
+                ->body($this->notificationBody)
+                ->type($this->notificationType)
+                ->position($this->notificationPosition);
         }
 
-        return $this->successNotification;
+        return $this->notification;
     }
 
     protected function fillFormData()
@@ -396,10 +418,13 @@ class Action
             $this->callHook($this->afterSave);
             DB::commit();
 
+            $notification = $this->getNotification();
+
             return response()->json([
-                'status' => 'success',
-                'title' => $this->getSuccessNotification()->getNotification()['title'],
-                'message' => $this->getSuccessNotification()->getNotification()['body'],
+                'status' => $notification['type'],
+                'title' => $notification['title'],
+                'message' => $notification['body'],
+                'position' => $notification['position'],
             ]);
         } catch (\Throwable $th) {
             DB::rollBack();

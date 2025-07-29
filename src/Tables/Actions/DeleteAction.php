@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Mulaidarinull\Larascaff\Enums\NotificationType;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 
 class DeleteAction extends Action
@@ -21,9 +22,10 @@ class DeleteAction extends Action
     {
         parent::setup($name);
 
-        $this->permission($name);
-
-        $this->form(false);
+        $this->permission($name)
+            ->notificationTitle('Deleted Successfully')
+            ->notificationType(NotificationType::Warning)
+            ->form(false);
 
         if ($this->getModule()) {
             $this->action = function ($record) {
@@ -63,7 +65,14 @@ class DeleteAction extends Action
 
             DB::commit();
 
-            return responseSuccess();
+            $notification = $this->getNotification();
+
+            return response()->json([
+                'status' => $notification['type'],
+                'title' => $notification['title'],
+                'message' => $notification['body'],
+                'position' => $notification['position'],
+            ]);
         } catch (\Throwable $th) {
             DB::rollBack();
 

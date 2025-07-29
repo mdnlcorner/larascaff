@@ -17,7 +17,8 @@ class CreateAction extends Action
     {
         parent::setup($name);
 
-        $this->permission($name);
+        $this->permission($name)
+            ->notificationTitle('Created Successfully');
 
         if ($this->getModule()) {
             $this->action = function (Request $request, $record) {

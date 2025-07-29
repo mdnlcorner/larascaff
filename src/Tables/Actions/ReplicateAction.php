@@ -16,9 +16,9 @@ class ReplicateAction extends Action
     {
         parent::setup($name);
 
-        $this->permission($name);
-
-        $this->icon('tabler-copy');
+        $this->permission($name)
+            ->notificationTitle('Replicated Successfully')
+            ->icon('tabler-copy');
 
         if ($this->getModule()) {
             $this->form(function (Form $form) {

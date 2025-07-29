@@ -297,7 +297,7 @@ export class AjaxAction extends AjaxOption {
                         window['modalAction'].show();
                     }
                 } else {
-                    !this.successCb && showToast(res?.status, res?.title, res?.message);
+                    !this.successCb && showToast(res?.status, res?.title, res?.message, res.position ?? 'topRight');
                 }
 
                 this.successCb && this.successCb(res);
@@ -368,7 +368,7 @@ export class HandleFormSubmit extends AjaxOption {
                         // @ts-ignore
                         window['modalAction']?.hide();
                     }
-                    showToast(res?.status, res?.title, res?.message);
+                    showToast(res.status ?? 'success', res?.title, res?.message, res.position ?? 'topRight');
                     _this.successCb && _this.successCb(res);
                     if (_this.datatableId) {
                         window['LaravelDataTables'][_this.datatableId].ajax.reload(null, false);
