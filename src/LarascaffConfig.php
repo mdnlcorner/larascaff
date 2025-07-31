@@ -3,16 +3,14 @@
 namespace Mulaidarinull\Larascaff;
 
 use Illuminate\Contracts\View\View;
-use Mulaidarinull\Larascaff\Concerns\HasAuth;
-use Mulaidarinull\Larascaff\Concerns\HasBrand;
-use Mulaidarinull\Larascaff\Concerns\HasMiddleware;
 use Mulaidarinull\Larascaff\Facades\LarascaffColor;
 
 class LarascaffConfig
 {
-    use HasAuth;
-    use HasBrand;
-    use HasMiddleware;
+    use Concerns\HasAuth;
+    use Concerns\HasBrand;
+    use Concerns\HasDatabaseTransactions;
+    use Concerns\HasMiddleware;
 
     protected string $prefix = '';
 

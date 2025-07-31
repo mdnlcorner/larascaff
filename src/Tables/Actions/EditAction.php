@@ -3,6 +3,7 @@
 namespace Mulaidarinull\Larascaff\Tables\Actions;
 
 use Illuminate\Http\Request;
+use Mulaidarinull\Larascaff\Enums\ColorVariant;
 
 class EditAction extends Action
 {
@@ -15,8 +16,15 @@ class EditAction extends Action
     {
         parent::setup($name);
 
-        $this->permission('update')
-            ->notificationTitle('Updated Successfully');
+        $this->permission('update');
+
+        $this->color(ColorVariant::Warning);
+
+        $this->icon('tabler-edit');
+
+        $this->notificationTitle('Updated Successfully');
+
+        $this->modalSubmitActionLabel('Save Changes');
 
         if ($this->getModule()) {
             $this->action = function (Request $request, $record) {

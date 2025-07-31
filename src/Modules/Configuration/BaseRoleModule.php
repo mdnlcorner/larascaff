@@ -69,9 +69,9 @@ class BaseRoleModule extends Module
                                     ];
                                 }),
                         ])
-                            ->modalSize(ModalSize::Lg)
                             ->columns(1);
                     })
+                    ->modalSize(ModalSize::Lg)
                     ->action(function (Request $request, Role $role) {
                         $role->syncPermissions($request->permissions);
 

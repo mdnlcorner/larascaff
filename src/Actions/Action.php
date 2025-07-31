@@ -2,18 +2,16 @@
 
 namespace Mulaidarinull\Larascaff\Actions;
 
+use BackedEnum;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Mulaidarinull\Larascaff\Enums\NotificationPosition;
-use Mulaidarinull\Larascaff\Enums\NotificationType;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
 use Mulaidarinull\Larascaff\Info\Components\Info;
-use Mulaidarinull\Larascaff\Notifications\Notification;
 
 class Action
 {
@@ -21,19 +19,18 @@ class Action
     use Concerns\HasForm;
     use Concerns\HasLifecycle;
     use Concerns\HasMedia;
+    use Concerns\HasModal;
+    use Concerns\HasNotification;
+    use Concerns\HasPermission;
     use Concerns\HasRelationship;
     use Concerns\HasValidation;
     use HasModule;
 
     protected array $options = [];
 
-    protected ?Action $instance = null;
-
-    protected string | bool $permission = false;
-
     protected ?Closure $show = null;
 
-    protected ?string $color = null;
+    protected string $color = 'primary';
 
     protected ?string $name = null;
 
@@ -55,37 +52,30 @@ class Action
 
     protected ?string $title = null;
 
-    protected ?string $notificationTitle = null;
-
-    protected ?string $notificationBody = null;
-
-    protected ?NotificationType $notificationType = null;
-
-    protected ?NotificationPosition $notificationPosition = null;
-
-    protected ?Notification $notification = null;
-
     protected ?Model $replica = null;
 
     public static function make(?string $name = 'action'): static
     {
         $static = app(static::class);
         $static->setup($name);
-        $static->instance = $static;
 
         return $static;
     }
 
     public function getInstance(): static
     {
-        return $this->instance;
+        return $this;
     }
 
     protected function setup(string $name)
     {
-        $this->label = str($name)->headline()->value();
-
         $this->name = $name;
+
+        $this->label(str($name)->headline()->value());
+
+        $this->modalSubmitActionLabel('Save');
+
+        $this->modalCancelActionLabel('Cancel');
 
         $this->permission(false);
 
@@ -99,26 +89,14 @@ class Action
         }
     }
 
-    public function permission(string | bool $permission): static
-    {
-        $this->permission = $permission;
-
-        return $this;
-    }
-
-    public function getPermission(): string | bool
-    {
-        return $this->permission;
-    }
-
-    public function show(\Closure | bool $show): static
+    public function show(Closure | bool $show): static
     {
         $this->show = is_bool($show) ? fn () => $show : $show;
 
         return $this;
     }
 
-    public function action(\Closure $action): static
+    public function action(Closure $action): static
     {
         $this->action = $action;
         $this->isCustomAction = true;
@@ -143,7 +121,7 @@ class Action
 
     public function color(string | \Mulaidarinull\Larascaff\Enums\ColorVariant $color): static
     {
-        if ($color instanceof \Mulaidarinull\Larascaff\Enums\ColorVariant) {
+        if ($color instanceof BackedEnum) {
             $color = $color->value;
         }
         $this->color = $color;
@@ -200,15 +178,15 @@ class Action
 
     public function getOptions(): array
     {
-        $this->options['instance'] = $this->instance;
+        // $this->options['instance'] = $this;
         $this->options['permission'] = $this->permission;
         $this->options['blank'] = $this->blank;
         $this->options['ajax'] = $this->ajax;
         $this->options['path'] = $this->path;
         $this->options['show'] = $this->show ?? fn () => true;
         $this->options['method'] = $this->method;
-        $this->options['icon'] = $this->icon ?? ($this->permission == 'update' ? 'tabler-edit' : ($this->permission == 'read' ? 'tabler-eye' : ($this->permission == 'delete' ? 'tabler-trash' : null)));
-        $this->options['color'] = $this->color ?? ($this->permission == 'update' ? 'warning' : ($this->permission == 'delete' ? 'danger' : 'primary'));
+        $this->options['icon'] = $this->icon;
+        $this->options['color'] = $this->color;
         $this->options['form'] = $this->form;
         $this->options['hasForm'] = $this->hasForm;
         $this->options['name'] = $this->name;
@@ -219,56 +197,12 @@ class Action
         $this->options['withValidations'] = $this->withValidations;
         $this->options['beforeFormFilled'] = $this->beforeFormFilled;
         $this->options['notification'] = $this->getNotification();
+        $this->options['modalTitle'] = $this->modalTitle;
+        $this->options['modalSubmitActionLabel'] = $this->modalSubmitActionLabel;
+        $this->options['modalCancelActionLabel'] = $this->modalCancelActionLabel;
+        $this->options['modalSize'] = ($this->modalSize instanceof BackedEnum ? $this->modalSize->value : $this->modalSize);
 
         return [$this->name => $this->options];
-    }
-
-    public function notification(Notification $notification): static
-    {
-        $this->notification = $notification;
-
-        return $this;
-    }
-
-    public function notificationTitle(string $title): static
-    {
-        $this->notificationTitle = $title;
-
-        return $this;
-    }
-
-    public function notificationBody(string $body): static
-    {
-        $this->notificationBody = $body;
-
-        return $this;
-    }
-
-    public function notificationType(NotificationType $type): static
-    {
-        $this->notificationType = $type;
-
-        return $this;
-    }
-
-    public function notificationPosition(NotificationPosition $position): static
-    {
-        $this->notificationPosition = $position;
-
-        return $this;
-    }
-
-    public function getNotification(): Notification
-    {
-        if (is_null($this->notification)) {
-            $this->notification = Notification::make()
-                ->title($this->notificationTitle)
-                ->body($this->notificationBody)
-                ->type($this->notificationType)
-                ->position($this->notificationPosition);
-        }
-
-        return $this->notification;
     }
 
     protected function fillFormData()
@@ -327,6 +261,8 @@ class Action
                  */
                 $form = $this->resolveClosureParams($actions['form']);
 
+                $actions['modalTitle'] = str($actions['label'] . ' ' . $this->getModule()::getInstanceModel()->getTable())->headline()->singular()->toString();
+
                 $this->callHook($actions['beforeFormFilled']);
 
                 return response()->json([
@@ -336,7 +272,7 @@ class Action
                     'id' => $request->post('_id'),
                     'html' => view('larascaff::form', [
                         'form' => $form,
-                        'action' => isset($actions['action']) ? url('handler') : null,
+                        'actions' => $actions,
                     ])->render(),
                 ]);
 
@@ -372,7 +308,9 @@ class Action
             $request->validate($this->validations['validations'] ?? [], $this->validations['messages'] ?? []);
         }
 
-        DB::beginTransaction();
+        if (larascaffConfig()->isDatabaseTransactions()) {
+            DB::beginTransaction();
+        }
 
         try {
             $this->callEditFormData($this->editFormData);
@@ -416,7 +354,10 @@ class Action
             }
 
             $this->callHook($this->afterSave);
-            DB::commit();
+
+            if (larascaffConfig()->isDatabaseTransactions()) {
+                DB::commit();
+            }
 
             $notification = $this->getNotification();
 
@@ -427,7 +368,9 @@ class Action
                 'position' => $notification['position'],
             ]);
         } catch (\Throwable $th) {
-            DB::rollBack();
+            if (larascaffConfig()->isDatabaseTransactions()) {
+                DB::rollBack();
+            }
 
             return responseError($th);
         }
@@ -435,7 +378,7 @@ class Action
 
     protected function resolveClosureParams(?callable $cb = null)
     {
-        if (! $cb instanceof \Closure) {
+        if (! $cb instanceof Closure) {
             throw new \Exception('Param must be callable');
         }
 

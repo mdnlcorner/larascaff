@@ -25,6 +25,34 @@ class Notification implements ArrayAccess
         return $static;
     }
 
+    public function success(): static
+    {
+        $this->options['type'] = NotificationType::Success;
+
+        return $this;
+    }
+
+    public function error(): static
+    {
+        $this->options['type'] = NotificationType::Error;
+
+        return $this;
+    }
+
+    public function info(): static
+    {
+        $this->options['type'] = NotificationType::Info;
+
+        return $this;
+    }
+
+    public function warning(): static
+    {
+        $this->options['type'] = NotificationType::Warning;
+
+        return $this;
+    }
+
     public function title(?string $title): static
     {
         if ($title) {

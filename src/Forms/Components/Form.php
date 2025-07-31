@@ -8,7 +8,6 @@ class Form
 {
     use Concerns\HasColumnSpan;
     use Concerns\HasComponent;
-    use Concerns\HasModal;
     use Concerns\HasModule;
 
     public function render()

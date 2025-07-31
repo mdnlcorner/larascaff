@@ -3,14 +3,12 @@
 namespace Mulaidarinull\Larascaff\Info\Components;
 
 use Closure;
-use Mulaidarinull\Larascaff\Enums\ModalSize;
 use Mulaidarinull\Larascaff\Forms\Concerns;
 
 class Info
 {
     use Concerns\HasColumnSpan;
     use Concerns\HasComponent;
-    use Concerns\HasModal;
     use Concerns\HasModule;
 
     protected ?string $label = '';
@@ -77,18 +75,6 @@ class Info
         $this->placeholder = $name;
 
         return $this;
-    }
-
-    public function modalSize(ModalSize $modalSize): static
-    {
-        $this->modalSize = $modalSize;
-
-        return $this;
-    }
-
-    public function getModalSize(): string
-    {
-        return $this->modalSize->value;
     }
 
     public function render()
