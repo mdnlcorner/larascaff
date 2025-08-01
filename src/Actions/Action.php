@@ -193,13 +193,15 @@ class Action
         $this->options['label'] = $this->label;
         $this->options['action'] = $this->action;
         $this->options['isCustomAction'] = $this->isCustomAction;
-        $this->options['hasConfirmation'] = $this->confirmation;
+        $this->options['hasConfirmation'] = $this->hasConfirmation();
         $this->options['withValidations'] = $this->withValidations;
         $this->options['beforeFormFilled'] = $this->beforeFormFilled;
         $this->options['notification'] = $this->getNotification();
         $this->options['modalTitle'] = $this->modalTitle;
         $this->options['modalSubmitActionLabel'] = $this->modalSubmitActionLabel;
         $this->options['modalCancelActionLabel'] = $this->modalCancelActionLabel;
+        $this->options['modalDescription'] = $this->modalDescription;
+        $this->options['modalIcon'] = $this->modalIcon;
         $this->options['modalSize'] = ($this->modalSize instanceof BackedEnum ? $this->modalSize->value : $this->modalSize);
 
         return [$this->name => $this->options];

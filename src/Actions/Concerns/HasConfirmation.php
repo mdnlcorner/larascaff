@@ -17,4 +17,19 @@ trait HasConfirmation
     {
         return $this->confirmation;
     }
+
+    public function requiresConfirmation(): static
+    {
+        $this->confirmation();
+
+        $this->modalTitle('Delete');
+
+        $this->modalDescription('Are you sure you would like to do this?');
+
+        $this->modalSubmitActionLabel('Confirm');
+
+        $this->modalCancelActionLabel('Cancel');
+
+        return $this;
+    }
 }

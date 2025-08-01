@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Mulaidarinull\Larascaff\Contracts\HasColor;
 use Mulaidarinull\Larascaff\Contracts\HasIcon;
@@ -170,38 +171,45 @@ class Table extends DataTable
      */
     public function actions(array $actions, ActionsPosition $position = ActionsPosition::AfterColumns): static
     {
-        $this->tableActions = [];
+        $this->tableActions = collect([]);
 
         foreach ($actions as $action) {
-            foreach ($action->getOptions() as $key => $value) {
-                $this->tableActions[$key] = $value;
+            $options = current($action->getOptions());
+            $options['url'] = url($this->url . $options['path']);
+
+            $confirmation = [];
+            if ($options['hasConfirmation']) {
+                $confirmation = [
+                    'modalTitle' => $options['modalTitle'],
+                    'modalDescription' => $options['modalDescription'],
+                    'modalIcon' => $options['modalIcon'],
+                    'modalSubmitActionLabel' => $options['modalSubmitActionLabel'],
+                    'modalCancelActionLabel' => $options['modalCancelActionLabel'],
+                ];
             }
+
+            $options['handler'] = [
+                'actionHandler' => $this->actionHandler,
+                'actionName' => $options['name'],
+                'actionType' => $options['hasForm'] === true ? 'form' : 'action',
+                'hasConfirmation' => $options['hasConfirmation'],
+                'id' => null,
+                ...$confirmation,
+            ];
+            $this->tableActions[$action->getName()] = $options;
         }
 
-        $this->tableActions = collect($this->tableActions)
-            ->map(function ($item) {
-                $item['url'] = url($this->url . $item['path']);
-                $item['handler'] = [
-                    'actionHandler' => $this->actionHandler,
-                    'actionName' => $item['name'],
-                    'actionType' => $item['hasForm'] === true ? 'form' : 'action',
-                    'hasConfirmation' => $item['hasConfirmation'],
-                    'id' => null,
-                ];
-
-                return $item;
-            })
-            ->filter(function ($item) {
-                if (! user()) {
-                    return true;
-                }
-
-                if ($item['permission']) {
-                    return user()->can($item['permission'] . ' ' . $this->url);
-                }
-
+        $this->tableActions = $this->tableActions->filter(function ($item) {
+            if (! user()) {
                 return true;
-            });
+            }
+
+            if ($item['permission']) {
+                return user()->can($item['permission'] . ' ' . $this->url);
+            }
+
+            return true;
+        });
 
         $this->generateHtmlBuilder();
         $this->actionsPosition = $position;
@@ -258,6 +266,7 @@ class Table extends DataTable
                     foreach ($this->getActions() as $action) {
                         if ($action['show']($model)) {
                             $action['url'] = str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']);
+                            // dd($action);
                             $action['handler']['id'] = $model->{$model->getRouteKeyName()};
                             $action['handler'] = json_encode($action['handler']);
                             $actions[] = $action;

@@ -12,8 +12,6 @@ use Mulaidarinull\Larascaff\Forms\Components\Form;
 
 class DeleteAction extends Action
 {
-    protected bool $confirmation = true;
-
     public static function make(?string $name = 'delete'): static
     {
         return parent::make('delete');
@@ -32,6 +30,8 @@ class DeleteAction extends Action
         $this->notificationTitle('Deleted Successfully');
 
         $this->notificationType(NotificationType::Warning);
+
+        $this->requiresConfirmation();
 
         $this->form(false);
 
