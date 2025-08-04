@@ -19,6 +19,8 @@ class ViewAction extends Action
 
         $this->permission('read');
 
+        $this->label(__('larascaff::action.label.view'));
+
         $this->color(ColorVariant::Primary);
 
         $this->icon('tabler-eye');

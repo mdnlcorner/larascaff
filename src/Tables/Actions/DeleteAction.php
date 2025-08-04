@@ -23,11 +23,13 @@ class DeleteAction extends Action
 
         $this->permission($name);
 
+        $this->label(__('larascaff::action.label.delete'));
+
+        $this->notificationTitle(__('larascaff::action.notification.delete.title'));
+
         $this->color(ColorVariant::Danger);
 
         $this->icon('tabler-trash');
-
-        $this->notificationTitle('Deleted Successfully');
 
         $this->notificationType(NotificationType::Warning);
 

@@ -17,6 +17,8 @@ class LarascaffServiceProvider extends ServiceProvider
         $this->registerCommands();
         $this->shouldPublishes();
 
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'larascaff');
+        $this->loadJsonTranslationsFrom(__DIR__ . '/../resources/lang');
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'larascaff');
 
@@ -51,6 +53,10 @@ class LarascaffServiceProvider extends ServiceProvider
     protected function shouldPublishes(): void
     {
         if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../resources/lang' => $this->app->langPath('vendor/larascaff'),
+            ], 'larascaff-translation');
+
             $this->publishes([
                 __DIR__ . '/../config/larascaff.php' => config_path('larascaff.php'),
                 __DIR__ . '/../config/permission.php' => config_path('permission.php'),

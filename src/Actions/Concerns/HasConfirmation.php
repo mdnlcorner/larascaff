@@ -22,13 +22,13 @@ trait HasConfirmation
     {
         $this->confirmation();
 
-        $this->modalTitle('Delete');
+        $this->modalTitle(__('larascaff::action.modal.confirm.title', ['record' => '']));
 
-        $this->modalDescription('Are you sure you would like to do this?');
+        $this->modalDescription(__('larascaff::action.modal.confirm.description'));
 
-        $this->modalSubmitActionLabel('Confirm');
+        $this->modalSubmitActionLabel(__('larascaff::action.modal.confirm.action'));
 
-        $this->modalCancelActionLabel('Cancel');
+        $this->modalCancelActionLabel(__('larascaff::action.modal.cancel.title'));
 
         return $this;
     }

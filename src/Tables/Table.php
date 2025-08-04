@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Mulaidarinull\Larascaff\Contracts\HasColor;
 use Mulaidarinull\Larascaff\Contracts\HasIcon;

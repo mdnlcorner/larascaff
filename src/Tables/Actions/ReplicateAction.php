@@ -18,7 +18,11 @@ class ReplicateAction extends Action
 
         $this->permission($name);
 
-        $this->notificationTitle('Replicated Successfully');
+        $this->label(__('larascaff::action.label.replicate'));
+
+        $this->notificationTitle(__('larascaff::action.notification.replicate.title'));
+
+        $this->modalSubmitActionLabel(__('larascaff::action.modal.replicate.title'));
 
         $this->icon('tabler-copy');
 

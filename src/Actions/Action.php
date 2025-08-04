@@ -77,6 +77,8 @@ class Action
 
         $this->modalCancelActionLabel('Cancel');
 
+        $this->modalCancelActionLabel(__('larascaff::action.modal.cancel.title'));
+
         $this->permission(false);
 
         if (request()->has(['_action_handler', '_action_name', '_action_type', '_id']) && request()->ajax()) {
