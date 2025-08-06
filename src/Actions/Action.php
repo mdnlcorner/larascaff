@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
 use Mulaidarinull\Larascaff\Info\Components\Info;
@@ -359,11 +360,21 @@ class Action
 
             $this->callHook($this->afterSave);
 
+            $notification = $this->getNotification();
+
+            if (isset($notification['to'])) {
+                if ($notification['to'] instanceof Closure) {
+                    $notificationUsers = $this->resolveClosureParams($notification['to']);
+                } else {
+                    $notificationUsers = $notification['to'];
+                }
+
+                Notification::send($notificationUsers, new $notification['notification_handler'](getRecord(), $this->getModule()));
+            }
+
             if (larascaffConfig()->isDatabaseTransactions()) {
                 DB::commit();
             }
-
-            $notification = $this->getNotification();
 
             return response()->json([
                 'status' => $notification['type'],

@@ -81,6 +81,7 @@ class LarascaffServiceProvider extends ServiceProvider
                 Console\Commands\MakePage::class,
                 Console\Commands\MakeComponent::class,
                 Console\Commands\MakeWidget::class,
+                Console\Commands\MakeNotification::class,
                 Console\Commands\Install::class,
                 Console\Commands\LinkAsset::class,
                 Console\Commands\UnlinkAsset::class,

@@ -2,84 +2,114 @@
 
 namespace Mulaidarinull\Larascaff\Notifications;
 
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Notifications\Channels\DatabaseChannel;
 
-class NotificationHandler extends Notification
+abstract class NotificationHandler extends Notification implements ShouldQueue
 {
-    protected $user;
+    use Queueable;
+
+    protected User $user;
 
     protected array $channels = [];
 
-    /**
-     * Create a new notification instance.
+    protected ?User $notifiable = null;
+
+    protected int $priority = 1;
+
+    /** @var class-string<Module> */
+    protected ?string $module;
+
+    /** 
+     * @param class-string<Module> $module
      */
-    public function __construct(protected Model $model, protected string $action, protected string $actionLabel = 'Action', protected $title = '', protected $message = '', protected int $priority = 1)
-    {
-        $this->model = $model;
-        $this->action = $action;
-        $this->title = $title;
-        $this->message = $message;
+    public function __construct(protected Model $model, string $module) {
         $this->user = user();
+
+        $this->module = $module;
+        
         $this->channels = [DatabaseChannel::class];
     }
 
-    public function setPriority(int $priority)
+    final public function getModel(): Model
     {
-        $this->priority = $priority;
-
-        return $this;
+        return $this->model;
     }
 
-    public function getPriority()
+    final public function getUser(): User
     {
-        return $this->priority;
+        return $this->user;
     }
 
-    /**
-     * Add notification channel
-     */
-    public function addChannel(string $channel)
+    public function channels(): array
     {
-        $this->channels[] = $channel;
-
-        return $this;
+        return [];
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function path(string $path = ''): string
     {
-        return $this->channels;
+        return url($this->module::getUrl() . $path);
     }
 
-    public function toDatabase(object $notifiable): array
+    final public function via(User $notifiable): array
+    {
+        $this->notifiable = $notifiable;
+
+        return array_merge($this->channels, $this->channels());
+    }
+
+    public function toDatabase(User $notifiable): array
     {
         return [
-            'model_id' => $this->model->id,
-            'model_type' => get_class($this->model),
-            'user_id' => $this->user->id,
-            'user_type' => get_class($this->user),
-            'priority' => $this->priority,
             'data' => [
-                'title' => $this->title,
-                'message' => $this->message,
-                'action' => $this->action,
-                'actionLabel' => $this->actionLabel,
+                'title' => $this->resolveMethodParams('title'),
+                'message' => $this->resolveMethodParams('message'),
+                'action' => $this->resolveMethodParams('action'),
+                'actionLabel' => $this->resolveMethodParams('actionLabel'),
             ],
         ];
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(User $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line($this->title ?? 'Notification title')
-            ->line($this->message)
-            ->action($this->actionLabel, $this->action);
+            ->subject($this->resolveMethodParams('subject'))
+            ->line($this->resolveMethodParams('title'))
+            ->line($this->resolveMethodParams('message'))
+            ->action($this->resolveMethodParams('actionLabel'), $this->resolveMethodParams('action'));
+    }
+
+    public function resolveMethodParams($method)
+    {
+        if (! method_exists($this, $method)) {
+            return null;
+        }
+
+        $parameters = [];
+        foreach ((new \ReflectionMethod($this, $method))->getParameters() as $parameter) {
+            $default = match ($parameter->getName()) {
+                'model' => [$parameter->getName() => $this->model],
+                'user' => [$parameter->getName() => $this->user],
+                'notifiable' => [$parameter->getName() => $this->notifiable],
+                'module' => [$parameter->getName() => $this->module],
+                default => []
+            };
+
+            $type = match ($parameter->getType()?->getName()) {
+                get_class($this->getModel()) => [$parameter->getName() => getRecord()],
+                $this->module => [$parameter->getName() => $this->module],
+                default => []
+            };
+
+            $parameters = [...$parameters, ...$type, ...$default];
+        }
+
+        return app()->call([$this, $method], $parameters);
     }
 }

@@ -2,7 +2,10 @@
 
 namespace Mulaidarinull\Larascaff\Notifications;
 
+use App\Models\User;
 use ArrayAccess;
+use Closure;
+use Illuminate\Database\Eloquent\Collection;
 use Mulaidarinull\Larascaff\Enums\NotificationPosition;
 use Mulaidarinull\Larascaff\Enums\NotificationType;
 use Mulaidarinull\Larascaff\Traits\HasArrayAccess;
@@ -23,6 +26,18 @@ class Notification implements ArrayAccess
         ];
 
         return $static;
+    }
+
+    /**
+     * @param  class-string<Notification>  $notification
+     * @param  User|Collection<int,User>|Closure  $user
+     */
+    public function to(User | Collection | Closure $user, string $notification): static
+    {
+        $this->options['to'] = $user;
+        $this->options['notification_handler'] = $notification;
+
+        return $this;
     }
 
     public function success(): static
