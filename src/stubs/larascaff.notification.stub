@@ -13,21 +13,11 @@ final class {{ class }} extends NotificationHandler
 
     public function message(): string
     {
-        return 'Dear ' . $this->notifiable->name . ', Transaction number: ' . $this->model->number . ' was created';
+        return 'Dear ' . $this->notifiable->name . ', Transaction number: ' . $this->record->number . ' was created';
     }
 
     public function action(): ?string
     {
         return null;
-    }
-
-    public function actionLabel(): ?string
-    {
-        return $this->path('');
-    }
-
-    public function priority()
-    {
-        return 1;
     }
 }

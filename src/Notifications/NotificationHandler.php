@@ -26,30 +26,16 @@ abstract class NotificationHandler extends Notification implements ShouldQueue
     /** @var class-string<Module> */
     protected ?string $module;
 
-    /** 
-     * @param class-string<Module> $module
+    /**
+     * @param  class-string<Module>  $module
      */
-    public function __construct(protected Model $model, string $module) {
+    public function __construct(protected Model $record, string $module)
+    {
         $this->user = user();
 
         $this->module = $module;
-        
+
         $this->channels = [DatabaseChannel::class];
-    }
-
-    final public function getModel(): Model
-    {
-        return $this->model;
-    }
-
-    final public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    public function channels(): array
-    {
-        return [];
     }
 
     public function path(string $path = ''): string
@@ -57,11 +43,31 @@ abstract class NotificationHandler extends Notification implements ShouldQueue
         return url($this->module::getUrl() . $path);
     }
 
+    public function getRecord(): Model
+    {
+        return $this->record;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function getModule(): string
+    {
+        return $this->module;
+    }
+
+    public function getNotifiable(): User
+    {
+        return $this->notifiable;
+    }
+
     final public function via(User $notifiable): array
     {
         $this->notifiable = $notifiable;
 
-        return array_merge($this->channels, $this->channels());
+        return array_merge($this->channels, $this->resolveMethodParams('channels') ?? []);
     }
 
     public function toDatabase(User $notifiable): array
@@ -94,7 +100,7 @@ abstract class NotificationHandler extends Notification implements ShouldQueue
         $parameters = [];
         foreach ((new \ReflectionMethod($this, $method))->getParameters() as $parameter) {
             $default = match ($parameter->getName()) {
-                'model' => [$parameter->getName() => $this->model],
+                'record' => [$parameter->getName() => $this->record],
                 'user' => [$parameter->getName() => $this->user],
                 'notifiable' => [$parameter->getName() => $this->notifiable],
                 'module' => [$parameter->getName() => $this->module],
@@ -102,7 +108,7 @@ abstract class NotificationHandler extends Notification implements ShouldQueue
             };
 
             $type = match ($parameter->getType()?->getName()) {
-                get_class($this->getModel()) => [$parameter->getName() => getRecord()],
+                get_class($this->record) => [$parameter->getName() => getRecord()],
                 $this->module => [$parameter->getName() => $this->module],
                 default => []
             };
