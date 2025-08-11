@@ -7,7 +7,7 @@ import iziToast, { IziToastPosition } from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import $ from 'jquery';
 import NProgress from 'nprogress';
-import Swal, { SweetAlertResult } from 'sweetalert2';
+import Swal, { SweetAlertOptions, SweetAlertResult } from 'sweetalert2';
 import Modal from '../js/components/modal';
 import '../scss/components/_nprogress.scss';
 import '../scss/components/_swall.scss';
@@ -108,6 +108,11 @@ export function initActionModal() {
                         showToast('error', 'Error', message ?? 'Something went wrong');
                     })
                     .execute();
+            }, {
+                title: handler.modalTitle,
+                text: handler.modalDescription,
+                confirmButtonText: handler.modalSubmitActionLabel,
+                cancelButtonText: handler.modalCancelActionLabel
             });
 
             return;
@@ -185,15 +190,17 @@ export function initActionByUrl() {
     }
 }
 
-export function confirmation(cb: (res: SweetAlertResult) => void, configs = {}) {
+export function confirmation(cb: (res: SweetAlertResult) => void, configs: SweetAlertOptions = {}) {
+    const color = JSON.parse(document.querySelector('[data-color-variants]')?.innerHTML ?? '{}');
+    
     Swal.fire({
-        title: 'Apakah anda yakin?',
-        text: 'Data ini akan dihapus!',
+        title: 'Confirmation',
+        text: 'Are you sure?',
+        confirmButtonText: 'Go Ahead',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya, Yakin!',
+        confirmButtonColor: `rgba(${color.primary})`,
+        cancelButtonColor: `rgba(${color.danger})`,
         ...configs,
     }).then((result) => {
         if (result.isConfirmed) {
@@ -297,7 +304,7 @@ export class AjaxAction extends AjaxOption {
                         window['modalAction'].show();
                     }
                 } else {
-                    !this.successCb && showToast(res?.status, res?.title, res?.message);
+                    !this.successCb && showToast(res?.status, res?.title, res?.message, res.position ?? 'topRight');
                 }
 
                 this.successCb && this.successCb(res);
@@ -368,7 +375,7 @@ export class HandleFormSubmit extends AjaxOption {
                         // @ts-ignore
                         window['modalAction']?.hide();
                     }
-                    showToast(res?.status, res?.title, res?.message);
+                    showToast(res.status ?? 'success', res?.title, res?.message, res.position ?? 'topRight');
                     _this.successCb && _this.successCb(res);
                     if (_this.datatableId) {
                         window['LaravelDataTables'][_this.datatableId].ajax.reload(null, false);

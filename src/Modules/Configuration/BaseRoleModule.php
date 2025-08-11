@@ -20,7 +20,7 @@ class BaseRoleModule extends Module
     {
         return $form->schema([
             Forms\Components\TextInput::make('name')
-                ->validations(['required', Rule::unique('roles')->ignore(static::getInstanceModel())]),
+                ->validations(['required', Rule::unique('roles')->ignore(getRecord())]),
             Forms\Components\TextInput::make('guard_name')
                 ->validations(['required']),
         ]);
@@ -69,9 +69,9 @@ class BaseRoleModule extends Module
                                     ];
                                 }),
                         ])
-                            ->modalSize(ModalSize::Lg)
                             ->columns(1);
                     })
+                    ->modalSize(ModalSize::Lg)
                     ->action(function (Request $request, Role $role) {
                         $role->syncPermissions($request->permissions);
 

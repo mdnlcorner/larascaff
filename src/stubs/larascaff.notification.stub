@@ -1,0 +1,23 @@
+<?php
+
+namespace {{ namespace }};
+
+use Mulaidarinull\Larascaff\Notifications\NotificationHandler;
+
+final class {{ class }} extends NotificationHandler
+{
+    public function title(): string
+    {
+        return 'New notification from: ' . $this->user->name;
+    }
+
+    public function message(): string
+    {
+        return 'Dear ' . $this->notifiable->name . ', Transaction number: ' . $this->record->number . ' was created';
+    }
+
+    public function action(): ?string
+    {
+        return null;
+    }
+}

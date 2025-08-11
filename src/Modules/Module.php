@@ -113,29 +113,30 @@ abstract class Module extends Controller
     public static function getActions(bool $validatePermission = false): \Illuminate\Support\Collection
     {
         $url = static::getUrl();
-        $actions = [];
-        foreach (CreateAction::make()->getOptions() as $key => $create) {
-            $actions[$key] = $create;
+        $actions = collect([]);
+
+        $resolveAction = function ($action) use ($url) {
+            $action['url'] = url($url . $action['path']);
+            $action['handler'] = [
+                'actionHandler' => static::class,
+                'actionType' => $action['hasForm'] === true ? 'form' : 'action',
+                'actionName' => $action['name'],
+                'hasConfirmation' => $action['hasConfirmation'],
+                'id' => null,
+            ];
+
+            return $action;
+        };
+
+        foreach (CreateAction::make()->module(static::class)->getOptions() as $actionName => $action) {
+            $actions[$actionName] = $resolveAction($action);
         }
+
         foreach (static::actions() as $action) {
-            foreach ($action->getOptions() as $key => $value) {
-                $actions[$key] = $value;
+            foreach ($action->module(static::class)->getOptions() as $actionName => $action) {
+                $actions[$actionName] = $resolveAction($action);
             }
         }
-
-        $actions = collect($actions)
-            ->map(function ($item) use ($url) {
-                $item['url'] = url($url . $item['path']);
-                $item['handler'] = [
-                    'actionHandler' => static::class,
-                    'actionType' => $item['hasForm'] === true ? 'form' : 'action',
-                    'actionName' => $item['name'],
-                    'hasConfirmation' => $item['hasConfirmation'],
-                    'id' => null,
-                ];
-
-                return $item;
-            });
 
         if ($validatePermission) {
             $actions->filter(function ($action) use ($url) {

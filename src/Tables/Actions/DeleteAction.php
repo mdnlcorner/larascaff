@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Mulaidarinull\Larascaff\Enums\ColorVariant;
+use Mulaidarinull\Larascaff\Enums\NotificationType;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 
 class DeleteAction extends Action
 {
-    protected bool $confirmation = true;
-
     public static function make(?string $name = 'delete'): static
     {
         return parent::make('delete');
@@ -22,6 +22,18 @@ class DeleteAction extends Action
         parent::setup($name);
 
         $this->permission($name);
+
+        $this->label(__('larascaff::action.label.delete'));
+
+        $this->notificationTitle(__('larascaff::action.notification.delete.title'));
+
+        $this->color(ColorVariant::Danger);
+
+        $this->icon('tabler-trash');
+
+        $this->notificationType(NotificationType::Warning);
+
+        $this->requiresConfirmation();
 
         $this->form(false);
 
@@ -44,7 +56,9 @@ class DeleteAction extends Action
 
         $this->inspectFormBuilder($this->getForm()->getComponents());
 
-        DB::beginTransaction();
+        if (larascaffConfig()->isDatabaseTransactions()) {
+            DB::beginTransaction();
+        }
 
         try {
             $this->callHook($this->beforeSave);
@@ -61,11 +75,22 @@ class DeleteAction extends Action
 
             $this->callHook($this->afterSave);
 
-            DB::commit();
+            if (larascaffConfig()->isDatabaseTransactions()) {
+                DB::commit();
+            }
 
-            return responseSuccess();
+            $notification = $this->getNotification();
+
+            return response()->json([
+                'status' => $notification['type'],
+                'title' => $notification['title'],
+                'message' => $notification['body'],
+                'position' => $notification['position'],
+            ]);
         } catch (\Throwable $th) {
-            DB::rollBack();
+            if (larascaffConfig()->isDatabaseTransactions()) {
+                DB::rollBack();
+            }
 
             return responseError($th);
         }

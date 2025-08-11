@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Tables\Actions;
 
+use Mulaidarinull\Larascaff\Enums\ColorVariant;
 use Mulaidarinull\Larascaff\Forms\Components\Form;
 use Mulaidarinull\Larascaff\Info\Components\Info;
 
@@ -14,11 +15,15 @@ class ViewAction extends Action
 
     protected function setup(string $name)
     {
-        $this->label = str($name)->headline()->value();
-
-        $this->name = $name;
+        parent::setup($name);
 
         $this->permission('read');
+
+        $this->label(__('larascaff::action.label.view'));
+
+        $this->color(ColorVariant::Primary);
+
+        $this->icon('tabler-eye');
 
         $this->handle();
     }

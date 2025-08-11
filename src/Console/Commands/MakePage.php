@@ -20,8 +20,6 @@ class MakePage extends BaseCommand implements PromptsForMissingInput
 
     protected $pageName;
 
-    protected $modelClass;
-
     protected $view;
 
     protected function promptForMissingArgumentsUsing()
@@ -37,30 +35,34 @@ class MakePage extends BaseCommand implements PromptsForMissingInput
     public function handle()
     {
         $name = $this->argument('name');
-        if (substr($name, -4) == 'page' || substr($name, -4) == 'Page') {
+        if (strtolower(substr($name, -4)) == 'page') {
             $name = substr($name, 0, strlen($name) - 4);
         }
 
         $this->pathList = array_map(fn ($item) => ucfirst($item), explode('/', $name));
 
-        $class = array_pop($this->pathList);
+        $this->pageName = array_pop($this->pathList);
 
         $this->path = implode('/', $this->pathList);
-        $this->pageName = $class;
+
         $this->view = strtolower(($this->path != '' ? $this->path . '/' : '') . "{$this->pageName}");
 
         $this->makeView();
         $this->makePage();
+
         if ($this->option('javascript')) {
             $this->makeJs();
         }
+
         $this->makeMenu($this->pageName, ['read']);
     }
 
     public function makeView()
     {
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.page-view.stub');
+
         $file = $this->laravel->basePath('/resources/views/pages/' . "{$this->view}.blade.php");
+
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, [], $file, 'View');
     }
@@ -70,6 +72,7 @@ class MakePage extends BaseCommand implements PromptsForMissingInput
         $this->js = strtolower(($this->path != '' ? $this->path . '/' : '') . "{$this->view}");
 
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.js.stub');
+
         $file = $this->laravel->basePath('/resources/js/pages/' . "{$this->js}.js");
 
         $this->makeDirectory(dirname($file));
@@ -87,7 +90,9 @@ class MakePage extends BaseCommand implements PromptsForMissingInput
         ];
 
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.page.stub');
+
         $file = $this->laravel->basePath('/app/Larascaff/Pages' . ($this->path != '' ? '/' . $this->path : '') . "/{$pageClass}.php");
+
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, $replaces, $file, 'Page');
     }

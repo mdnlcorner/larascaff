@@ -29,7 +29,7 @@ class BaseMenuModule extends Module
                     Cache::forget('urlMenu');
                 }),
             Action::make('sort')->permission('sort')->path('sort')
-                ->label('Sort menu')->color(ColorVariant::Info)
+                ->label('Sort Menu')->color(ColorVariant::Info)
                 ->form(false)
                 ->withValidations(false)
                 ->action(function (Menu $record) {

@@ -114,9 +114,9 @@ class BaseUserModule extends Module
                                     ];
                                 }),
                         ])
-                            ->modalSize(ModalSize::Lg)
                             ->columns(1);
                     })
+                    ->modalSize(ModalSize::Lg)
                     ->action(function (Request $request, User $user) {
                         Gate::authorize('update-permissions ' . static::getUrl());
 

@@ -19,6 +19,12 @@ class CreateAction extends Action
 
         $this->permission($name);
 
+        $this->label(__('larascaff::action.label.create'));
+
+        $this->notificationTitle(__('larascaff::action.notification.create.title'));
+
+        $this->modalSubmitActionLabel(__('larascaff::action.modal.create.title'));
+
         if ($this->getModule()) {
             $this->action = function (Request $request, $record) {
                 return $this->actionHandler($request, $record);

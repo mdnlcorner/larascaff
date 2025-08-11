@@ -17,4 +17,19 @@ trait HasConfirmation
     {
         return $this->confirmation;
     }
+
+    public function requiresConfirmation(): static
+    {
+        $this->confirmation();
+
+        $this->modalTitle(__('larascaff::action.modal.confirm.title', ['record' => '']));
+
+        $this->modalDescription(__('larascaff::action.modal.confirm.description'));
+
+        $this->modalSubmitActionLabel(__('larascaff::action.modal.confirm.action'));
+
+        $this->modalCancelActionLabel(__('larascaff::action.modal.cancel.title'));
+
+        return $this;
+    }
 }
