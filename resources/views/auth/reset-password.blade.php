@@ -1,21 +1,25 @@
 <x-larascaff-guest-layout title="Forgot password">
+    <div class="text-2xl font-semibold">{{ __('larascaff::auth/password-reset/reset-password.title') }}</div>
+    <p class="pb-4 text-sm text-muted-foreground">
+        {{ __('larascaff::auth/password-reset/reset-password.heading') }}
+    </p>
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
         <input type="hidden" name="token" value="{{ $request->route('token') }}">
         <div class="grid grid-cols-1 gap-6">
-            <x-larascaff::forms.input label="Email" :error="$errors->first('email')" id="email" class="block w-full mt-1" type="email"
-                name="email" :value="old('email', $request->email)" autofocus autocomplete="username" />
-            <x-larascaff::forms.input :error="$errors->first('password')" label="Password" id="password" class="block w-full mt-1"
-                type="password" name="password" autocomplete="new-password" />
-            <x-larascaff::forms.input label="Password Confirmation" id="password_confirmation" class="block w-full mt-1"
-                type="password" :error="$errors->first('password_conrifmation')" name="password_confirmation" autocomplete="new-password" />
+            <x-larascaff::forms.input-group :error="$errors->first('email')" :value="old('email', request('email'))" name="email" prependIcon="mail" label="{{ __('larascaff::auth/password-reset/reset-password.form.email.label') }}" />
+            <x-larascaff::forms.input-group :error="$errors->first('password')" :value="old('password')" name="password" prependIcon="lock" type="password" label="{{ __('larascaff::auth/password-reset/reset-password.form.password.label') }}" />
+            <x-larascaff::forms.input-group prependIcon="lock" type="password" name="password_confirmation" label="{{ __('larascaff::auth/password-reset/reset-password.form.password_confirmation.label') }}" />
         </div>
-        <div class="flex items-center justify-end mt-4">
-            <x-larascaff::button onclick="setTimeout(() => {
-                this.disabled = true
-                }, 0)" type="submit">
-                {{ __('Reset Password') }}
-            </x-larascaff::button>
-        </div>
+        <x-larascaff::button onclick="setTimeout(() => {
+            this.disabled = true
+            }, 0)" type="submit"
+            class="w-full mt-4"
+            >
+            {{ __('larascaff::auth/password-reset/reset-password.form.actions.reset.label') }}
+        </x-larascaff::button>
     </form>
+    <div class="flex justify-center w-full mt-4">
+        <a href="{{ route('login') }}" class="text-sm underline text-primary">{{ __('larascaff::auth/password-reset/reset-password.actions.login.label') }}</a>
+    </div>
 </x-larascaff-guest-layout>
