@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace Mulaidarinull\Larascaff\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -14,8 +14,10 @@ final class EmailVerificationPromptController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse | View
     {
+        $route = larascaffConfig()->getPrefix() ? larascaffConfig()->getPrefix() . '.dashboard' : '';
+
         return $request->user()->hasVerifiedEmail()
-                    ? redirect()->intended(route('dashboard', absolute: false))
+                    ? redirect()->intended(route($route, absolute: false))
                     : view('larascaff::auth.verify-email');
     }
 }

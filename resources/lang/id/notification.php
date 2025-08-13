@@ -4,5 +4,5 @@ return [
     'from' => 'Dari',
     'title' => 'Notifikasi',
     'clear' => 'Hapus semua',
-    'more' => 'Lihat lainnya'
+    'more' => 'Lihat lainnya',
 ];

@@ -10,7 +10,7 @@ use Mulaidarinull\Larascaff\Notifications\NotificationRoute;
 use Mulaidarinull\Larascaff\Pages\Uploader;
 
 Route::middleware(larascaffConfig()->getMiddleware())->group(function () {
-    Route::middleware(larascaffConfig()->getAuthMiddleware())->group(function () {
+    Route::middleware([...larascaffConfig()->getAuthMiddleware(), 'verified'])->group(function () {
         Route::get('notifications/{notification}', NotificationRoute::class)->name('notifications');
         Route::post('temp-upload', [Uploader::class, 'tempUploadHandler'])->middleware('signed')->name('temp-upload');
         Route::post('uploader', [Uploader::class, 'uploadHandler'])->middleware('signed')->name('uploader');

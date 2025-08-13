@@ -60,7 +60,6 @@ class Install extends BaseCommand
         $this->filesystem->copy(__DIR__ . '/../../stubs/User.php', app_path('Models/User.php'));
         $this->filesystem->copy(__DIR__ . '/../../stubs/Media.php', app_path('Models/Media.php'));
 
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Auth', app_path('Http/Controllers/Auth'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/resources', base_path('resources'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Requests', app_path('Http/Requests'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Larascaff', app_path('Larascaff'));

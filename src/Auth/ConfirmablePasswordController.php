@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace Mulaidarinull\Larascaff\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -35,6 +35,8 @@ final class ConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $route = larascaffConfig()->getPrefix() ? larascaffConfig()->getPrefix() . '.dashboard' : '';
+
+        return redirect()->intended(route($route, absolute: false));
     }
 }

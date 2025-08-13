@@ -84,7 +84,7 @@ abstract class NotificationHandler extends Notification implements ShouldQueue
         }
 
         return [
-            'data' => $data
+            'data' => $data,
         ];
     }
 
