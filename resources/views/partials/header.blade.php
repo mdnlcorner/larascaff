@@ -28,7 +28,7 @@
                 class="items-center justify-between hidden h-10 px-3 overflow-hidden shadow-sm search-modal group w-72 rounded-primary bg-dark-100 dark:border-transparent dark:bg-dark-800 sm:flex">
                 <div class="flex items-center">
                     @svg('tabler-search', 'w-5 h-5 text-dark-400')
-                    <span class="flex ml-2 text-sm text-dark-400">Search <span></span></span>
+                    <span class="flex ml-2 text-sm text-dark-400">{{ __('larascaff::layout.search') }} <span></span></span>
                 </div>
                 <div class="text-xs text-dark-400"><span class="border rounded-md px-1 py-0.5">Ctrl</span> + <span
                         class="border inline-flex w-6 justify-center rounded-md py-0.5">K</span></div>
@@ -123,27 +123,32 @@
             </x-larascaff::dropdown>
             <!-- Notification Dropdown Ends -->
 
+            @php
+                $hasAvatar = user() instanceof \Mulaidarinull\Larascaff\Models\Contracts\HasAvatar;
+                $config = larascaffConfig();
+                $profileUrl = $config->hasProfile() ? url(getPrefix() . '/profile') : null;
+            @endphp
             <!-- Profile Dropdown Starts -->
             <button data-dropdown-toggle="dropdown_user" data-dropdown-placement="bottom-end"
                 class="group ml-3 relative flex items-center gap-x-1.5" type="button">
                 <div class="avatar avatar-circle avatar-indicator avatar-indicator-online">
-                    <img class="w-8 h-8 rounded-full" src="{{ isset(user()->getMedia('avatar')[0]) ? url(Storage::disk(config('larascaff.default_filesystem_disk'))->url('profile/'.user()->getMedia('avatar')[0])) : 'https://ui-avatars.com/api/?name='.user('name') }}" alt="Avatar 1" />
+                    <img class="w-8 h-8 rounded-full" src="{{ $hasAvatar ? user()->getAvatar() : 'https://ui-avatars.com/api/?name='.user('name') }}" alt="Avatar 1" />
                 </div>
             </button>
             <x-larascaff::dropdown id="dropdown_user" class="w-56 ">
                 <div class="divide-y">
                     <div class="px-4 py-3">
-                        <p class="text-sm">Signed in as</p>
+                        <p class="text-sm">{{ __('larascaff::layout.sign_as')  }}</p>
                         <p class="text-sm font-medium truncate">{{ auth()->user()->email }}</p>
                     </div>
                     <div class="py-2">
-                        <x-larascaff::dropdown-link href="{{ url(getPrefix(). '/profile') }}">
+                        <x-larascaff::dropdown-link :href=$profileUrl >
                             <div class="flex items-center gap-x-2">
                                 @svg('tabler-user', 'w-5 h-5 text-dark-500')
-                                <span>Profile</span>
+                                <span>{{ __('larascaff::auth/edit-profile.label') }}</span>
                             </div>
                         </x-larascaff::dropdown-link>
-                        <x-larascaff::dropdown-link>
+                        {{-- <x-larascaff::dropdown-link>
                             <div class="flex items-center gap-x-2">
                                 @svg('tabler-settings', 'w-5 h-5 text-dark-500')
                                 <span>Settings</span>
@@ -154,7 +159,7 @@
                                     @svg('tabler-help-circle', 'w-5 h-5 text-dark-500')
                                 <span>Support</span>
                             </div>
-                        </x-larascaff::dropdown-link>
+                        </x-larascaff::dropdown-link> --}}
                     </div>
                     <div class="pt-2">
                         <form method="POST" action="{{ route('logout') }}">
@@ -162,7 +167,7 @@
                             <x-larascaff::dropdown-link>
                                 <button type="submit" class="flex items-center w-full gap-x-2">
                                         @svg('tabler-logout', 'w-5 h-5 text-dark-500')
-                                    <span>Sign out</span>
+                                    <span>{{ __('larascaff::layout.actions.logout.label') }}</span>
                                 </button>
                             </x-larascaff::dropdown-link>
                         </form>

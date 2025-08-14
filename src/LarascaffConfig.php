@@ -11,6 +11,7 @@ class LarascaffConfig
     use Concerns\HasBrand;
     use Concerns\HasDatabaseTransactions;
     use Concerns\HasMiddleware;
+    use Concerns\HasProfile;
 
     protected string $prefix = '';
 
