@@ -15,6 +15,13 @@ trait HasProfile
 
     protected string $updateAvatarUrl = 'profile-avatar';
 
+    protected string $updatePasswordUrl = 'password';
+
+    /**
+     * @var Closure | string | array<class-string, string> | null
+     */
+    protected Closure | string | array | null $updatePasswordAction = null;
+
     /**
      * @var Closure | string | array<class-string, string> | null
      */
@@ -34,6 +41,16 @@ trait HasProfile
      * @var Closure | string | array<class-string, string> | null
      */
     protected Closure | string | array | null $profileDeleteAction = null;
+
+    public function getUpdatePasswordUrl(): string
+    {
+        return $this->updatePasswordUrl;
+    }
+
+    public function getUpdatePasswordAction()
+    {
+        return $this->updatePasswordAction;
+    }
 
     public function getProfileDeleteAction()
     {
@@ -83,6 +100,8 @@ trait HasProfile
         Closure | string | array | null $deleteAction = null,
         ?string $updateAvatarUrl = null,
         Closure | string | array | null $udpateAvatarAction = null,
+        ?string $updatePasswordUrl = null,
+        Closure | string | array | null $udpatePasswordAction = null,
     ): static {
         $this->hasProfile = true;
 
@@ -99,6 +118,10 @@ trait HasProfile
         $updateAvatarUrl ? $this->updateAvatarUrl = $updateAvatarUrl : null;
 
         $this->updateAvatarAction = $udpateAvatarAction ?? [ProfileController::class, 'updateAvatar'];
+
+        $updatePasswordUrl ? $this->updatePasswordUrl = $updatePasswordUrl : null;
+
+        $this->updatePasswordAction = $updatePasswordAction ?? [ProfileController::class, 'updatePassword'];
 
         return $this;
     }

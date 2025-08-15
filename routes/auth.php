@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\PasswordController;
 use Illuminate\Support\Facades\Route;
 use Mulaidarinull\Larascaff\Auth\ConfirmablePasswordController;
 
@@ -32,7 +31,7 @@ Route::prefix($config->getPrefix())->group(function () use ($config) {
             }
             Route::patch($config->getUpdateAvatarUrl(), $config->getUpdateAvatarAction())->name('profile.avatar');
         }
-        Route::put('password', [PasswordController::class, 'update'])->name('password.update');
+        Route::put($config->getUpdatePasswordUrl(), $config->getUpdatePasswordAction())->name('password.update');
 
         if ($config->hasEmailVerification()) {
             Route::get($config->getEmailVerificationPromptUrl(), $config->getEmailVerificationPromptForm())->name('verification.notice');
