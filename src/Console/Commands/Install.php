@@ -44,7 +44,7 @@ class Install extends BaseCommand
             ],
             $this->laravel->basePath('bootstrap/app.php')
         );
-        // copy an d set service providers
+        // copy and set service providers
         $this->saveStub(
             $this->resolveStubPath('/../../stubs/Providers/LarascaffProvider.php'),
             [
@@ -67,7 +67,7 @@ class Install extends BaseCommand
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/rootFile', base_path(''));
 
         if (! $this->filesystem->isDirectory(public_path('larascaff')) && ! is_link(public_path('larascaff'))) {
-            $this->call('larascaff:link-asset');
+            $this->call('larascaff:link');
         }
 
         $this->call('vendor:publish', [
@@ -78,16 +78,16 @@ class Install extends BaseCommand
             '--tag' => 'larascaff-config',
         ]);
 
-        // NPM Packages...
         $this->updateNodePackages(callback: function ($packages) {
             return [
                 '@tailwindcss/forms' => '^0.5.2',
                 '@tailwindcss/typography' => '^0.5.12',
                 'autoprefixer' => '^10.4.2',
                 'glob' => '^10.3.12',
-                'laravel-vite-plugin' => '^1.0',
+                'laravel-vite-plugin' => '^1.2.0',
                 'tailwind-merge' => '^2.5.2',
                 'tailwindcss' => '^3.4.13',
+                'vite' => '^6.2.4',
             ] + $packages;
         }, dev: true);
 

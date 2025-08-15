@@ -63,12 +63,12 @@ trait ResetPassword
         return Str::start($this->passwordResetUrl, '/');
     }
 
-    public function getPasswordResetForm(): Closure | string | array
+    public function getPasswordResetForm()
     {
         return $this->passwordResetForm;
     }
 
-    public function getPasswordResetAction(): Closure | string | array
+    public function getPasswordResetAction()
     {
         return $this->passwordResetAction;
     }
@@ -78,12 +78,12 @@ trait ResetPassword
         return Str::start($this->newPasswordUrl, '/');
     }
 
-    public function getNewPasswordForm(): Closure | string | array
+    public function getNewPasswordForm()
     {
         return $this->newPasswordForm;
     }
 
-    public function getNewPasswordAction(): Closure | string | array
+    public function getNewPasswordAction()
     {
         return $this->newPasswordAction;
     }

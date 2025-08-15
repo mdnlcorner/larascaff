@@ -45,12 +45,12 @@ trait Registration
         return Str::start($this->registrationUrl, '/');
     }
 
-    public function getRegistrationForm(): Closure | string | array
+    public function getRegistrationForm()
     {
         return $this->registrationForm;
     }
 
-    public function getRegistrationAction(): Closure | string | array
+    public function getRegistrationAction()
     {
         return $this->registrationAction;
     }

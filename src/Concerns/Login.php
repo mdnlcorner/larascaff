@@ -27,7 +27,7 @@ trait Login
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure | string | array | null $logoutAction;
+    protected Closure | string | array | null $logoutAction = null;
 
     public function login(?string $url = null, Closure | array | string | null $form = null, Closure | array | string | null $action = null): static
     {
@@ -56,7 +56,7 @@ trait Login
         return Str::start($this->logoutUrl, '/');
     }
 
-    public function getLogoutAction(): Closure | string | array
+    public function getLogoutAction()
     {
         return $this->logoutAction;
     }
@@ -71,12 +71,12 @@ trait Login
         return Str::start($this->loginUrl, '/');
     }
 
-    public function getLoginForm(): Closure | string | array
+    public function getLoginForm()
     {
         return $this->loginForm;
     }
 
-    public function getLoginAction(): Closure | string | array
+    public function getLoginAction()
     {
         return $this->loginAction;
     }
