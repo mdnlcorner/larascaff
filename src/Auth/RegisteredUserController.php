@@ -46,6 +46,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route(larascaffConfig()->getPrefix() . '.dashboard', absolute: false));
+        return redirect(route(routeDashboard(), absolute: false));
     }
 }

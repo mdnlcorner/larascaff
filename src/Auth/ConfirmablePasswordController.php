@@ -35,8 +35,6 @@ final class ConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-        $route = larascaffConfig()->getPrefix() ? larascaffConfig()->getPrefix() . '.dashboard' : '';
-
-        return redirect()->intended(route($route, absolute: false));
+        return redirect()->intended(route(routeDashboard(), absolute: false));
     }
 }

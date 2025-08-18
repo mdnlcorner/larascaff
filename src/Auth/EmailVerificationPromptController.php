@@ -14,10 +14,8 @@ final class EmailVerificationPromptController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse | View
     {
-        $route = larascaffConfig()->getPrefix() ? larascaffConfig()->getPrefix() . '.dashboard' : '';
-
         return $request->user()->hasVerifiedEmail()
-                    ? redirect()->intended(route($route, absolute: false))
+                    ? redirect()->intended(route(routeDashboard(), absolute: false))
                     : view('larascaff::auth.verify-email');
     }
 }

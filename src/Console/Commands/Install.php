@@ -61,7 +61,6 @@ class Install extends BaseCommand
         $this->filesystem->copy(__DIR__ . '/../../stubs/Media.php', app_path('Models/Media.php'));
 
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/resources', base_path('resources'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Requests', app_path('Http/Requests'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Larascaff', app_path('Larascaff'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/seeders', database_path('seeders'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/rootFile', base_path(''));
@@ -74,9 +73,9 @@ class Install extends BaseCommand
             '--tag' => 'larascaff-migration',
         ]);
 
-        $this->call('vendor:publish', [
-            '--tag' => 'larascaff-config',
-        ]);
+        // $this->call('vendor:publish', [
+        //     '--tag' => 'larascaff-config',
+        // ]);
 
         $this->updateNodePackages(callback: function ($packages) {
             return [

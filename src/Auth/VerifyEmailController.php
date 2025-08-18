@@ -14,9 +14,8 @@ final class VerifyEmailController extends Controller
      */
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
-        $route = larascaffConfig()->getPrefix() ? larascaffConfig()->getPrefix() . '.dashboard' : '';
         if (user()->hasVerifiedEmail()) {
-            return redirect()->intended(route($route, absolute: false) . '?verified=1');
+            return redirect()->intended(route(routeDashboard(), absolute: false) . '?verified=1');
         }
 
         if (user()->markEmailAsVerified()) {
@@ -26,6 +25,6 @@ final class VerifyEmailController extends Controller
             event(new Verified($user));
         }
 
-        return redirect()->intended(route($route, absolute: false) . '?verified=1');
+        return redirect()->intended(route(routeDashboard(), absolute: false) . '?verified=1');
     }
 }
