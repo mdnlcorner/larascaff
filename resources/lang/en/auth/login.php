@@ -2,19 +2,19 @@
 
 return [
 
-    'title' => 'Masuk',
+    'title' => 'Welcome',
 
-    'heading' => 'Masuk ke akun Anda',
+    'heading' => 'Please sign in',
 
     'actions' => [
 
         'register' => [
-            'before' => 'atau',
-            'label' => 'buat akun baru',
+            'question' => 'Don\'t have an account?',
+            'label' => 'Sign up for an account',
         ],
 
         'request_password_reset' => [
-            'label' => 'Lupa kata sandi?',
+            'label' => 'Forgot password?',
         ],
 
     ],
@@ -22,21 +22,21 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Alamat email',
+            'label' => 'Email address',
         ],
 
         'password' => [
-            'label' => 'Kata sandi',
+            'label' => 'Password',
         ],
 
         'remember' => [
-            'label' => 'Ingat saya',
+            'label' => 'Remember me',
         ],
 
         'actions' => [
 
             'authenticate' => [
-                'label' => 'Masuk',
+                'label' => 'Sign in',
             ],
 
         ],
@@ -45,15 +45,15 @@ return [
 
     'messages' => [
 
-        'failed' => 'Kredensial yang diberikan tidak dapat ditemukan.',
+        'failed' => 'These credentials do not match our records.',
 
     ],
 
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Terlalu banyak permintaan',
-            'body' => 'Silakan coba lagi dalam :seconds detik.',
+            'title' => 'Too many login attempts',
+            'body' => 'Please try again in :seconds seconds.',
         ],
 
     ],

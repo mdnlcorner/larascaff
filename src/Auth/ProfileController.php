@@ -25,10 +25,14 @@ final class ProfileController extends Controller
     public function edit(): View
     {
         setRecord(user());
-        $view = view('larascaff::pages.profile', [
+
+        $viewData = [
             'config' => larascaffConfig(),
-            'hasAvatar' => user() instanceof \Mulaidarinull\Larascaff\Models\Contracts\HasAvatar,
-            'avatarInput' => \Mulaidarinull\Larascaff\Forms\Components\Uploader::make('avatar')
+            'hasAvatar' => user() instanceof \Mulaidarinull\Larascaff\Models\Contracts\HasAvatar
+        ];
+
+        if ($viewData['hasAvatar']) {
+            $viewData['avatarInput'] = \Mulaidarinull\Larascaff\Forms\Components\Uploader::make('avatar')
                 ->allowImagePreview(true)
                 ->linkPreview()
                 ->avatar()
@@ -36,8 +40,10 @@ final class ProfileController extends Controller
                 ->imageResizeTargetHeight(100)
                 ->imageResizeTargetWidth(100)
                 ->imageEditor()
-                ->label(''),
-        ]);
+                ->label('');
+        }
+
+        $view = view('larascaff::pages.profile', $viewData);
 
         return view('larascaff::main-content', [
             'view' => $view,
