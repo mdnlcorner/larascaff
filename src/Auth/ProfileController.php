@@ -12,6 +12,7 @@ use Illuminate\Support\Pluralizer;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 use Mulaidarinull\Larascaff\Auth\Requests\ProfileUpdateRequest;
+use Mulaidarinull\Larascaff\Forms\Components\Uploader;
 
 final class ProfileController extends Controller
 {
@@ -32,10 +33,12 @@ final class ProfileController extends Controller
         ];
 
         if ($viewData['hasAvatar']) {
-            $viewData['avatarInput'] = \Mulaidarinull\Larascaff\Forms\Components\Uploader::make('avatar')
+            $viewData['avatarInput'] = Uploader::make('avatar')
+                ->name(user()->getAvatarField())
                 ->allowImagePreview(true)
                 ->linkPreview()
                 ->avatar()
+                ->disk(user()->getAvatarDisk())
                 ->path(user()->getAvatarPath())
                 ->imageResizeTargetHeight(100)
                 ->imageResizeTargetWidth(100)
@@ -70,7 +73,7 @@ final class ProfileController extends Controller
 
     public function updateAvatar(Request $request)
     {
-        $request->user()->updateMedia('profile', $request->avatar, 'avatar');
+        user()->updateMedia(user()->getAvatarPath(), $request->{user()->getAvatarField()}, user()->getAvatarField(), user()->getAvatarDisk());
 
         return Redirect::route('profile.edit')->with('status', 'avatar-updated');
     }
@@ -84,11 +87,9 @@ final class ProfileController extends Controller
             'password' => ['required', 'current_password'],
         ]);
 
-        $user = $request->user();
-
         Auth::logout();
 
-        $user->delete();
+        user()->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -103,7 +104,7 @@ final class ProfileController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
+        user()->update([
             'password' => Hash::make($validated['password']),
         ]);
 

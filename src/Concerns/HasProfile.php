@@ -101,7 +101,7 @@ trait HasProfile
         ?string $updateAvatarUrl = null,
         Closure | string | array | null $udpateAvatarAction = null,
         ?string $updatePasswordUrl = null,
-        Closure | string | array | null $udpatePasswordAction = null,
+        Closure | string | array | null $updatePasswordAction = null,
     ): static {
         $this->hasProfile = true;
 

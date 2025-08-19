@@ -48,9 +48,6 @@ class BaseUserModule extends Module
                         })])->password()->revealable(),
                     Forms\Components\TextInput::make('password_confirmation')->password()->revealable(),
                 ]),
-            Forms\Components\Radio::make('gender')
-                ->validations(['required', 'in:Male,Female'])
-                ->options(['Male' => 'Male', 'Female' => 'Female']),
             Forms\Components\Select::make('roles')
                 ->label('Roles')
                 ->searchable()
@@ -131,7 +128,6 @@ class BaseUserModule extends Module
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email'),
-                Tables\Columns\TextColumn::make('gender'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->editColumn(fn (User $user) => $user->created_at->format('d-m-Y H:i')),
                 Tables\Columns\TextColumn::make('updated_at')

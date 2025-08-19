@@ -56,13 +56,9 @@ class Install extends BaseCommand
         $this->components->info('Copying asset files..');
 
         $this->filesystem->copy(__DIR__ . '/../../stubs/bootstrap/providers.php', base_path('bootstrap/providers.php'));
-        $this->filesystem->copy(__DIR__ . '/../../stubs/UserFactory.php', database_path('factories/UserFactory.php'));
-        $this->filesystem->copy(__DIR__ . '/../../stubs/User.php', app_path('Models/User.php'));
-        $this->filesystem->copy(__DIR__ . '/../../stubs/Media.php', app_path('Models/Media.php'));
 
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/resources', base_path('resources'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Larascaff', app_path('Larascaff'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/seeders', database_path('seeders'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/rootFile', base_path(''));
 
         if (! $this->filesystem->isDirectory(public_path('larascaff')) && ! is_link(public_path('larascaff'))) {
