@@ -3,7 +3,6 @@
 namespace Mulaidarinull\Larascaff\Auth;
 
 use App\Http\Controllers\Controller;
-use Mulaidarinull\Larascaff\Auth\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Pluralizer;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
+use Mulaidarinull\Larascaff\Auth\Requests\ProfileUpdateRequest;
 
 final class ProfileController extends Controller
 {
@@ -28,7 +28,7 @@ final class ProfileController extends Controller
 
         $viewData = [
             'config' => larascaffConfig(),
-            'hasAvatar' => user() instanceof \Mulaidarinull\Larascaff\Models\Contracts\HasAvatar
+            'hasAvatar' => user() instanceof \Mulaidarinull\Larascaff\Models\Contracts\HasAvatar,
         ];
 
         if ($viewData['hasAvatar']) {
