@@ -49,8 +49,6 @@ class Action
 
     protected string $method = 'post';
 
-    protected ?string $title = null;
-
     protected ?Model $replica = null;
 
     public static function make(?string $name = 'action'): static
@@ -101,21 +99,6 @@ class Action
     {
         $this->action = $action;
         $this->isCustomAction = true;
-
-        return $this;
-    }
-
-    public function getTitle(): string
-    {
-        return $this->title;
-    }
-
-    public function title(Closure | string $title): static
-    {
-        if (is_callable($title)) {
-            $this->title = $this->resolveClosureParams($title) ?? '';
-        }
-        $this->title = $title;
 
         return $this;
     }

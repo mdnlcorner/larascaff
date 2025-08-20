@@ -1,43 +1,27 @@
 <?php
 
-namespace Mulaidarinull\Larascaff\Console\Commands;
+namespace Mulaidarinull\Larascaff\Seeders;
 
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
-use Spatie\Permission\Models\Role;
+use Mulaidarinull\Larascaff\Models\Configuration\Role;
 
-class Seeder extends BaseCommand
+class LarascaffSeeder extends Seeder
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'larascaff:seed';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Generate tables for larascaff';
-
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    // public function __invoke(array $parameters = [])
+    // {
+    //     dd('invoke');
+    // }
+    public function run(): void
     {
         // Roles
         Role::create(['name' => 'administrator']);
         Role::create(['name' => 'ceo']);
 
         // Menus
-        Cache::forget('menus');
-        Cache::forget('urlMenu');
-
         File::ensureDirectoryExists(app_path('Larascaff/Pages'));
-
         foreach (File::allFiles(app_path('Larascaff/Pages')) as $pages) {
             $module = getFileNamespace($pages->getContents()) . '\\' . $pages->getFilenameWithoutExtension();
             if ($module) {
@@ -63,6 +47,7 @@ class Seeder extends BaseCommand
             $user->assignRole('administrator');
         }
 
-        User::factory(50)->create();
+        Cache::forget('menus');
+        Cache::forget('urlMenu');
     }
 }
