@@ -86,7 +86,7 @@ class LarascaffServiceProvider extends ServiceProvider
                 Console\Commands\LinkAsset::class,
                 Console\Commands\UnlinkAsset::class,
                 Console\Commands\DeleteTempUploadFiles::class,
-                Console\Commands\Migrate::class,
+                Console\Commands\Seeder::class,
             ]);
         }
     }

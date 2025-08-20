@@ -195,7 +195,7 @@ class Table extends DataTable
                 'id' => null,
                 ...$confirmation,
             ];
-            $this->tableActions[$action->getName()] = $options;
+            $this->tableActions[$options['name']] = $options;
         }
 
         $this->tableActions = $this->tableActions->filter(function ($item) {

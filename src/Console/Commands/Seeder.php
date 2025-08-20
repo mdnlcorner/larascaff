@@ -7,15 +7,14 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Spatie\Permission\Models\Role;
 
-class Migrate extends BaseCommand
+class Seeder extends BaseCommand
 {
-
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'larascaff:migrate';
+    protected $signature = 'larascaff:seed';
 
     /**
      * The console command description.
@@ -63,7 +62,7 @@ class Migrate extends BaseCommand
         if (method_exists($user, 'assignRole')) {
             $user->assignRole('administrator');
         }
-        
+
         User::factory(50)->create();
     }
 }

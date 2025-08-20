@@ -89,26 +89,27 @@
                     <ul class="divide-y dark:divide-dark-800/70 last:border-b dark:border-dark-800/70">
                         @foreach ($notifications as $notif)
                             <li class="dropdown-item">
-                                <a href="{{ url('notifications/'.$notif->id) }}" class="flex w-full gap-4 px-2 py-3 transition-colors duration-150 cursor-pointer hover:bg-dark-50 dark:hover:bg-dark-900/80">
+                                <div class="flex w-full gap-2 px-2 py-3">
                                     <div class="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full text-warning-600 bg-warning/30">
                                         @svg('tabler-alert-circle', 'w-5 h-5')
                                     </div>
                                     <div class="w-full">
                                         <h6 class="text-sm font-normal">{{ $notif->data['title'] }}</h6>
                                         <p class="mt-1 text-xs text-dark-400 line-clamp-2">{{ $notif->data['message'] }}</p>
-                                        <div class="flex justify-end w-full gap-1 mt-1 text-dark-400">
-                                            <div>
-                                                <div class="flex items-center text-xs italic gap-x-2">
+                                        <div class="flex w-full gap-1 mt-1 text-dark-400">
+                                            <div class="py-1.5 italic">
+                                                <div class="flex items-center text-xs gap-x-2">
                                                     @svg('tabler-clock', 'w-4 h-4')
                                                     <span>{{ $notif['created_at']->diffForHumans() }}</span>
                                                 </div>
                                                 @if (isset($notif->data['sender']))
-                                                    <div class="flex items-center justify-end text-xs text-foreground">{{ __('larascaff::notification.from') }} {{ $notif->data['sender'] }}</div>
+                                                    <div class="flex items-center mt-1 text-xs text-foreground">{{ __('larascaff::notification.from') }} {{ $notif->data['sender'] }}</div>
                                                 @endif
                                             </div>
                                         </div>
+                                        <a href="{{ url('notifications/'.$notif->id) }}" class="flex justify-end text-sm text-primary hover:underline">{{ $notif->data['actionLabel'] }}</a>
                                     </div>
-                                </a>
+                                </div>
                             </li>
                         @endforeach
                     </ul>

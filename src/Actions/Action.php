@@ -27,8 +27,6 @@ class Action
     use Concerns\HasValidation;
     use HasModule;
 
-    protected array $options = [];
-
     protected ?Closure $show = null;
 
     protected string $color = 'primary';
@@ -181,33 +179,32 @@ class Action
 
     public function getOptions(): array
     {
-        // $this->options['instance'] = $this;
-        $this->options['permission'] = $this->permission;
-        $this->options['blank'] = $this->blank;
-        $this->options['ajax'] = $this->ajax;
-        $this->options['path'] = $this->path;
-        $this->options['show'] = $this->show ?? fn () => true;
-        $this->options['method'] = $this->method;
-        $this->options['icon'] = $this->icon;
-        $this->options['color'] = $this->color;
-        $this->options['form'] = $this->form;
-        $this->options['hasForm'] = $this->hasForm;
-        $this->options['name'] = $this->name;
-        $this->options['label'] = $this->label;
-        $this->options['action'] = $this->action;
-        $this->options['isCustomAction'] = $this->isCustomAction;
-        $this->options['hasConfirmation'] = $this->hasConfirmation();
-        $this->options['withValidations'] = $this->withValidations;
-        $this->options['beforeFormFilled'] = $this->beforeFormFilled;
-        $this->options['notification'] = $this->getNotification();
-        $this->options['modalTitle'] = $this->modalTitle;
-        $this->options['modalSubmitActionLabel'] = $this->modalSubmitActionLabel;
-        $this->options['modalCancelActionLabel'] = $this->modalCancelActionLabel;
-        $this->options['modalDescription'] = $this->modalDescription;
-        $this->options['modalIcon'] = $this->modalIcon;
-        $this->options['modalSize'] = ($this->modalSize instanceof BackedEnum ? $this->modalSize->value : $this->modalSize);
-
-        return [$this->name => $this->options];
+        return [$this->name => [
+            'permission' => $this->permission,
+            'blank' => $this->blank,
+            'ajax' => $this->ajax,
+            'path' => $this->path,
+            'show' => $this->show ?? fn () => true,
+            'method' => $this->method,
+            'icon' => $this->icon,
+            'color' => $this->color,
+            'form' => $this->form,
+            'hasForm' => $this->hasForm,
+            'name' => $this->name,
+            'label' => $this->label,
+            'action' => $this->action,
+            'isCustomAction' => $this->isCustomAction,
+            'hasConfirmation' => $this->hasConfirmation(),
+            'withValidations' => $this->withValidations,
+            'beforeFormFilled' => $this->beforeFormFilled,
+            'notification' => $this->getNotification(),
+            'modalTitle' => $this->modalTitle,
+            'modalSubmitActionLabel' => $this->modalSubmitActionLabel,
+            'modalCancelActionLabel' => $this->modalCancelActionLabel,
+            'modalDescription' => $this->modalDescription,
+            'modalIcon' => $this->modalIcon,
+            'modalSize' => ($this->modalSize instanceof BackedEnum ? $this->modalSize->value : $this->modalSize),
+        ]];
     }
 
     protected function fillFormData()
@@ -391,7 +388,7 @@ class Action
         }
     }
 
-    protected function resolveClosureParams(?callable $cb = null)
+    protected function resolveClosureParams(Closure $cb)
     {
         if (! $cb instanceof Closure) {
             throw new \Exception('Param must be callable');
