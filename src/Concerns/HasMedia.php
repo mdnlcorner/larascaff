@@ -1,6 +1,6 @@
 <?php
 
-namespace Mulaidarinull\Larascaff\Traits;
+namespace Mulaidarinull\Larascaff\Concerns;
 
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\Storage;

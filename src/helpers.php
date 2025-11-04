@@ -92,6 +92,15 @@ if (! function_exists('getPrefix')) {
     }
 }
 
+if (! function_exists('routeDashboard')) {
+    function routeDashboard()
+    {
+        $route = getPrefix() ? getPrefix() . '.dashboard' : 'dashboard';
+
+        return $route;
+    }
+}
+
 if (! function_exists('larascaffConfig')) {
     function larascaffConfig()
     {

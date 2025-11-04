@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             'name' => 'administrator',
             'email' => 'administrator@example.com',
         ]);
-        $user->assignRole('ADMINISTRATOR');
+        $user->assignRole('administrator');
         User::factory(50)->create();
     }
 }

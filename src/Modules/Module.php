@@ -263,7 +263,7 @@ abstract class Module extends Controller
             $url = Pluralizer::plural($url);
         }
 
-        return str(getPrefix())->finish('/') . $url;
+        return empty(getPrefix()) ? $url : str(getPrefix())->finish('/')->append($url);
     }
 
     public static function registerRoutes()

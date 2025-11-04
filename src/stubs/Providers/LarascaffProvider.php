@@ -7,9 +7,9 @@ use Mulaidarinull\Larascaff\Providers\LarascaffProvider as Provider;
 
 class LarascaffProvider extends Provider
 {
-    public function config(LarascaffConfig $config)
+    public function config(LarascaffConfig $config): LarascaffConfig
     {
-        $config->prefix('{{ prefix }}')
+        return $config->prefix('{{ prefix }}')
             ->login();
     }
 }

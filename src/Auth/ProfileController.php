@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace Mulaidarinull\Larascaff\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Pluralizer;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
+use Mulaidarinull\Larascaff\Auth\Requests\ProfileUpdateRequest;
+use Mulaidarinull\Larascaff\Forms\Components\Uploader;
 
 final class ProfileController extends Controller
 {
@@ -20,22 +23,30 @@ final class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(): View
     {
         setRecord(user());
-        $view = view('larascaff::pages.profile', [
-            'avatarInput' => \Mulaidarinull\Larascaff\Components\Forms\Uploader::make('avatar')
+
+        $viewData = [
+            'config' => larascaffConfig(),
+            'hasAvatar' => user() instanceof \Mulaidarinull\Larascaff\Models\Contracts\HasAvatar,
+        ];
+
+        if ($viewData['hasAvatar']) {
+            $viewData['avatarInput'] = Uploader::make('avatar')
+                ->name(user()->getAvatarField())
                 ->allowImagePreview(true)
                 ->linkPreview()
                 ->avatar()
-                ->path('profile')
+                ->disk(user()->getAvatarDisk())
+                ->path(user()->getAvatarPath())
                 ->imageResizeTargetHeight(100)
                 ->imageResizeTargetWidth(100)
                 ->imageEditor()
-                ->disk('local')
-                ->label('')
-                ->field('avatar'),
-        ]);
+                ->label('');
+        }
+
+        $view = view('larascaff::pages.profile', $viewData);
 
         return view('larascaff::main-content', [
             'view' => $view,
@@ -49,20 +60,20 @@ final class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if (user()->isDirty('email')) {
+            user()->email_verified_at = null;
         }
 
-        $request->user()->save();
+        user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    public function avatar(Request $request)
+    public function updateAvatar(Request $request)
     {
-        $request->user()->updateMedia('profile', $request->avatar, 'avatar');
+        user()->updateMedia(user()->getAvatarPath(), $request->{user()->getAvatarField()}, user()->getAvatarField(), user()->getAvatarDisk());
 
         return Redirect::route('profile.edit')->with('status', 'avatar-updated');
     }
@@ -76,15 +87,27 @@ final class ProfileController extends Controller
             'password' => ['required', 'current_password'],
         ]);
 
-        $user = $request->user();
-
         Auth::logout();
 
-        $user->delete();
+        user()->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('updatePassword', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', Password::defaults(), 'confirmed'],
+        ]);
+
+        user()->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return back()->with('status', 'password-updated');
     }
 }

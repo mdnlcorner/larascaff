@@ -29,7 +29,7 @@ abstract class NotificationHandler extends Notification implements ShouldQueue
     /**
      * @param  class-string<Module>  $module
      */
-    public function __construct(protected Model $record, string $module)
+    public function __construct(protected Model $record, string $module, protected bool $showSender = false)
     {
         $this->user = user();
 
@@ -72,13 +72,19 @@ abstract class NotificationHandler extends Notification implements ShouldQueue
 
     public function toDatabase(User $notifiable): array
     {
+        $data = [
+            'title' => $this->resolveMethodParams('title'),
+            'message' => $this->resolveMethodParams('message'),
+            'action' => $this->resolveMethodParams('action'),
+            'actionLabel' => $this->resolveMethodParams('actionLabel'),
+        ];
+
+        if ($this->resolveMethodParams('showSender')) {
+            $data['sender'] = $notifiable->name;
+        }
+
         return [
-            'data' => [
-                'title' => $this->resolveMethodParams('title'),
-                'message' => $this->resolveMethodParams('message'),
-                'action' => $this->resolveMethodParams('action'),
-                'actionLabel' => $this->resolveMethodParams('actionLabel'),
-            ],
+            'data' => $data,
         ];
     }
 

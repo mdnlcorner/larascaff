@@ -44,7 +44,7 @@ class Install extends BaseCommand
             ],
             $this->laravel->basePath('bootstrap/app.php')
         );
-        // copy an d set service providers
+        // copy and set service providers
         $this->saveStub(
             $this->resolveStubPath('/../../stubs/Providers/LarascaffProvider.php'),
             [
@@ -56,39 +56,33 @@ class Install extends BaseCommand
         $this->components->info('Copying asset files..');
 
         $this->filesystem->copy(__DIR__ . '/../../stubs/bootstrap/providers.php', base_path('bootstrap/providers.php'));
-        $this->filesystem->copy(__DIR__ . '/../../stubs/UserFactory.php', database_path('factories/UserFactory.php'));
-        $this->filesystem->copy(__DIR__ . '/../../stubs/User.php', app_path('Models/User.php'));
-        $this->filesystem->copy(__DIR__ . '/../../stubs/Media.php', app_path('Models/Media.php'));
 
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Auth', app_path('Http/Controllers/Auth'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/resources', base_path('resources'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Requests', app_path('Http/Requests'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Larascaff', app_path('Larascaff'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/seeders', database_path('seeders'));
         $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/rootFile', base_path(''));
 
         if (! $this->filesystem->isDirectory(public_path('larascaff')) && ! is_link(public_path('larascaff'))) {
-            $this->call('larascaff:link-asset');
+            $this->call('larascaff:link');
         }
 
         $this->call('vendor:publish', [
             '--tag' => 'larascaff-migration',
         ]);
 
-        $this->call('vendor:publish', [
-            '--tag' => 'larascaff-config',
-        ]);
+        // $this->call('vendor:publish', [
+        //     '--tag' => 'larascaff-config',
+        // ]);
 
-        // NPM Packages...
         $this->updateNodePackages(callback: function ($packages) {
             return [
                 '@tailwindcss/forms' => '^0.5.2',
                 '@tailwindcss/typography' => '^0.5.12',
                 'autoprefixer' => '^10.4.2',
                 'glob' => '^10.3.12',
-                'laravel-vite-plugin' => '^1.0',
+                'laravel-vite-plugin' => '^1.2.0',
                 'tailwind-merge' => '^2.5.2',
                 'tailwindcss' => '^3.4.13',
+                'vite' => '^6.2.4',
             ] + $packages;
         }, dev: true);
 

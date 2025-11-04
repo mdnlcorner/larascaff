@@ -195,7 +195,7 @@ class Table extends DataTable
                 'id' => null,
                 ...$confirmation,
             ];
-            $this->tableActions[$action->getName()] = $options;
+            $this->tableActions[$options['name']] = $options;
         }
 
         $this->tableActions = $this->tableActions->filter(function ($item) {
@@ -265,7 +265,6 @@ class Table extends DataTable
                     foreach ($this->getActions() as $action) {
                         if ($action['show']($model)) {
                             $action['url'] = str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']);
-                            // dd($action);
                             $action['handler']['id'] = $model->{$model->getRouteKeyName()};
                             $action['handler'] = json_encode($action['handler']);
                             $actions[] = $action;

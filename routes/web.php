@@ -6,11 +6,14 @@ use Mulaidarinull\Larascaff\Actions\Action;
 use Mulaidarinull\Larascaff\Actions\RouteHandler;
 use Mulaidarinull\Larascaff\Forms\Components\Repeater;
 use Mulaidarinull\Larascaff\Forms\Components\Select;
+use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Notifications\NotificationRoute;
+use Mulaidarinull\Larascaff\Pages\Page;
 use Mulaidarinull\Larascaff\Pages\Uploader;
 
-Route::middleware(larascaffConfig()->getMiddleware())->group(function () {
-    Route::middleware(larascaffConfig()->getAuthMiddleware())->group(function () {
+$config = larascaffConfig();
+Route::middleware($config->getMiddleware())->group(function () use ($config) {
+    Route::middleware([...$config->getAuthMiddleware(), 'verified'])->group(function () {
         Route::get('notifications/{notification}', NotificationRoute::class)->name('notifications');
         Route::post('temp-upload', [Uploader::class, 'tempUploadHandler'])->middleware('signed')->name('temp-upload');
         Route::post('uploader', [Uploader::class, 'uploadHandler'])->middleware('signed')->name('uploader');
@@ -22,15 +25,17 @@ Route::middleware(larascaffConfig()->getMiddleware())->group(function () {
         // Pages route
         File::ensureDirectoryExists(app_path('Larascaff/Pages'));
         foreach (File::allFiles(app_path('Larascaff/Pages')) as $page) {
-            $class = 'App\\Larascaff\\Pages\\' . (str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $page->getRelativePathname()));
-            $class::registerRoutes();
+            /** @var Page */
+            $page = 'App\\Larascaff\\Pages\\' . (str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $page->getRelativePathname()));
+            $page::registerRoutes();
         }
 
         // Modules route
         File::ensureDirectoryExists(app_path('Larascaff/Modules'));
         foreach (File::allFiles(app_path('Larascaff/Modules')) as $module) {
-            $class = 'App\\Larascaff\\Modules\\' . (str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $module->getRelativePathname()));
-            $class::registerRoutes();
+            /** @var Module */
+            $module = 'App\\Larascaff\\Modules\\' . (str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $module->getRelativePathname()));
+            $module::registerRoutes();
         }
     });
     require __DIR__ . '/auth.php';

@@ -5,7 +5,7 @@ namespace Mulaidarinull\Larascaff\Widgets;
 use ArrayAccess;
 use Mulaidarinull\Larascaff\Enums\ColorVariant;
 use Mulaidarinull\Larascaff\Enums\IconPosition;
-use Mulaidarinull\Larascaff\Traits\HasArrayAccess;
+use Mulaidarinull\Larascaff\Concerns\HasArrayAccess;
 
 class Stat implements ArrayAccess
 {

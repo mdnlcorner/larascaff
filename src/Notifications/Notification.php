@@ -6,9 +6,9 @@ use App\Models\User;
 use ArrayAccess;
 use Closure;
 use Illuminate\Database\Eloquent\Collection;
+use Mulaidarinull\Larascaff\Concerns\HasArrayAccess;
 use Mulaidarinull\Larascaff\Enums\NotificationPosition;
 use Mulaidarinull\Larascaff\Enums\NotificationType;
-use Mulaidarinull\Larascaff\Traits\HasArrayAccess;
 
 class Notification implements ArrayAccess
 {
