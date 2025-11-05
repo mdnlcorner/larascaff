@@ -38,6 +38,7 @@
         @larascaffColors
         @larascaffPlugins
         
+        <script type="module" src="{{ asset('larascaff/js/vendor/alpine.js?v='. \Mulaidarinull\Larascaff\Facades\LarascaffAsset::getVersion()) }}" ></script>
         <script type="module" src="{{ asset('larascaff/js/bootstrap.js?v='. \Mulaidarinull\Larascaff\Facades\LarascaffAsset::getVersion()) }}" ></script>
         
         @vite(['resources/css/app.css','resources/js/app.js'])
