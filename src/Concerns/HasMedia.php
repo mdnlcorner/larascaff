@@ -27,8 +27,9 @@ trait HasMedia
                 array_push($media, $uploadedFile->getFilename());
             }
 
-            $this->{$field} = $media;
-            $this->save();
+            $this->fill([
+                $field => $media,
+            ])->save();
         } else {
             $__file = new File(Storage::disk('local')->path($tmpFiles));
             Storage::disk($disk)->putFileAs(
@@ -37,8 +38,9 @@ trait HasMedia
                 name: $__file->getFilename()
             );
 
-            $this->{$field} = $__file->getFilename();
-            $this->save();
+            $this->fill([
+                $field => $__file->getFilename(),
+            ])->save();
         }
     }
 
@@ -67,8 +69,9 @@ trait HasMedia
 
             unset($this->oldModelValue);
 
-            $this->{$field} = $media;
-            $this->save();
+            $this->fill([
+                $field => $media,
+            ])->save();
 
             foreach ($existingMedia as $item) {
                 if (! in_array($item, $tmpFiles)) {
@@ -87,8 +90,9 @@ trait HasMedia
 
                 unset($this->oldModelValue);
 
-                $this->{$field} = null;
-                $this->save();
+                $this->fill([
+                    $field => null,
+                ])->save();
 
                 return;
             }
@@ -106,8 +110,9 @@ trait HasMedia
 
                 unset($this->oldModelValue);
 
-                $this->{$field} = $uploadeFile->getFilename();
-                $this->save();
+                $this->fill([
+                    $field => $uploadeFile->getFilename(),
+                ])->save();
             }
         }
     }

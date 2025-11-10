@@ -61,11 +61,13 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
     public function handle()
     {
         $name = $this->argument('name');
+
         if (strtolower(substr($name, -6)) == 'module') {
             $name = substr($name, 0, strlen($name) - 6);
         }
 
         $this->pathList = array_map(fn ($item) => ucfirst($item), explode('/', $name));
+
         if ($this->option('model')) {
             $model = explode('/', $this->option('model'));
         }
@@ -91,10 +93,12 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
         }
 
         $this->makeModel();
+
         if ($this->option('javascript')) {
             $this->makeJs();
         }
         $this->makeMenu(Pluralizer::plural($this->moduleName, null));
+
         $this->makeModule();
     }
 
@@ -105,6 +109,7 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
         $file = $this->laravel->basePath('/resources/views/pages/' . "{$this->view}-form.blade.php");
 
         $this->makeDirectory(dirname($file));
+
         $this->saveStub($stubFile, [], $file, 'View');
     }
 
@@ -117,6 +122,7 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
         $file = $this->laravel->basePath('/resources/js/pages/' . "{$this->js}.js");
 
         $this->makeDirectory(dirname($file));
+
         $this->saveStub($stubFile, [], $file, 'Javascript');
     }
 
