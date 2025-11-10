@@ -128,10 +128,8 @@ class BaseUserModule extends Module
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->editColumn(fn (User $user) => $user->created_at->format('d-m-Y H:i')),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->editColumn(fn (User $user) => $user->updated_at->format('d-m-Y H:i')),
+                Tables\Columns\DateColumn::make('created_at')->format('d-m-Y H:i'),
+                Tables\Columns\DateColumn::make('updated_at')->format('d-m-Y H:i'),
             ]);
     }
 }

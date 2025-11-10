@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Tables;
 
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,7 @@ use Mulaidarinull\Larascaff\Enums\ColorVariant;
 use Mulaidarinull\Larascaff\Forms\Components\DatepickerRange;
 use Mulaidarinull\Larascaff\Info\Components\Icon;
 use Mulaidarinull\Larascaff\Tables\Columns\Column;
+use Mulaidarinull\Larascaff\Tables\Columns\DateColumn;
 use Mulaidarinull\Larascaff\Tables\Columns\IconColumn;
 use Mulaidarinull\Larascaff\Tables\Columns\ImageColumn;
 use Mulaidarinull\Larascaff\Tables\Components\Tab;
@@ -47,9 +49,13 @@ class Table extends DataTable
     public function __construct(Model | EloquentBuilder $model, protected string $url, protected ?string $actionHandler = null)
     {
         $this->model = get_class($model);
+
         $this->query = $model;
+
         $this->url = $url;
+
         $this->actionHandler = $actionHandler;
+
         $this->generateTable();
     }
 
@@ -433,6 +439,15 @@ class Table extends DataTable
                         $label = $actionType->view();
                     }
 
+                    // define date column
+                    if ($type == 'dateColumn') {
+                        if ($record->{$field} instanceof Carbon) {
+                            $label = $record->{$field}->format($actionType->getFormat());
+                        } else {
+                            $label = date($actionType->getFormat(), strtotime($record->{$field}));
+                        }
+                    }
+
                     if (! isset($label)) {
                         $label = $record->{$field};
                     }
@@ -488,6 +503,11 @@ class Table extends DataTable
             // define image column
             if ($column instanceof ImageColumn) {
                 $rawColumns[$column['data']]['imageColumn'] = $column;
+            }
+
+            // define date column
+            if ($column instanceof DateColumn) {
+                $rawColumns[$column['data']]['dateColumn'] = $column;
             }
         }
     }

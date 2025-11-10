@@ -14,7 +14,7 @@ final class {{ class }} extends Module
     public static function formBuilder(Forms\Components\Form $form): Forms\Components\Form
     {
         return $form->schema([
-            Forms\Components\TextInput::make('name'),
+            {{ forms }}
         ]);
     }
 
@@ -30,15 +30,7 @@ final class {{ class }} extends Module
                 //
             })
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->editColumn(function ({{ model }} ${{ modelVariable }}) {
-                        return ${{ modelVariable }}->created_at->format('d-m-Y H:i');
-                    }),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->editColumn(function ({{ model }} ${{ modelVariable }}) {
-                        return ${{ modelVariable }}->updated_at->format('d-m-Y H:i');
-                    }),
+                {{ tableColumns }}
             ]);
     }
 }
