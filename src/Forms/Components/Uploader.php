@@ -14,6 +14,9 @@ class Uploader extends Field
     protected bool $multiple = false;
 
     protected array $config = [
+        'allowImageCrop' => false,
+        'allowImageResize' => false,
+        'imageResizeUpscale' => true,
         'imageEditor' => false,
         'allowReorder' => false,
         'allowRemove' => true,
@@ -37,16 +40,37 @@ class Uploader extends Field
         return $this;
     }
 
-    public function allowReorder(bool $allowReorder = true): static
+    public function allowImageCrop(bool $status): static
     {
-        $this->config['allowReorder'] = $allowReorder;
+        $this->config['allowImageCrop'] = $status;
 
         return $this;
     }
 
-    public function allowImagePreview(bool $allowImagePreview = true): static
+    public function allowReorder(bool $status = true): static
     {
-        $this->config['allowImagePreview'] = $allowImagePreview;
+        $this->config['allowReorder'] = $status;
+
+        return $this;
+    }
+
+    public function allowImageResize(bool $status = true): static
+    {
+        $this->config['allowImageResize'] = $status;
+
+        return $this;
+    }
+
+    public function imageResizeUpscale(bool $status = true): static
+    {
+        $this->config['imageResizeUpscale'] = $status;
+
+        return $this;
+    }
+
+    public function allowImagePreview(bool $status = true): static
+    {
+        $this->config['allowImagePreview'] = $status;
 
         return $this;
     }
@@ -65,9 +89,9 @@ class Uploader extends Field
         return $this;
     }
 
-    public function linkPreview(bool $linkPreview = true): static
+    public function linkPreview(bool $status = true): static
     {
-        $this->config['linkPreview'] = $linkPreview;
+        $this->config['linkPreview'] = $status;
 
         return $this;
     }
@@ -86,9 +110,9 @@ class Uploader extends Field
         return $this;
     }
 
-    public function multiple(bool $multiple = true): static
+    public function multiple(bool $status = true): static
     {
-        $this->multiple = $multiple;
+        $this->multiple = $status;
 
         return $this;
     }
@@ -121,16 +145,16 @@ class Uploader extends Field
         return $this;
     }
 
-    public function allowRemove(bool $allowRemove = true): static
+    public function allowRemove(bool $status = true): static
     {
-        $this->config['allowRemove'] = $allowRemove;
+        $this->config['allowRemove'] = $status;
 
         return $this;
     }
 
-    public function imageEditor(bool $editor = true): static
+    public function imageEditor(bool $status = true): static
     {
-        $this->config['imageEditor'] = $editor;
+        $this->config['imageEditor'] = $status;
 
         return $this;
     }
@@ -157,6 +181,7 @@ class Uploader extends Field
     {
         $config = $this->config;
 
+        // avatar
         if (isset($config['stylePanelLayout']) && $config['stylePanelLayout'] == 'compact circle') {
             if (! isset($config['imageResizeTargetHeight'])) {
                 $config['imageResizeTargetHeight'] = 200;

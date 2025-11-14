@@ -15,7 +15,7 @@ import '../../../scss/components/_filepond.scss';
 // import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
 // import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css';
 
-const blobToBase64 = (blob: any) => {
+const blobToBase64 = (blob) => {
     const reader = new FileReader();
     reader.readAsDataURL(blob);
 
@@ -26,20 +26,12 @@ const blobToBase64 = (blob: any) => {
     });
 };
 
-type Config = {
-    tempUploadUrl?: string;
-    imageEditor?: boolean;
-    cropperOptions?: Cropper.Options<HTMLImageElement>;
-    files: [];
-    path?: string;
-    linkPreview?: boolean;
-};
 
-function initUploader({ files = [], ...config }: FilePond.FilePondOptions & Config) {
+function initUploader({ files = [], ...config }) {
     return {
         FilePond: FilePond,
         init: async function () {
-            const csrfToken = document.querySelector<HTMLMetaElement>('meta[name=csrf_token]')?.getAttribute('content') ?? '';
+            const csrfToken = document.querySelector('meta[name=csrf_token]')?.getAttribute('content') ?? '';
             // Create a FilePond instance
             this.FilePond = FilePond;
             this.FilePond.registerPlugin(FilePondPluginFileValidateType);
@@ -55,7 +47,7 @@ function initUploader({ files = [], ...config }: FilePond.FilePondOptions & Conf
 
             if (config.imageEditor) {
                 config.imageEditEditor = {
-                    open: async (imageToEdit: any) => {
+                    open: async (imageToEdit) => {
                         if (config.imageEditor) {
                             let cropperWrapper = document.createElement('div');
                             cropperWrapper.className =
@@ -67,12 +59,12 @@ function initUploader({ files = [], ...config }: FilePond.FilePondOptions & Conf
                                 document.body.append(cropperWrapper);
                             }
 
-                            let imageEl = cropperWrapper.querySelector<HTMLImageElement>('.editor') as HTMLImageElement;
-                            imageEl?.setAttribute('src', (await blobToBase64(imageToEdit)) as any);
+                            let imageEl = cropperWrapper.querySelector('.editor');
+                            imageEl?.setAttribute('src', (await blobToBase64(imageToEdit)));
 
-                            let acpectRatio = function (): number {
+                            let acpectRatio = function () {
                                 if (config.imageCropAspectRatio) {
-                                    let ratio: string[] = config?.imageCropAspectRatio.split(':');
+                                    let ratio = config?.imageCropAspectRatio.split(':');
                                     return parseInt(ratio[0]) / parseInt(ratio[1]);
                                 }
                                 return 1 / 1;
@@ -120,19 +112,21 @@ function initUploader({ files = [], ...config }: FilePond.FilePondOptions & Conf
                     },
                 };
             }
+
+            console.log(config)
             const pond = this.FilePond.create(this.$refs.input, {
                 // resize options
-                allowImageResize: true,
-                imageResizeMode: config?.imageResizeMode ?? 'cover',
-                imageResizeTargetWidth: config?.imageResizeTargetWidth ?? 600,
-                imageResizeTargetHeight: config?.imageResizeTargetHeight ?? 600,
-                imageResizeUpscale: true,
+                allowImageResize: config.allowImageResize ?? false,
+                imageResizeMode: config.imageResizeMode ?? 'cover',
+                imageResizeTargetWidth: config.imageResizeTargetWidth,
+                imageResizeTargetHeight: config.imageResizeTargetHeight,
+                imageResizeUpscale: config.imageResizeUpscale ?? true,
                 // crop options
-                allowImageCrop: true,
-                imageCropAspectRatio: config?.imageCropAspectRatio,
+                allowImageCrop: config.allowImageCrop ?? false,
+                imageCropAspectRatio: config.imageCropAspectRatio ?? '1:1',
                 // preview options
-                allowImagePreview: config?.allowImagePreview,
-                imagePreviewHeight: config?.imagePreviewHeight ?? 170,
+                allowImagePreview: config.allowImagePreview ?? true,
+                imagePreviewHeight: config.imagePreviewHeight ?? 170,
                 allowReorder: config?.allowReorder ?? true,
                 allowImageTransform: true,
                 // allowAudioPreview: true,
@@ -168,17 +162,17 @@ function initUploader({ files = [], ...config }: FilePond.FilePondOptions & Conf
             if (config.linkPreview) {
                 pond.on('init', function () {
                     pond.element.querySelector(`input`).setAttribute('data-input-name', config.name);
-                    pond.element.querySelectorAll('.filepond--file-info-main').forEach((el: any) => {
+                    pond.element.querySelectorAll('.filepond--file-info-main').forEach((el) => {
                         const filename = el.innerHTML;
                         el.innerHTML = `<a target="_blank" class="pointer-events-auto" href="/${path + filename}"> [<u class="mr-2">Preview</u>]</a> ${filename} `;
                     });
                 });
             }
 
-            var btnAction: HTMLButtonElement;
-            var btnActionLabel: string;
+            var btnAction;
+            var btnActionLabel;
             pond.on('processfilestart', function () {
-                btnAction = pond.element.closest('form').querySelector('button[type=submit]') as HTMLButtonElement;
+                btnAction = pond.element.closest('form').querySelector('button[type=submit]');
                 if (btnAction) {
                     btnActionLabel = btnAction.innerHTML;
                     btnAction.setAttribute('disabled', 'true');
@@ -192,7 +186,7 @@ function initUploader({ files = [], ...config }: FilePond.FilePondOptions & Conf
                 }
             });
         },
-        registerPlugin: function (plugin: any) {
+        registerPlugin: function (plugin) {
             if (plugin) {
                 this.FilePond.registerPlugin(plugin);
             }

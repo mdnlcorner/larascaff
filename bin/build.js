@@ -72,7 +72,6 @@ const defaultOptions = {
     ],
 }
 const components = [
-    'uploader',
     'datatable',
     'chart',
     'datepicker',
@@ -81,13 +80,22 @@ const components = [
     'richeditor',
     'markdown-editor'
 ];
-compile({
-    ...defaultOptions,
-    entryPoints: [
-            `./resources/js/components/choices/index.js`,
+
+const componentsJs = [
+    'choices',
+    'uploader',
+];
+
+componentsJs.forEach(component => {
+    compile({
+        ...defaultOptions,
+        entryPoints: [
+            `./resources/js/components/${component}/index.js`,
         ],
-        outfile: `./dist/components/choices.js`,
+        outfile: `./dist/components/${component}.js`,
+    })
 })
+
 components.forEach(component => {
     compile({
         ...defaultOptions,
