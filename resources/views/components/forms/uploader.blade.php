@@ -13,8 +13,8 @@
 <div 
     x-ignore 
     x-load 
-    x-load-src="{{ asset('larascaff/components/uploader.js?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}" 
-    x-load-css="['{{ asset('larascaff/components/uploader.css?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
+    x-load-src="{{ asset('larascaff/components/uploader.js?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}" 
+    x-load-css="['{{ asset('larascaff/components/uploader.css?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
     x-data="initUploader({
         tempUploadUrl: '{{ url()->temporarySignedRoute('temp-upload', now()->addMinutes(180)) }}',
         files: @js($files),

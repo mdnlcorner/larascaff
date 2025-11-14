@@ -15,14 +15,14 @@ trait Registration
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure | string | array | null $registrationForm = null;
+    protected Closure|string|array|null $registrationForm = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure | string | array | null $registrationAction = null;
+    protected Closure|string|array|null $registrationAction = null;
 
-    public function registration(?string $url = null, Closure | array | string | null $form = null, Closure | array | string | null $action = null): static
+    public function registration(?string $url = null, Closure|array|string|null $form = null, Closure|array|string|null $action = null): static
     {
         $this->hasRegistration = true;
 

@@ -9,7 +9,7 @@ class Icon extends Info
 {
     protected ?string $color = null;
 
-    protected Closure | string | null $icon = null;
+    protected Closure|string|null $icon = null;
 
     protected bool $boolean = false;
 
@@ -27,7 +27,7 @@ class Icon extends Info
         return $this;
     }
 
-    public function icon(Closure | string $icon): static
+    public function icon(Closure|string $icon): static
     {
         $this->icon = $icon;
 

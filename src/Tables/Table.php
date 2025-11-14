@@ -27,11 +27,11 @@ use Yajra\DataTables\Services\DataTable;
 
 class Table extends DataTable
 {
-    protected EloquentBuilder | Model | null $query = null;
+    protected EloquentBuilder|Model|null $query = null;
 
     protected ?EloquentTable $eloquentTable = null;
 
-    protected Collection | array $tableActions = [];
+    protected Collection|array $tableActions = [];
 
     protected ActionsPosition $actionsPosition = ActionsPosition::AfterColumns;
 
@@ -46,7 +46,7 @@ class Table extends DataTable
 
     protected bool $isWidget = false;
 
-    public function __construct(Model | EloquentBuilder $model, protected string $url, protected ?string $actionHandler = null)
+    public function __construct(Model|EloquentBuilder $model, protected string $url, protected ?string $actionHandler = null)
     {
         $this->model = get_class($model);
 
@@ -76,7 +76,7 @@ class Table extends DataTable
     /**
      * Sets DT_RowClass template.
      */
-    public function rowClass(Closure | string | null $class = null): static
+    public function rowClass(Closure|string|null $class = null): static
     {
         $this->eloquentTable->setRowClass($class);
 
@@ -127,7 +127,7 @@ class Table extends DataTable
                 $this->resolveClosureParams($query);
             }
 
-            $filter->attr('data-filter=' . $tableId);
+            $filter->attr('data-filter='.$tableId);
             $filterTable .= $filter->view();
         }
 
@@ -180,7 +180,7 @@ class Table extends DataTable
 
         foreach ($actions as $action) {
             $options = current($action->getOptions());
-            $options['url'] = url($this->url . $options['path']);
+            $options['url'] = url($this->url.$options['path']);
 
             $confirmation = [];
             if ($options['hasConfirmation']) {
@@ -210,7 +210,7 @@ class Table extends DataTable
             }
 
             if ($item['permission']) {
-                return user()->can($item['permission'] . ' ' . $this->url);
+                return user()->can($item['permission'].' '.$this->url);
             }
 
             return true;
@@ -252,7 +252,7 @@ class Table extends DataTable
         return $this;
     }
 
-    public function getQuery(): Model | EloquentBuilder | QueryBuilder
+    public function getQuery(): Model|EloquentBuilder|QueryBuilder
     {
         return $this->query;
     }
@@ -315,7 +315,7 @@ class Table extends DataTable
         return $this->filters ??= collect([]);
     }
 
-    public function query(callable | EloquentBuilder | null $cb = null): EloquentBuilder | static
+    public function query(callable|EloquentBuilder|null $cb = null): EloquentBuilder|static
     {
         if (is_callable($cb)) {
             $cb($this->query);
@@ -349,7 +349,7 @@ class Table extends DataTable
                     'previous' => '←',
                 ]])
                 ->searchDelay(800)
-                ->minifiedAjax($this->isWidget ? url($this->url . '?tableId=' . $tableId) : '')
+                ->minifiedAjax($this->isWidget ? url($this->url.'?tableId='.$tableId) : '')
                 ->selectStyleSingle()
                 ->orderBy(1, 'desc')
                 ->setTableId($tableId);
@@ -454,14 +454,14 @@ class Table extends DataTable
                 }
 
                 if (isset($color)) {
-                    $html = '<span class="' . 'text-' . $color . '">' . $label . '</span>';
+                    $html = '<span class="'.'text-'.$color.'">'.$label.'</span>';
                 }
 
                 if (isset($hasBadge)) {
                     if (! isset($color)) {
                         $color = 'primary';
                     }
-                    $html = '<div class="inline-block px-2 py-1 text-' . $color . ' text-xs font-semibold rounded-md ' . 'bg-' . $color . '/20 border border-' . $color . '">' . $label . '</div>';
+                    $html = '<div class="inline-block px-2 py-1 text-'.$color.' text-xs font-semibold rounded-md '.'bg-'.$color.'/20 border border-'.$color.'">'.$label.'</div>';
                 }
 
                 if (isset($html)) {
@@ -558,6 +558,6 @@ class Table extends DataTable
 
     protected function filename(): string
     {
-        return '_' . date('YmdHis');
+        return '_'.date('YmdHis');
     }
 }

@@ -9,35 +9,37 @@
     'options' => [],
     'placeholder' => null,
     'value' => null,
-    'serverSide' => false,
+    'model' => false,
     'config' => [],
     'depend' => false,
+    'dependTo' => [],
     'dependValue' => null,
     'dependColumn' => null,
     'columnValue' => null,
     'columnLabel' => null,
-    'modifyQuery' => null,
     'columnSpan' => '1',
     'limit' => 20,
     'attr' => '',
+    'module' => $module,
 ])
 @if ($searchable)
     <div 
         x-ignore 
         x-load 
-        x-load-src="{{ asset('larascaff/components/choices.js?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
-        x-load-css="['{{ asset('larascaff/components/choices.css?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" x-data="initSelect({
+        x-load-src="{{ asset('larascaff/components/choices.js?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
+        x-load-css="['{{ asset('larascaff/components/choices.css?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" x-data="initSelect({
             options: @js($options),
             value: @js($value),
-            serverSide: @js($serverSide),
+            model: @js($model),
             depend: @js($depend),
+            dependTo: @js($dependTo),
             dependValue: @js($dependValue),
             dependColumn: @js($dependColumn),
             placeholder: @js($placeholder),
             columnLabel: @js($columnLabel),
             columnValue: @js($columnValue),
-            modifyQuery: @js($modifyQuery),
             limit: @js($limit),
+            module: @js($module),
         })"
         @class(["w-full form-wrapper", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])
     >

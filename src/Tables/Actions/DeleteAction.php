@@ -46,7 +46,7 @@ class DeleteAction extends Action
 
     protected function handle(Model $record)
     {
-        Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
+        Gate::authorize($this->getPermission().' '.$this->getModule()::getUrl());
 
         if ($form = Arr::get($this->getModule()::getActions(), 'create.form')) {
             $this->form($form);

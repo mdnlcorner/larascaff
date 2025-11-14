@@ -8,7 +8,7 @@ trait HasAvatar
 {
     public function getAvatar(): string
     {
-        return Storage::disk('public')->url($this->getAvatarPath() . '/' . $this->avatar);
+        return Storage::disk('public')->url($this->getAvatarPath().'/'.$this->avatar);
     }
 
     public function getAvatarPath(): string

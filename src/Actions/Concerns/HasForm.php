@@ -9,7 +9,7 @@ trait HasForm
 {
     protected array $formData = [];
 
-    protected Closure | bool | null $form = null;
+    protected Closure|bool|null $form = null;
 
     protected bool $hasForm = true;
 
@@ -33,7 +33,7 @@ trait HasForm
         }
     }
 
-    public function form(Closure | bool | null $form = null): static
+    public function form(Closure|bool|null $form = null): static
     {
         $this->form = $form;
         $this->hasForm = true;
@@ -54,7 +54,7 @@ trait HasForm
         return $this->formData;
     }
 
-    protected function inspectFormBuilder(Collection | array $fields, mixed $relationship = null)
+    protected function inspectFormBuilder(Collection|array $fields, mixed $relationship = null)
     {
         foreach ($fields as $field) {
             if (method_exists($field, 'getValidations')) {

@@ -22,7 +22,7 @@ class MenuSeeder extends Seeder
         File::ensureDirectoryExists(app_path('Larascaff/Pages'));
 
         foreach (File::allFiles(app_path('Larascaff/Pages')) as $pages) {
-            $module = getFileNamespace($pages->getContents()) . '\\' . $pages->getFilenameWithoutExtension();
+            $module = getFileNamespace($pages->getContents()).'\\'.$pages->getFilenameWithoutExtension();
             if ($module) {
                 $module::makeMenu();
             }
@@ -30,7 +30,7 @@ class MenuSeeder extends Seeder
 
         File::ensureDirectoryExists(app_path('Larascaff/Modules'));
         foreach (File::allFiles(app_path('Larascaff/Modules')) as $modules) {
-            $module = getFileNamespace($modules->getContents()) . '\\' . $modules->getFilenameWithoutExtension();
+            $module = getFileNamespace($modules->getContents()).'\\'.$modules->getFilenameWithoutExtension();
             if ($module) {
                 $module::makeMenu();
             }

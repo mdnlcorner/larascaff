@@ -26,7 +26,7 @@ Route::middleware($config->getMiddleware())->group(function () use ($config) {
         File::ensureDirectoryExists(app_path('Larascaff/Pages'));
         foreach (File::allFiles(app_path('Larascaff/Pages')) as $page) {
             /** @var Page */
-            $page = 'App\\Larascaff\\Pages\\' . (str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $page->getRelativePathname()));
+            $page = 'App\\Larascaff\\Pages\\'.(str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $page->getRelativePathname()));
             $page::registerRoutes();
         }
 
@@ -34,9 +34,9 @@ Route::middleware($config->getMiddleware())->group(function () use ($config) {
         File::ensureDirectoryExists(app_path('Larascaff/Modules'));
         foreach (File::allFiles(app_path('Larascaff/Modules')) as $module) {
             /** @var Module */
-            $module = 'App\\Larascaff\\Modules\\' . (str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $module->getRelativePathname()));
+            $module = 'App\\Larascaff\\Modules\\'.(str_replace([DIRECTORY_SEPARATOR, '.php'], ['\\', ''], $module->getRelativePathname()));
             $module::registerRoutes();
         }
     });
-    require __DIR__ . '/auth.php';
+    require __DIR__.'/auth.php';
 });

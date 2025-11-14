@@ -78,15 +78,15 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
 
         $this->tableName = $this->argument('table') ?? Str::snake(Pluralizer::plural($this->baseModelClass));
 
-        $this->modelNamespace = 'App\\Models' . (count($model ?? $this->pathList) ? '\\' : '') . implode('\\', $model ?? $this->pathList);
+        $this->modelNamespace = 'App\\Models'.(count($model ?? $this->pathList) ? '\\' : '').implode('\\', $model ?? $this->pathList);
 
-        $this->modelClass = $this->modelNamespace . str($this->baseModelClass)->start('\\');
+        $this->modelClass = $this->modelNamespace.str($this->baseModelClass)->start('\\');
 
         $this->path = implode('/', $this->pathList);
 
         $this->pathModel = implode('/', $model ?? $this->pathList);
 
-        $this->view = strtolower(($this->path != '' ? $this->path . '/' : '') . "{$this->moduleName}");
+        $this->view = strtolower(($this->path != '' ? $this->path.'/' : '')."{$this->moduleName}");
 
         if (Schema::hasTable($tableName = (new $this->modelClass)->getTable())) {
             $this->tableColumns = Schema::getColumns($tableName);
@@ -106,7 +106,7 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
     {
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.form.stub');
 
-        $file = $this->laravel->basePath('/resources/views/pages/' . "{$this->view}-form.blade.php");
+        $file = $this->laravel->basePath('/resources/views/pages/'."{$this->view}-form.blade.php");
 
         $this->makeDirectory(dirname($file));
 
@@ -115,11 +115,11 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
 
     protected function makeJs()
     {
-        $this->js = strtolower(($this->path != '' ? $this->path . '/' : '') . "{$this->moduleName}");
+        $this->js = strtolower(($this->path != '' ? $this->path.'/' : '')."{$this->moduleName}");
 
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.js.stub');
 
-        $file = $this->laravel->basePath('/resources/js/pages/' . "{$this->js}.js");
+        $file = $this->laravel->basePath('/resources/js/pages/'."{$this->js}.js");
 
         $this->makeDirectory(dirname($file));
 
@@ -128,11 +128,11 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
 
     protected function makeModule()
     {
-        $moduleClass = $this->moduleName . 'Module';
+        $moduleClass = $this->moduleName.'Module';
 
         $replaces = [
-            '{{ namespace }}' => 'App\\Larascaff\\Modules' . (count($this->pathList) ? '\\' : '') . implode('\\', $this->pathList),
-            '{{ modelNamespace }}' => $this->modelNamespace . '\\' . $this->baseModelClass,
+            '{{ namespace }}' => 'App\\Larascaff\\Modules'.(count($this->pathList) ? '\\' : '').implode('\\', $this->pathList),
+            '{{ modelNamespace }}' => $this->modelNamespace.'\\'.$this->baseModelClass,
             '{{ class }}' => $moduleClass,
             '{{ view }}' => str_replace('/', '.', $this->view),
             '{{ model }}' => $this->baseModelClass,
@@ -141,9 +141,9 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
             '{{ forms }}' => $this->generateForms(),
         ];
 
-        $stubFile = $this->resolveStubPath('/../../stubs/' . 'larascaff.module-builder.stub');
+        $stubFile = $this->resolveStubPath('/../../stubs/'.'larascaff.module-builder.stub');
 
-        $file = $this->laravel->basePath('/app/Larascaff/Modules' . ($this->path != '' ? '/' . $this->path : '') . "/{$moduleClass}.php");
+        $file = $this->laravel->basePath('/app/Larascaff/Modules'.($this->path != '' ? '/'.$this->path : '')."/{$moduleClass}.php");
 
         $this->makeDirectory(dirname($file));
 
@@ -156,13 +156,13 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
             '{{ namespace }}' => $this->modelNamespace,
             '{{ class }}' => $this->baseModelClass,
             '{{ table }}' => $this->tableName,
-            '{{ useNotificationTrait }}' => $this->option('notification') ? "\n" . "use Mulaidarinull\Larascaff\Traits\HasNotification;" : '',
+            '{{ useNotificationTrait }}' => $this->option('notification') ? "\n"."use Mulaidarinull\Larascaff\Traits\HasNotification;" : '',
             '{{ notificationTrait }}' => $this->option('notification') ? ', HasNotification' : '',
         ];
 
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.model.stub');
 
-        $file = $this->laravel->basePath('app/Models' . ($this->pathModel != '' ? '/' . $this->pathModel : '') . "/{$this->baseModelClass}.php");
+        $file = $this->laravel->basePath('app/Models'.($this->pathModel != '' ? '/'.$this->pathModel : '')."/{$this->baseModelClass}.php");
 
         $this->makeDirectory(dirname($file));
 
@@ -179,7 +179,7 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
         $this->saveStub($stubFile, $replaces, $file, 'Model');
 
         if ($this->option('migration')) {
-            $this->call('make:migration', ['name' => 'create' . Pluralizer::plural($this->moduleName, null) . '_table']);
+            $this->call('make:migration', ['name' => 'create'.Pluralizer::plural($this->moduleName, null).'_table']);
         }
     }
 
@@ -191,14 +191,14 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
             $type = $column['type_name'];
             if (! in_array($name, ['id', 'uuid', 'created_at', 'updated_at'])) {
                 if (in_array($type, ['date', 'datetime', 'timestamp'])) {
-                    $forms[] = "Forms\Components\DatePicker::make('" . $name . "')";
+                    $forms[] = "Forms\Components\DatePicker::make('".$name."')";
                 } else {
-                    $forms[] = "Forms\Components\TextInput::make('" . $name . "')";
+                    $forms[] = "Forms\Components\TextInput::make('".$name."')";
                 }
             }
         }
         if (count($forms)) {
-            return implode(',' . PHP_EOL . '            ', $forms) . ',';
+            return implode(','.PHP_EOL.'            ', $forms).',';
         } else {
             return '//';
         }
@@ -212,14 +212,14 @@ class MakeModule extends BaseCommand implements PromptsForMissingInput
             $type = $column['type_name'];
             if (! in_array($name, ['id', 'uuid'])) {
                 if (in_array($type, ['date', 'datetime', 'timestamp'])) {
-                    $columns[] = "Tables\Columns\DateColumn::make('" . $name . "')";
+                    $columns[] = "Tables\Columns\DateColumn::make('".$name."')";
                 } else {
-                    $columns[] = "Tables\Columns\TextColumn::make('" . $name . "')";
+                    $columns[] = "Tables\Columns\TextColumn::make('".$name."')";
                 }
             }
         }
         if (count($columns)) {
-            return implode(',' . PHP_EOL . '                ', $columns) . ',';
+            return implode(','.PHP_EOL.'                ', $columns).',';
         } else {
             return '//';
         }

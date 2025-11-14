@@ -88,7 +88,7 @@ class Action
         }
     }
 
-    public function show(Closure | bool $show): static
+    public function show(Closure|bool $show): static
     {
         $this->show = is_bool($show) ? fn () => $show : $show;
 
@@ -103,7 +103,7 @@ class Action
         return $this;
     }
 
-    public function color(string | \Mulaidarinull\Larascaff\Enums\ColorVariant $color): static
+    public function color(string|\Mulaidarinull\Larascaff\Enums\ColorVariant $color): static
     {
         if ($color instanceof BackedEnum) {
             $color = $color->value;
@@ -246,7 +246,7 @@ class Action
                  */
                 $form = $this->resolveClosureParams($actions['form']);
 
-                $actions['modalTitle'] = str($actions['label'] . ' ' . $this->getModule()::getInstanceModel()->getTable())->headline()->singular()->toString();
+                $actions['modalTitle'] = str($actions['label'].' '.$this->getModule()::getInstanceModel()->getTable())->headline()->singular()->toString();
 
                 $this->callHook($actions['beforeFormFilled']);
 
@@ -284,7 +284,7 @@ class Action
     protected function actionHandler(Request $request, Model $record, ?Closure $action = null): \Illuminate\Http\JsonResponse
     {
         if ($this->getPermission()) {
-            Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
+            Gate::authorize($this->getPermission().' '.$this->getModule()::getUrl());
         }
 
         $this->inspectFormBuilder($this->getForm()->getComponents());

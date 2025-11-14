@@ -21,7 +21,7 @@ class ImageColumn extends Column
 
     protected ?int $imageSize = null;
 
-    public static function make(array | string $data = [], string $name = ''): static
+    public static function make(array|string $data = [], string $name = ''): static
     {
         $static = parent::make($data, $name);
         $static->orderable(false);
@@ -74,10 +74,10 @@ class ImageColumn extends Column
 
         if (is_array($this->record->{$this->name})) {
             foreach ($this->record->{$this->name} as $record) {
-                $sources[] = $baseUrl . $record;
+                $sources[] = $baseUrl.$record;
             }
         } else {
-            $sources = [$baseUrl . $this->record?->{$this->name}];
+            $sources = [$baseUrl.$this->record?->{$this->name}];
         }
 
         return view('larascaff::image', [

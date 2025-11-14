@@ -23,7 +23,7 @@ trait HasRelationship
         return $this->relationship;
     }
 
-    public function relationshipHandler(Field | Layout $input, Model $model)
+    public function relationshipHandler(Field|Layout $input, Model $model)
     {
         $relationship = $model->{$input->getRelationship()}();
         switch (true) {

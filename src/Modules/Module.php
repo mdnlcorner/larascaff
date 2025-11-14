@@ -23,7 +23,7 @@ abstract class Module extends Controller
 
     protected static ?string $model = null;
 
-    protected static Model | Builder | null $instanceModel = null;
+    protected static Model|Builder|null $instanceModel = null;
 
     protected static ?string $url = null;
 
@@ -80,7 +80,7 @@ abstract class Module extends Controller
             ->toString();
     }
 
-    public static function getInstanceModel(): Model | Builder
+    public static function getInstanceModel(): Model|Builder
     {
         if (! static::$instanceModel) {
             $model = static::getModel();
@@ -116,7 +116,7 @@ abstract class Module extends Controller
         $actions = collect([]);
 
         $resolveAction = function ($action) use ($url) {
-            $action['url'] = url($url . $action['path']);
+            $action['url'] = url($url.$action['path']);
             $action['handler'] = [
                 'actionHandler' => static::class,
                 'actionType' => $action['hasForm'] === true ? 'form' : 'action',
@@ -140,7 +140,7 @@ abstract class Module extends Controller
 
         if ($validatePermission) {
             $actions->filter(function ($action) use ($url) {
-                return user()->can($action['permission'] . ' ' . $url);
+                return user()->can($action['permission'].' '.$url);
             });
         }
 
@@ -270,21 +270,21 @@ abstract class Module extends Controller
     {
         $routeName = explode('/', static::getUrl());
 
-        $implodeRouteName = (implode('.', $routeName)) . '.';
+        $implodeRouteName = (implode('.', $routeName)).'.';
 
         foreach (static::routes() as $route) {
-            $url = static::getUrl() . (str_starts_with($route['url'], '/') ? $route['url'] : '/' . $route['url']);
+            $url = static::getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
             $action = is_string($route['action']) ? [static::class, $route['action']] : $route['action'];
-            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName . $route['name'] : null);
+            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName.$route['name'] : null);
         }
 
         $lastRouteName = array_pop($routeName);
-        Route::name(implode('.', $routeName) . (count($routeName) ? '.' : ''))->group(function () use ($lastRouteName) {
-            Route::get(static::getUrl(), [static::class, 'index'])->name($lastRouteName . '.index');
+        Route::name(implode('.', $routeName).(count($routeName) ? '.' : ''))->group(function () use ($lastRouteName) {
+            Route::get(static::getUrl(), [static::class, 'index'])->name($lastRouteName.'.index');
         });
     }
 
-    public static function makeRoute($url, string | \Closure | array | null $action = null, $method = 'get', $name = null)
+    public static function makeRoute($url, string|\Closure|array|null $action = null, $method = 'get', $name = null)
     {
         return compact('method', 'action', 'url', 'name');
     }

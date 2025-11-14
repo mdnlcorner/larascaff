@@ -53,7 +53,7 @@ class DatepickerRange implements HasDatepicker, IsComponent
         return $this;
     }
 
-    public function getName(?int $index = null): array | string | null
+    public function getName(?int $index = null): array|string|null
     {
         if (! is_null($index)) {
             return $this->name[$index] ?? null;
@@ -166,7 +166,7 @@ class DatepickerRange implements HasDatepicker, IsComponent
                 $expFormat = explode($separator, $this->format);
                 $formatPhp = '';
                 foreach ($expFormat as $i) {
-                    $formatPhp .= ($formatPhp ? $separator . $map[$i] : $map[$i]);
+                    $formatPhp .= ($formatPhp ? $separator.$map[$i] : $map[$i]);
                 }
                 $this->formatPhp = $formatPhp;
             }

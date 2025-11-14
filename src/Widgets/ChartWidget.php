@@ -10,7 +10,7 @@ abstract class ChartWidget extends Widget
 {
     use WidgetOption;
 
-    protected static string | ColorVariant $color = ColorVariant::Primary;
+    protected static string|ColorVariant $color = ColorVariant::Primary;
 
     /** @return array<string,array> */
     public static function getData(): array
@@ -18,7 +18,7 @@ abstract class ChartWidget extends Widget
         return [];
     }
 
-    public static function getColor(): string | ColorVariant
+    public static function getColor(): string|ColorVariant
     {
         return static::$color;
     }
@@ -28,7 +28,7 @@ abstract class ChartWidget extends Widget
         return count(static::getData());
     }
 
-    abstract public static function getType(): string | ChartType;
+    abstract public static function getType(): string|ChartType;
 
     final public static function getWidgetType(): string
     {

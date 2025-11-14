@@ -42,6 +42,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect(larascaffConfig()->getPrefix() . larascaffConfig()->getLoginUrl());
+        return redirect(larascaffConfig()->getPrefix().larascaffConfig()->getLoginUrl());
     }
 }

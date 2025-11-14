@@ -26,7 +26,7 @@
 <div 
     x-ignore 
     x-load 
-    x-load-src="{{ asset('larascaff/components/richeditor.js?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
+    x-load-src="{{ asset('larascaff/components/richeditor.js?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
     x-data="initRichEditor({
         url: @js(url()->temporarySignedRoute('uploader', now()->addMinutes(60))),
         path: @js($imagePath),

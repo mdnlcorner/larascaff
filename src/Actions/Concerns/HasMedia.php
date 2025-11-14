@@ -42,7 +42,7 @@ trait HasMedia
         if ($input instanceof Uploader) {
             $filename = null;
             if ($input->getField()) {
-                $filename = $input->getPath() . '/' . $model->{$input->getField()};
+                $filename = $input->getPath().'/'.$model->{$input->getField()};
             }
             $model->deleteMedia($filename, $input->getField());
         }

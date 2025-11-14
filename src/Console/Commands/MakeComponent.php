@@ -37,7 +37,7 @@ class MakeComponent extends BaseCommand implements PromptsForMissingInput
         $this->pathList = array_map(fn ($item) => ucfirst($item), explode('/', $name));
         $this->componentName = array_pop($this->pathList);
         $this->path = implode('/', $this->pathList);
-        $this->view = strtolower(($this->path != '' ? $this->path . '/' : '') . "{$this->componentName}");
+        $this->view = strtolower(($this->path != '' ? $this->path.'/' : '')."{$this->componentName}");
 
         $this->makeComponent();
         $this->makeView();
@@ -46,23 +46,23 @@ class MakeComponent extends BaseCommand implements PromptsForMissingInput
     public function makeView()
     {
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.component-view.stub');
-        $file = $this->laravel->basePath('/resources/views/pages/' . "{$this->view}-component.blade.php");
+        $file = $this->laravel->basePath('/resources/views/pages/'."{$this->view}-component.blade.php");
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, [], $file, 'View');
     }
 
     public function makeComponent()
     {
-        $pageClass = $this->componentName . 'Component';
+        $pageClass = $this->componentName.'Component';
 
         $replaces = [
-            '{{ namespace }}' => 'App\\Larascaff\\Components' . (count($this->pathList) ? '\\' : '') . implode('\\', $this->pathList),
+            '{{ namespace }}' => 'App\\Larascaff\\Components'.(count($this->pathList) ? '\\' : '').implode('\\', $this->pathList),
             '{{ class }}' => $pageClass,
-            '{{ view }}' => 'pages.' . str_replace('/', '.', $this->view) . '-component',
+            '{{ view }}' => 'pages.'.str_replace('/', '.', $this->view).'-component',
         ];
 
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.component.stub');
-        $file = $this->laravel->basePath('/app/Larascaff/Components' . ($this->path != '' ? '/' . $this->path : '') . "/{$pageClass}.php");
+        $file = $this->laravel->basePath('/app/Larascaff/Components'.($this->path != '' ? '/'.$this->path : '')."/{$pageClass}.php");
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, $replaces, $file, 'Component');
     }

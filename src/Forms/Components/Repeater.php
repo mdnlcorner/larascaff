@@ -79,7 +79,7 @@ class Repeater
 
     public function repeaterHandler(Request $request)
     {
-        $class = (new ('\\' . $request->post('module')));
+        $class = (new ('\\'.$request->post('module')));
         setRecord($class->getModel());
         foreach ($class->formBuilder(new Form)->getComponents() as $repeater) {
             if ($repeater instanceof \Mulaidarinull\Larascaff\Forms\Components\Repeater) {

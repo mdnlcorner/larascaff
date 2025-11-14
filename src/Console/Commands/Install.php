@@ -40,7 +40,7 @@ class Install extends BaseCommand
         $this->saveStub(
             $this->resolveStubPath('/../../stubs/bootstrap/app.php'),
             [
-                '{{ dashboard }}' => $prefix ? $prefix . '/dashboard' : '/dashboard',
+                '{{ dashboard }}' => $prefix ? $prefix.'/dashboard' : '/dashboard',
             ],
             $this->laravel->basePath('bootstrap/app.php')
         );
@@ -55,11 +55,11 @@ class Install extends BaseCommand
 
         $this->components->info('Copying asset files..');
 
-        $this->filesystem->copy(__DIR__ . '/../../stubs/bootstrap/providers.php', base_path('bootstrap/providers.php'));
+        $this->filesystem->copy(__DIR__.'/../../stubs/bootstrap/providers.php', base_path('bootstrap/providers.php'));
 
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/resources', base_path('resources'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/Larascaff', app_path('Larascaff'));
-        $this->filesystem->copyDirectory(__DIR__ . '/../../stubs/rootFile', base_path(''));
+        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/resources', base_path('resources'));
+        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/Larascaff', app_path('Larascaff'));
+        $this->filesystem->copyDirectory(__DIR__.'/../../stubs/rootFile', base_path(''));
 
         if (! $this->filesystem->isDirectory(public_path('larascaff')) && ! is_link(public_path('larascaff'))) {
             $this->call('larascaff:link');
@@ -122,12 +122,12 @@ class Install extends BaseCommand
             try {
                 $process->setTty(true);
             } catch (\RuntimeException $e) {
-                $this->output->writeln('  <bg=yellow;fg=black> WARN </> ' . $e->getMessage() . PHP_EOL);
+                $this->output->writeln('  <bg=yellow;fg=black> WARN </> '.$e->getMessage().PHP_EOL);
             }
         }
 
         $process->run(function ($type, $line) {
-            $this->output->write('    ' . $line);
+            $this->output->write('    '.$line);
         });
     }
 
@@ -156,7 +156,7 @@ class Install extends BaseCommand
 
         file_put_contents(
             base_path('package.json'),
-            json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_FORCE_OBJECT) . PHP_EOL
+            json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_FORCE_OBJECT).PHP_EOL
         );
     }
 }

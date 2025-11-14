@@ -33,7 +33,7 @@ trait HasMenuPermission
         static::attachMenupermission($mm, count($subMenus) ? ['read'] : static::getPermissions(), ['administrator']);
 
         foreach ($subMenus as $key => $sub) {
-            $mm = $mm->subMenus()->firstOrCreate(['url' => $mm->url . '/' . $sub], ['name' => ucwords(str_replace('-', ' ', $sub)), 'url' => $mm->url . '/' . $sub, 'category' => $mm->category]);
+            $mm = $mm->subMenus()->firstOrCreate(['url' => $mm->url.'/'.$sub], ['name' => ucwords(str_replace('-', ' ', $sub)), 'url' => $mm->url.'/'.$sub, 'category' => $mm->category]);
             static::attachMenupermission($mm, (count($subMenus) > 1 && $key == 0) ? ['read'] : static::getPermissions(), ['administrator']);
         }
     }
@@ -58,7 +58,7 @@ trait HasMenuPermission
         }
 
         foreach ($permissions as $item) {
-            $permission = Permission::firstOrCreate(['name' => $item . " {$menu->url}"], ['name' => $item . " {$menu->url}", 'menu_id' => $menu->id]);
+            $permission = Permission::firstOrCreate(['name' => $item." {$menu->url}"], ['name' => $item." {$menu->url}", 'menu_id' => $menu->id]);
             if ($roles) {
                 $permission->assignRole($roles);
             }

@@ -24,6 +24,6 @@ class Js extends Asset
 
         $modulePreload = $this->isModule() ? "<link rel=\"modulepreload\" href=\"{$this->getPath()}\"></link>" : '';
 
-        return "{$modulePreload}" . PHP_EOL . "<script {$module} src=\"{$this->getPath()}\"></script>";
+        return "{$modulePreload}".PHP_EOL."<script {$module} src=\"{$this->getPath()}\"></script>";
     }
 }

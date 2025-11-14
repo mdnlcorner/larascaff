@@ -18,22 +18,22 @@ trait EmailVerification
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure | string | array | null $emailVerificationNotificationAction = null;
+    protected Closure|string|array|null $emailVerificationNotificationAction = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure | string | array | null $emailVerificationForm = null;
+    protected Closure|string|array|null $emailVerificationForm = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure | string | array | null $emailVerificationPromptForm = null;
+    protected Closure|string|array|null $emailVerificationPromptForm = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure | string | array | null $emailVerificationAction = null;
+    protected Closure|string|array|null $emailVerificationAction = null;
 
     public function getEmailVerificationPromptUrl(): string
     {
@@ -77,11 +77,11 @@ trait EmailVerification
 
     public function emailVerification(
         ?string $promptUrl = null,
-        Closure | array | string | null $formPrompt = null,
+        Closure|array|string|null $formPrompt = null,
         ?string $notificationUrl = null,
-        Closure | array | string | null $notificationAction = null,
+        Closure|array|string|null $notificationAction = null,
         ?string $url = null,
-        Closure | array | string | null $action = null,
+        Closure|array|string|null $action = null,
     ): static {
         $this->hasEmailVerification = true;
 

@@ -72,7 +72,6 @@ const defaultOptions = {
     ],
 }
 const components = [
-    'choices',
     'uploader',
     'datatable',
     'chart',
@@ -82,7 +81,13 @@ const components = [
     'richeditor',
     'markdown-editor'
 ];
-
+compile({
+    ...defaultOptions,
+    entryPoints: [
+            `./resources/js/components/choices/index.js`,
+        ],
+        outfile: `./dist/components/choices.js`,
+})
 components.forEach(component => {
     compile({
         ...defaultOptions,

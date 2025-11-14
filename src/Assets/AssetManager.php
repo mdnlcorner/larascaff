@@ -22,8 +22,8 @@ class AssetManager
             }
         }
 
-        return '<style>:root {' . $styles . '}</style>' . PHP_EOL .
-        "<script data-color-variants type='application/json'>" . json_encode($colorVariants) . '</script>';
+        return '<style>:root {'.$styles.'}</style>'.PHP_EOL.
+        "<script data-color-variants type='application/json'>".json_encode($colorVariants).'</script>';
     }
 
     public function register(array $plugins)

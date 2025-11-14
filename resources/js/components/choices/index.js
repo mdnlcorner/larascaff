@@ -1,29 +1,16 @@
-import Choices, { Choice, Options } from 'choices.js';
+import Choices from 'choices.js';
 import 'choices.js/public/assets/styles/choices.min.css';
 import '../../../scss/components/_choices.scss';
 
-type Config = {
-    serverSide?: boolean;
-    value?: string | [];
-    options?: Array<{ valu: string; label: string; selected: boolean; disabled: boolean }>;
-    depend?: boolean;
-    dependValue?: string;
-    dependColumn?: string;
-    columnLabel?: string;
-    columnValue?: string;
-    url?: string;
-    modifyQuery?: string;
-    limit?: number;
-};
-
-const initSelect = (config: Partial<Options> & Config) => {
+const initSelect = (config) => {
     return {
         select: null,
         value: config.value ?? [],
-        serverSide: config.serverSide ?? false,
+        model: config.model ?? false,
         options: config.options ?? [],
         url: new URL(window.location.origin + '/options'),
         init: async function () {
+            const $this = this;
             this.select = new Choices(this.$refs.input, {
                 removeItemButton: true,
                 searchPlaceholderValue: 'Start typing to search...',
@@ -44,7 +31,7 @@ const initSelect = (config: Partial<Options> & Config) => {
 
             this.select.dependValue = config.dependValue;
 
-            this.select.refreshChoice = async (dependValue: string | null = null, withInitialOptions?: boolean) => {
+            this.select.refreshChoice = async (dependValue = null, withInitialOptions) => {
                 this.select.clearStore();
                 this.select.clearChoices();
 
@@ -61,24 +48,24 @@ const initSelect = (config: Partial<Options> & Config) => {
                 this.select.dependValue = dependValue;
                 this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>Loading...</div>`;
 
-                if (this.serverSide) {
-                    this.url.searchParams.set('serverSide', this.serverSide);
-                }
-                if (config.modifyQuery) {
-                    this.url.searchParams.set('modifyQuery', config.modifyQuery);
+                // if (this.model) {
+                //     this.url.searchParams.set('model', this.model);
+                // }
+                if (config.module) {
+                    this.url.searchParams.set('module', config.module);
                 }
                 if (config.dependColumn) {
                     this.url.searchParams.set('dependColumn', config.dependColumn);
                 }
-                if (config.columnLabel) {
-                    this.url.searchParams.set('columnLabel', config.columnLabel);
-                }
-                if (config.columnValue) {
-                    this.url.searchParams.set('columnValue', config.columnValue);
-                }
-                if (config.limit) {
-                    this.url.searchParams.set('limit', config.limit);
-                }
+                // if (config.columnLabel) {
+                //     this.url.searchParams.set('columnLabel', config.columnLabel);
+                // }
+                // if (config.columnValue) {
+                //     this.url.searchParams.set('columnValue', config.columnValue);
+                // }
+                // if (config.limit) {
+                //     this.url.searchParams.set('limit', config.limit);
+                // }
 
                 this.url.searchParams.delete('value');
                 this.url.searchParams.set('dependValue', dependValue);
@@ -92,20 +79,20 @@ const initSelect = (config: Partial<Options> & Config) => {
 
             this.select.setChoices(this.options);
 
-            if (this.serverSide) {
-                this.url.searchParams.set('serverSide', this.serverSide);
+            if (this.model) {
+                // this.url.searchParams.set('model', this.model);
                 if (config.dependColumn) {
                     this.url.searchParams.set('dependColumn', config.dependColumn);
                 }
-                if (config.modifyQuery) {
-                    this.url.searchParams.set('modifyQuery', config.modifyQuery);
+                if (config.module) {
+                    this.url.searchParams.set('module', config.module);
                 }
-                if (config.columnLabel) {
-                    this.url.searchParams.set('columnLabel', config.columnLabel);
-                }
-                if (config.columnValue) {
-                    this.url.searchParams.set('columnValue', config.columnValue);
-                }
+                // if (config.columnLabel) {
+                //     this.url.searchParams.set('columnLabel', config.columnLabel);
+                // }
+                // if (config.columnValue) {
+                //     this.url.searchParams.set('columnValue', config.columnValue);
+                // }
                 if (config.limit) {
                     this.url.searchParams.set('limit', config.limit);
                 }
@@ -126,11 +113,11 @@ const initSelect = (config: Partial<Options> & Config) => {
                 // add search event listener
                 this.select.passedElement.element.addEventListener(
                     'search',
-                    window['Alpine'].debounce(async (e: any) => {
+                    window['Alpine'].debounce(async (e) => {
                         this.select.clearChoices();
-                        if (config.depend && !this.select.dependValue) {
-                            return;
-                        }
+                        // if (config.depend && !this.select.dependValue) {
+                        //     return;
+                        // }
 
                         await this.select.setChoices([
                             {
@@ -152,7 +139,7 @@ const initSelect = (config: Partial<Options> & Config) => {
             }
 
             if (this.select._isSelectElement) {
-                this.value = this.options.filter((item: Choice) => item.selected);
+                this.value = this.options.filter((item) => item.selected);
                 if (!this.value.length && this.select._isSelectOneElement) {
                     this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`;
                 }
@@ -167,6 +154,14 @@ const initSelect = (config: Partial<Options> & Config) => {
                     }
                 });
             }
+
+            Object.entries(config.dependTo).forEach(([name, event]) => {
+                // @ts-ignore
+                document.querySelector(`[data-input-name=${name}]`)?.addEventListener(event, function () {
+                    $this.select.refreshChoice(this.value)
+                })
+            })
+            
 
             if (!window['Select']) {
                 window['Select'] = {};

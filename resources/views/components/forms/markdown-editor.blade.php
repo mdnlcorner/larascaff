@@ -12,8 +12,8 @@
 <div 
     x-ignore 
     x-load 
-    x-load-src="{{ asset('larascaff/components/markdown-editor.js?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}" 
-    x-load-css="['{{ asset('larascaff/components/markdown-editor.css?' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']"
+    x-load-src="{{ asset('larascaff/components/markdown-editor.js?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}" 
+    x-load-css="['{{ asset('larascaff/components/markdown-editor.css?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']"
     x-data="initMarkdown({
         toolbars: @js($toolbar),
         url: @js(url()->temporarySignedRoute('uploader', now()->addMinutes(60))),
