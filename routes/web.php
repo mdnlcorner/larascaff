@@ -8,16 +8,16 @@ use Mulaidarinull\Larascaff\Forms\Components\Repeater;
 use Mulaidarinull\Larascaff\Forms\Components\Select;
 use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Notifications\NotificationRoute;
+use Mulaidarinull\Larascaff\Pages\FileUpload;
 use Mulaidarinull\Larascaff\Pages\Page;
-use Mulaidarinull\Larascaff\Pages\Uploader;
 
 $config = larascaffConfig();
 Route::middleware($config->getMiddleware())->group(function () use ($config) {
     Route::middleware([...$config->getAuthMiddleware(), 'verified'])->group(function () {
         Route::get('notifications/{notification}', NotificationRoute::class)->name('notifications');
-        Route::post('temp-upload', [Uploader::class, 'tempUploadHandler'])->middleware('signed')->name('temp-upload');
-        Route::post('uploader', [Uploader::class, 'uploadHandler'])->middleware('signed')->name('uploader');
-        Route::get('options', [Select::class, 'serverSideOptionsHandler']);
+        Route::post('temp-upload', [FileUpload::class, 'tempUploadHandler'])->middleware('signed')->name('temp-upload');
+        Route::post('uploader', [FileUpload::class, 'uploadHandler'])->middleware('signed')->name('uploader');
+        Route::get('select-options', [Select::class, 'serverSideOptionsHandler']);
         Route::post('repeater-items', [Repeater::class, 'repeaterHandler']);
         Route::post('module-action', RouteHandler::class);
         Route::post('handler', [Action::class, 'routeActionHandler']);

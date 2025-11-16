@@ -4,14 +4,15 @@ import * as FilePond from 'filepond';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImageCrop from 'filepond-plugin-image-crop';
 import FilePondPluginImageEdit from 'filepond-plugin-image-edit';
-import 'filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css';
+// import 'filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css';
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+// import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import FilePondPluginFileSizeValidation from 'filepond-plugin-file-validate-size';
 import FilePondPluginImageResize from 'filepond-plugin-image-resize';
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
-import 'filepond/dist/filepond.min.css';
-import '../../../scss/components/_filepond.scss';
+// import 'filepond/dist/filepond.min.css';
+// import '../../../scss/components/_overridefilepond.scss';
 // import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
 // import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css';
 
@@ -25,7 +26,6 @@ const blobToBase64 = (blob) => {
         };
     });
 };
-
 
 function initUploader({ files = [], ...config }) {
     return {
@@ -41,6 +41,7 @@ function initUploader({ files = [], ...config }) {
             this.FilePond.registerPlugin(FilePondPluginImageResize);
             this.FilePond.registerPlugin(FilePondPluginImageTransform);
             this.FilePond.registerPlugin(FilePondPluginImageEdit);
+            this.FilePond.registerPlugin(FilePondPluginFileSizeValidation);
             // this.FilePond.registerPlugin(FilePondPluginMediaPreview)
 
             const path = config.path;
@@ -60,11 +61,11 @@ function initUploader({ files = [], ...config }) {
                             }
 
                             let imageEl = cropperWrapper.querySelector('.editor');
-                            imageEl?.setAttribute('src', (await blobToBase64(imageToEdit)));
+                            imageEl?.setAttribute('src', await blobToBase64(imageToEdit));
 
                             let acpectRatio = function () {
                                 if (config.imageCropAspectRatio) {
-                                    let ratio = config?.imageCropAspectRatio.split(':');
+                                    let ratio = config.imageCropAspectRatio.split(':');
                                     return parseInt(ratio[0]) / parseInt(ratio[1]);
                                 }
                                 return 1 / 1;
@@ -113,7 +114,6 @@ function initUploader({ files = [], ...config }) {
                 };
             }
 
-            console.log(config)
             const pond = this.FilePond.create(this.$refs.input, {
                 // resize options
                 allowImageResize: config.allowImageResize ?? false,
@@ -126,12 +126,18 @@ function initUploader({ files = [], ...config }) {
                 imageCropAspectRatio: config.imageCropAspectRatio ?? '1:1',
                 // preview options
                 allowImagePreview: config.allowImagePreview ?? true,
-                imagePreviewHeight: config.imagePreviewHeight ?? 170,
-                allowReorder: config?.allowReorder ?? true,
+                imagePreviewHeight: config.imagePreviewHeight,
+                allowReorder: config.allowReorder ?? true,
                 allowImageTransform: true,
+                // file size validation
+                allowFileSizeValidation: config.allowFileSizeValidation,
+                maxFileSize: config.maxFileSize,
+                maxTotalFileSize: config.maxTotalFileSize,
+                minFileSize: config.minFileSize,
+                // media preview
                 // allowAudioPreview: true,
                 // allowVideoPreview: true,
-                allowRemove: config?.allowRemove ?? true,
+                allowRemove: config.allowRemove ?? true,
                 credits: false,
                 server: {
                     process: {
@@ -159,15 +165,15 @@ function initUploader({ files = [], ...config }) {
                 ...config,
             });
 
-            if (config.linkPreview) {
-                pond.on('init', function () {
-                    pond.element.querySelector(`input`).setAttribute('data-input-name', config.name);
+            pond.on('init', function () {
+                pond.element.querySelector(`input`)?.setAttribute('data-input-name', config.name);
+                if (config.linkPreview) {
                     pond.element.querySelectorAll('.filepond--file-info-main').forEach((el) => {
                         const filename = el.innerHTML;
                         el.innerHTML = `<a target="_blank" class="pointer-events-auto" href="/${path + filename}"> [<u class="mr-2">Preview</u>]</a> ${filename} `;
                     });
-                });
-            }
+                }
+            });
 
             var btnAction;
             var btnActionLabel;

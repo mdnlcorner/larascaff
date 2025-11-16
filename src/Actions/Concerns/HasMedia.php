@@ -3,7 +3,7 @@
 namespace Mulaidarinull\Larascaff\Actions\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
-use Mulaidarinull\Larascaff\Forms\Components\Uploader;
+use Mulaidarinull\Larascaff\Forms\Components\FileUpload;
 
 trait HasMedia
 {
@@ -13,7 +13,7 @@ trait HasMedia
 
     protected function addMediaToBeHandled(mixed $input)
     {
-        if ($input instanceof Uploader) {
+        if ($input instanceof FileUpload) {
             $this->media[] = $input;
         }
     }
@@ -23,11 +23,11 @@ trait HasMedia
         return $this->media;
     }
 
-    protected function uploadMediaHandler(Uploader $input, Model $model)
+    protected function uploadMediaHandler(FileUpload $input, Model $model)
     {
         $data = $this->getFormData();
 
-        if ($input instanceof Uploader) {
+        if ($input instanceof FileUpload) {
             if (request()->post('_id')) {
                 $model->oldModelValue = $this->oldModelValue;
                 $model->updateMedia($input->getPath(), $data[$input->getName()] ?? null, $input->getName());
@@ -37,9 +37,9 @@ trait HasMedia
         }
     }
 
-    protected function deleteMediaHandler(Uploader $input, Model $model)
+    protected function deleteMediaHandler(FileUpload $input, Model $model)
     {
-        if ($input instanceof Uploader) {
+        if ($input instanceof FileUpload) {
             $filename = null;
             if ($input->getField()) {
                 $filename = $input->getPath().'/'.$model->{$input->getField()};

@@ -1,6 +1,6 @@
 import Choices from 'choices.js';
 import 'choices.js/public/assets/styles/choices.min.css';
-import '../../../scss/components/_choices.scss';
+import '../../../scss/components/_select.scss';
 
 const initSelect = (config) => {
     return {
@@ -8,7 +8,7 @@ const initSelect = (config) => {
         value: config.value ?? [],
         model: config.model ?? false,
         options: config.options ?? [],
-        url: new URL(window.location.origin + '/options'),
+        url: new URL(`${window.location.origin}/select-options`),
         init: async function () {
             const $this = this;
             this.select = new Choices(this.$refs.input, {
@@ -158,10 +158,9 @@ const initSelect = (config) => {
             Object.entries(config.dependTo).forEach(([name, event]) => {
                 // @ts-ignore
                 document.querySelector(`[data-input-name=${name}]`)?.addEventListener(event, function () {
-                    $this.select.refreshChoice(this.value)
-                })
-            })
-            
+                    $this.select.refreshChoice(this.value);
+                });
+            });
 
             if (!window['Select']) {
                 window['Select'] = {};

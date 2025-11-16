@@ -10,13 +10,24 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
 {
     protected bool $icon = true;
 
-    protected string $format = 'yyyy-mm-dd';
-
     protected string $formatPhp = 'Y-m-d';
 
-    protected array $config = [];
+    protected array $config = [
+        'format' => 'yyyy-mm-dd',
+        'todayHighlight' => true,
+        'autohide' => true,
+        'todayButton' => true,
+        'clearBtn' => true,
+    ];
 
     protected ?string $type = 'date';
+
+    public function config(array $config = []): static
+    {
+        $this->config = array_merge($this->config, $config);
+
+        return $this;
+    }
 
     public function icon($icon = true): static
     {
@@ -28,8 +39,22 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
     public function format($format): static
     {
         $this->format = $format;
+
         $record = getRecord();
-        $map = ['yyyy' => 'Y', 'yy' => 'y', 'm' => 'n', 'D' => 'D', 'DD' => 'l', 'MM' => 'F', 'M' => 'M', 'mm' => 'm', 'dd' => 'd', 'd' => 'j'];
+
+        $map = [
+            'yyyy' => 'Y',
+            'yy' => 'y',
+            'm' => 'n',
+            'D' => 'D',
+            'DD' => 'l',
+            'MM' => 'F',
+            'M' => 'M',
+            'mm' => 'm',
+            'dd' => 'd',
+            'd' => 'j',
+        ];
+
         foreach (['-', '/'] as $separator) {
             if (str_contains($format, $separator)) {
                 $expFormat = explode($separator, $format);
@@ -56,9 +81,58 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
         return $this->formatPhp;
     }
 
-    public function config(array $config): static
+    public function autoHide(bool $status = true): static
     {
-        $this->config = $config;
+        $this->config['autohide'] = $status;
+
+        return $this;
+    }
+
+    public function todayHighlight(bool $status = true): static
+    {
+        $this->config['todayHighlight'] = $status;
+
+        return $this;
+    }
+
+    public function todayButton(bool $status = true): static
+    {
+        $this->config['todayButton'] = $status;
+
+        return $this;
+    }
+
+    public function clearButton(bool $status = true): static
+    {
+        $this->config['clearButton'] = $status;
+
+        return $this;
+    }
+
+    public function datesDisabled(array $dates = []): static
+    {
+        $this->config['datesDisabled'] = $dates;
+
+        return $this;
+    }
+
+    public function daysOfWeekDisabled(array $dates = []): static
+    {
+        $this->config['daysOfWeekDisabled'] = $dates;
+
+        return $this;
+    }
+
+    public function startView(int $start = 0): static
+    {
+        $this->config['startView'] = $start;
+
+        return $this;
+    }
+
+    public function maxView(int $start = 0): static
+    {
+        $this->config['maxView'] = $start;
 
         return $this;
     }

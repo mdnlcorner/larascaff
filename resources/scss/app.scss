@@ -1,5 +1,8 @@
 @use 'tailwind';
 @use 'simplebar/dist/simplebar.css';
+@use 'filepond/dist/filepond.min.css';
+@use 'filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css';
+@use 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 @use 'base';
 @use 'typography';
 @use 'utilities';
@@ -9,6 +12,7 @@
 @use 'components/table';
 @use 'components/alert';
 @use 'components/toast';
+@use 'components/overridefilepond';
 
 :root {
     --background: #ffff;

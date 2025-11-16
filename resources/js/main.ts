@@ -88,22 +88,25 @@ export function initActionModal() {
 
         // if has confirmation
         if (handler.hasConfirmation) {
-            confirmation(() => {
-                req.onSuccess((res) => {
-                    showToast(res?.status, res?.title, res?.message);
-                    reloadDatatable(window['datatableId']);
-                }, false)
-                    .onError((err) => {
-                        const message = err.responseJSON?.message;
-                        showToast('error', 'Error', message ?? 'Something went wrong');
-                    })
-                    .execute();
-            }, {
-                title: handler.modalTitle,
-                text: handler.modalDescription,
-                confirmButtonText: handler.modalSubmitActionLabel,
-                cancelButtonText: handler.modalCancelActionLabel
-            });
+            confirmation(
+                () => {
+                    req.onSuccess((res) => {
+                        showToast(res?.status, res?.title, res?.message);
+                        reloadDatatable(window['datatableId']);
+                    }, false)
+                        .onError((err) => {
+                            const message = err.responseJSON?.message;
+                            showToast('error', 'Error', message ?? 'Something went wrong');
+                        })
+                        .execute();
+                },
+                {
+                    title: handler.modalTitle,
+                    text: handler.modalDescription,
+                    confirmButtonText: handler.modalSubmitActionLabel,
+                    cancelButtonText: handler.modalCancelActionLabel,
+                },
+            );
 
             return;
         }
@@ -182,7 +185,7 @@ export function initActionByUrl() {
 
 export function confirmation(cb: (res: SweetAlertResult) => void, configs: SweetAlertOptions = {}) {
     const color = JSON.parse(document.querySelector('[data-color-variants]')?.innerHTML ?? '{}');
-    
+
     Swal.fire({
         title: 'Confirmation',
         text: 'Are you sure?',

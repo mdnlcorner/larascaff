@@ -74,7 +74,6 @@ const defaultOptions = {
 const components = [
     'datatable',
     'chart',
-    'datepicker',
     'datepicker-range',
     'accordion',
     'richeditor',
@@ -82,8 +81,9 @@ const components = [
 ];
 
 const componentsJs = [
-    'choices',
-    'uploader',
+    'select',
+    'file-upload',
+    'datepicker',
 ];
 
 componentsJs.forEach(component => {

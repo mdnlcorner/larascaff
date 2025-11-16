@@ -5,7 +5,7 @@ namespace Mulaidarinull\Larascaff\Forms\Components;
 use Illuminate\Support\Facades\Blade;
 use Mulaidarinull\Larascaff\Forms\Concerns\HasMedia;
 
-class Uploader extends Field
+class FileUpload extends Field
 {
     use HasMedia;
 
@@ -27,6 +27,10 @@ class Uploader extends Field
         'imagePreviewHeight' => 170,
         'imageResizeMode' => 'cover',
         'imageCropAspectRatio' => '1:1',
+        'allowFileSizeValidation' => false,
+        'maxFileSize' => null,
+        'minFileSize' => null,
+        'maxTotalFileSize' => null,
     ];
 
     protected array $cropperOptions = [
@@ -40,9 +44,37 @@ class Uploader extends Field
         return $this;
     }
 
-    public function allowImageCrop(bool $status): static
+    public function allowImageCrop(bool $status = true): static
     {
         $this->config['allowImageCrop'] = $status;
+
+        return $this;
+    }
+
+    public function allowFileSizeValidation(bool $status = true): static
+    {
+        $this->config['allowFileSizeValidation'] = $status;
+
+        return $this;
+    }
+
+    public function minFileSize(string $size = '10kb'): static
+    {
+        $this->config['minFileSize'] = $size;
+
+        return $this;
+    }
+
+    public function maxFileSize(string $size = '5MB'): static
+    {
+        $this->config['maxFileSize'] = $size;
+
+        return $this;
+    }
+
+    public function maxTotalFileSize(string $size = '5MB'): static
+    {
+        $this->config['maxTotalFileSize'] = $size;
 
         return $this;
     }
@@ -201,7 +233,7 @@ class Uploader extends Field
     {
         return Blade::render(
             <<<'HTML'
-            <x-larascaff::forms.uploader 
+            <x-larascaff::forms.file-upload 
                 :name="$name" 
                 :label="$label" 
                 :multiple="$multiple"

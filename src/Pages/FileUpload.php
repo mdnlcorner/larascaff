@@ -5,7 +5,7 @@ namespace Mulaidarinull\Larascaff\Pages;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class Uploader
+class FileUpload
 {
     public function tempUploadHandler(Request $request)
     {

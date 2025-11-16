@@ -97,13 +97,13 @@ export default function initChart({ color, ...config }: StatType | ChartType) {
                 const plugins: Array<any> = [];
                 const pluginsConfig: any = {};
 
-                 (window['chartjsPlugins'] ?? []).forEach((item: any) => {
-                    plugins.push(item)
-                 })
+                (window['chartjsPlugins'] ?? []).forEach((item: any) => {
+                    plugins.push(item);
+                });
 
-                 for (const [key, value] of Object.entries(window['chartjsPluginsConfig'] ?? {})) {
-                    pluginsConfig[key] = value
-                 }
+                for (const [key, value] of Object.entries(window['chartjsPluginsConfig'] ?? {})) {
+                    pluginsConfig[key] = value;
+                }
 
                 new Chart(this.$refs.canvas, {
                     type: config.type,

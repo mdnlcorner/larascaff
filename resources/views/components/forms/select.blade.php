@@ -26,8 +26,8 @@
     <div 
         x-ignore 
         x-load 
-        x-load-src="{{ asset('larascaff/components/choices.js?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
-        x-load-css="['{{ asset('larascaff/components/choices.css?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" x-data="initSelect({
+        x-load-src="{{ asset('larascaff/components/select.js?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
+        x-load-css="['{{ asset('larascaff/components/select.css?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" x-data="initSelect({
             options: @js($options),
             value: @js($value),
             model: @js($model),

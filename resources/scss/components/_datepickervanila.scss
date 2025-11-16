@@ -10,6 +10,9 @@
     .datepicker-header {
         @apply flex w-full items-center justify-center gap-3;
     }
+    .datepicker-footer {
+        @apply mt-1;
+    }
     .datepicker-controls {
         @apply flex w-full items-center justify-between gap-x-3;
         .view-switch {
