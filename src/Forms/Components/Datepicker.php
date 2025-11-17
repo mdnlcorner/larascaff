@@ -10,21 +10,27 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
 {
     protected bool $icon = true;
 
-    protected string $formatPhp = 'Y-m-d';
-
-    protected array $config = [
-        'format' => 'yyyy-mm-dd',
-        'todayHighlight' => true,
-        'autohide' => true,
-        'todayButton' => true,
-        'clearBtn' => true,
-    ];
-
     protected ?string $type = 'date';
 
-    public function config(array $config = []): static
+    protected string $formatPhp = 'Y-m-d';
+
+    protected array $options = [];
+
+    public function __construct()
     {
-        $this->config = array_merge($this->config, $config);
+        $this->options([
+            'format' => 'yyyy-mm-dd',
+            'todayHighlight' => true,
+            'autohide' => true,
+            'todayButton' => true,
+            'clearBtn' => true,
+            'language' => app()->getLocale(),
+        ]);
+    }
+
+    public function options(array $options = []): static
+    {
+        $this->options = array_merge($this->options, $options);
 
         return $this;
     }
@@ -36,37 +42,43 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
         return $this;
     }
 
+    public function mapDate(): array
+    {
+        return [
+            'Y' => 'yyyy',
+            'y' => 'yy',
+            'n' => 'm',
+            'D' => 'D',
+            'l' => 'DD',
+            'F' => 'MM',
+            'M' => 'M',
+            'm' => 'mm',
+            'd' => 'dd',
+            'j' => 'd',
+        ];
+    }
+
     public function format($format): static
     {
-        $this->format = $format;
+        $this->formatPhp = $format;
 
-        $record = getRecord();
-
-        $map = [
-            'yyyy' => 'Y',
-            'yy' => 'y',
-            'm' => 'n',
-            'D' => 'D',
-            'DD' => 'l',
-            'MM' => 'F',
-            'M' => 'M',
-            'mm' => 'm',
-            'dd' => 'd',
-            'd' => 'j',
-        ];
+        $map = $this->mapDate();
 
         foreach (['-', '/'] as $separator) {
             if (str_contains($format, $separator)) {
                 $expFormat = explode($separator, $format);
-                $formatPhp = '';
+                $formatPicker = '';
                 foreach ($expFormat as $i) {
-                    $formatPhp .= ($formatPhp ? $separator.$map[$i] : $map[$i]);
+                    if (! isset($map[$i])) {
+                        throw new \Exception('Invalid date format');
+                    }
+                    $formatPicker .= ($formatPicker ? $separator.$map[$i] : $map[$i]);
                 }
-                $this->formatPhp = $formatPhp;
+                $this->options['format'] = $formatPicker;
             }
         }
 
-        $this->value = convertDate($record->{$this->name}, $this->formatPhp);
+        $this->value = convertDate(getRecord($this->name), $format);
 
         return $this;
     }
@@ -76,77 +88,101 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
         return [$this->getName() => convertDate(request()->{$this->getName()}, 'Y-m-d')];
     }
 
-    public function getFormatPhp(): string
+    public function getFormatPicker(): string
+    {
+        return $this->options['format'];
+    }
+
+    public function getFormat(): string
     {
         return $this->formatPhp;
     }
 
     public function autoHide(bool $status = true): static
     {
-        $this->config['autohide'] = $status;
+        $this->options['autohide'] = $status;
 
         return $this;
     }
 
     public function todayHighlight(bool $status = true): static
     {
-        $this->config['todayHighlight'] = $status;
+        $this->options['todayHighlight'] = $status;
 
         return $this;
     }
 
     public function todayButton(bool $status = true): static
     {
-        $this->config['todayButton'] = $status;
+        $this->options['todayButton'] = $status;
 
         return $this;
     }
 
     public function clearButton(bool $status = true): static
     {
-        $this->config['clearButton'] = $status;
+        $this->options['clearButton'] = $status;
 
         return $this;
     }
 
     public function datesDisabled(array $dates = []): static
     {
-        $this->config['datesDisabled'] = $dates;
+        $this->options['datesDisabled'] = $dates;
 
         return $this;
     }
 
     public function daysOfWeekDisabled(array $dates = []): static
     {
-        $this->config['daysOfWeekDisabled'] = $dates;
+        $this->options['daysOfWeekDisabled'] = $dates;
 
         return $this;
     }
 
     public function startView(int $start = 0): static
     {
-        $this->config['startView'] = $start;
+        $this->options['startView'] = $start;
 
         return $this;
     }
 
     public function maxView(int $start = 0): static
     {
-        $this->config['maxView'] = $start;
+        $this->options['maxView'] = $start;
+
+        return $this;
+    }
+
+    public function title(string $title): static
+    {
+        $this->options['title'] = $title;
+
+        return $this;
+    }
+
+    public function language(string $language): static
+    {
+        $this->options['language'] = $language;
+
+        return $this;
+    }
+
+    public function pickLevel(int $start = 0): static
+    {
+        $this->options['pickLevel'] = $start;
 
         return $this;
     }
 
     public function view(): string
     {
-        $this->config['format'] = $this->format;
-
         return Blade::render(
             <<<'HTML'
             <x-larascaff::forms.datepicker 
                 :value="$value" 
                 :columnSpan="$columnSpan" 
-                :config="$config" 
+                :options="$options" 
                 :icon="$icon" 
                 :name="$name" 
                 :label="$label" 
@@ -159,7 +195,7 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
                 'label' => $this->label,
                 'placeholder' => $this->placeholder,
                 'icon' => $this->icon,
-                'config' => $this->config,
+                'options' => $this->options,
                 'value' => $this->value,
                 'columnSpan' => $this->columnSpan,
                 'attr' => $this->attr,

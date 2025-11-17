@@ -1,21 +1,13 @@
 import { Datepicker } from 'vanillajs-datepicker';
+import id from 'vanillajs-datepicker/locales/id';
+import enAu from 'vanillajs-datepicker/locales/en-AU';
 import '../../../scss/components/_datepickervanila.scss';
 
-export default function initDatepicker(config) {
-    function matchLang(language) {
-        if (config[language] == 'id') {
-            return 'id';
-        }
-
-        return 'en';
-    }
-
+export default function initDatepicker(options = {}) {
     return {
         init: function () {
-            new Datepicker(this.$refs.input, {
-                language: 'en',
-                ...config,
-            });
+            Object.assign(Datepicker.locales, id, enAu)
+            new Datepicker(this.$refs.input, options);
         },
     };
 }

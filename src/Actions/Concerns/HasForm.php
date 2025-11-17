@@ -4,6 +4,7 @@ namespace Mulaidarinull\Larascaff\Actions\Concerns;
 
 use Closure;
 use Illuminate\Support\Collection;
+use Mulaidarinull\Larascaff\Forms\Components\Datepicker;
 
 trait HasForm
 {
@@ -59,6 +60,17 @@ trait HasForm
         foreach ($fields as $field) {
             if (method_exists($field, 'getValidations')) {
                 $this->fillValidations($field, $relationship);
+            }
+
+            if ($field instanceof Datepicker) {
+                foreach (['-', '/'] as $separator) {
+                    if (str_contains($field->getFormat(), $separator)) {
+                        if (! str($field->getFormat())->startsWith('Y')) {
+                            request()->merge([$field->getName() => convertDate(request($field->getName()), 'Y-m-d')]);
+                            $this->formData[$field->getName()] = request($field->getName());
+                        }
+                    }
+                }
             }
 
             if (method_exists($field, 'numberFormat')) {

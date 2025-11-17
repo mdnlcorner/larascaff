@@ -444,7 +444,7 @@ class Table extends DataTable
                         if ($record->{$field} instanceof Carbon) {
                             $label = $record->{$field}->format($actionType->getFormat());
                         } else {
-                            $label = date($actionType->getFormat(), strtotime($record->{$field}));
+                            $label = is_null($record->{$field}) ? null : date($actionType->getFormat(), strtotime($record->{$field}));
                         }
                     }
 

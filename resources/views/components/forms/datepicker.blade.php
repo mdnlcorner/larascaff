@@ -4,7 +4,7 @@
     'size' => 'md',
     'error' => null,
     'icon' => false,
-    'config' => [],
+    'options' => [],
     'name',
     'value' => null,
     'columnSpan' => '1',
@@ -16,7 +16,7 @@
     x-load-src="{{ asset('larascaff/components/datepicker.js?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
     x-load-css="['{{ asset('larascaff/components/datepicker.css?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
     x-data="initDatepicker({
-        ...@js($config)
+        ...@js($options)
     })"
     @class(["w-full form-wrapper", $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])
 >
