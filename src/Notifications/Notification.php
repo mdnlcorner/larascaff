@@ -32,7 +32,7 @@ class Notification implements ArrayAccess
      * @param  class-string<Notification>  $notification
      * @param  User|Collection<int,User>|Closure  $user
      */
-    public function to(User|Collection|Closure $user, string $notification): static
+    public function to(User | Collection | Closure $user, string $notification): static
     {
         $this->options['to'] = $user;
         $this->options['notification_handler'] = $notification;

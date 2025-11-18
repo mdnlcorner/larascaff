@@ -28,7 +28,7 @@ class UnlinkAsset extends Command
     public function handle()
     {
         foreach ($this->links() as $link => $target) {
-            if (! file_exists($link) || ! is_link($link)) {
+            if (!file_exists($link) || !is_link($link)) {
                 continue;
             }
 

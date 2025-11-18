@@ -69,10 +69,10 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
                 $expFormat = explode($separator, $format);
                 $formatPicker = '';
                 foreach ($expFormat as $i) {
-                    if (! isset($map[$i])) {
+                    if (!isset($map[$i])) {
                         throw new \Exception('Invalid date format');
                     }
-                    $formatPicker .= ($formatPicker ? $separator.$map[$i] : $map[$i]);
+                    $formatPicker .= ($formatPicker ? $separator . $map[$i] : $map[$i]);
                 }
                 $this->options['format'] = $formatPicker;
             }

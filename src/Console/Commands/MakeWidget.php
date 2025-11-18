@@ -57,10 +57,10 @@ class MakeWidget extends BaseCommand implements PromptsForMissingInput
 
     public function makeWidget()
     {
-        $pageClass = $this->widgetName.'Widget';
+        $pageClass = $this->widgetName . 'Widget';
 
         $replaces = [
-            '{{ namespace }}' => 'App\\Larascaff\\Widgets'.(count($this->pathList) ? '\\' : '').implode('\\', $this->pathList),
+            '{{ namespace }}' => 'App\\Larascaff\\Widgets' . (count($this->pathList) ? '\\' : '') . implode('\\', $this->pathList),
             '{{ class }}' => $pageClass,
         ];
 
@@ -70,7 +70,7 @@ class MakeWidget extends BaseCommand implements PromptsForMissingInput
             default => $this->resolveStubPath('/../../stubs/larascaff.widget-stat.stub'),
         };
 
-        $file = $this->laravel->basePath('/app/Larascaff/Widgets'.($this->path != '' ? '/'.$this->path : '')."/{$pageClass}.php");
+        $file = $this->laravel->basePath('/app/Larascaff/Widgets' . ($this->path != '' ? '/' . $this->path : '') . "/{$pageClass}.php");
 
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, $replaces, $file, 'Widget');

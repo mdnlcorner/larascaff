@@ -39,7 +39,7 @@ class Section extends Layout
                 $component->module($this->module);
             }
             if ($relationship) {
-                $component->name($relationship.'['.$component->getName().']');
+                $component->name($relationship . '[' . $component->getName() . ']');
                 $component->parentRelationship($relationship);
             }
             $slot .= $component->view();

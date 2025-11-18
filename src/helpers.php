@@ -7,7 +7,7 @@ use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\SetupAplication;
 use Mulaidarinull\Larascaff\Models\Record;
 
-if (! function_exists('responseSuccess')) {
+if (!function_exists('responseSuccess')) {
     function responseSuccess(string $message = 'Berhasil menyimpan data')
     {
         return response()->json([
@@ -17,15 +17,15 @@ if (! function_exists('responseSuccess')) {
     }
 }
 
-if (! function_exists('responseError')) {
-    function responseError(string|\Exception $th)
+if (!function_exists('responseError')) {
+    function responseError(string | \Exception $th)
     {
         $message = 'Terjadi kesalahan, silahkan coba beberapa saat lagi';
         $data = null;
         if ($th instanceof \Exception) {
             $message = $th->getMessage();
             if (config('app.debug')) {
-                $message .= ' in line '.$th->getLine().' at '.$th->getFile();
+                $message .= ' in line ' . $th->getLine() . ' at ' . $th->getFile();
                 $data = $th->getTrace();
             }
         } else {
@@ -40,7 +40,7 @@ if (! function_exists('responseError')) {
     }
 }
 
-if (! function_exists('getFileNamespace')) {
+if (!function_exists('getFileNamespace')) {
     /**
      * get namespace from content file
      */
@@ -54,13 +54,13 @@ if (! function_exists('getFileNamespace')) {
     }
 }
 
-if (! function_exists('menus')) {
+if (!function_exists('menus')) {
     /**
      * @return Collection
      */
     function menus()
     {
-        if (! Cache::has('menus')) {
+        if (!Cache::has('menus')) {
             $menus = (new Menu)->getMenus()->groupBy('category');
             Cache::forever('menus', $menus);
         } else {
@@ -71,47 +71,47 @@ if (! function_exists('menus')) {
     }
 }
 
-if (! function_exists('setRecord')) {
+if (!function_exists('setRecord')) {
     function setRecord(Model $model)
     {
         app(Record::class)->setRecord($model);
     }
 }
 
-if (! function_exists('getRecord')) {
+if (!function_exists('getRecord')) {
     function getRecord($key = null)
     {
         return app(Record::class)->getRecord($key);
     }
 }
 
-if (! function_exists('getPrefix')) {
+if (!function_exists('getPrefix')) {
     function getPrefix()
     {
         return app(LarascaffConfig::class)->getPrefix();
     }
 }
 
-if (! function_exists('routeDashboard')) {
+if (!function_exists('routeDashboard')) {
     function routeDashboard()
     {
-        $route = getPrefix() ? getPrefix().'.dashboard' : 'dashboard';
+        $route = getPrefix() ? getPrefix() . '.dashboard' : 'dashboard';
 
         return $route;
     }
 }
 
-if (! function_exists('larascaffConfig')) {
+if (!function_exists('larascaffConfig')) {
     function larascaffConfig()
     {
         return app(LarascaffConfig::class);
     }
 }
 
-if (! function_exists('urlMenu')) {
+if (!function_exists('urlMenu')) {
     function urlMenu()
     {
-        if (! Cache::has('urlMenu')) {
+        if (!Cache::has('urlMenu')) {
             $menus = menus()->flatMap(fn ($item) => $item);
             $url = [];
             foreach ($menus as $mm) {
@@ -133,10 +133,10 @@ if (! function_exists('urlMenu')) {
     }
 }
 
-if (! function_exists('convertDate')) {
+if (!function_exists('convertDate')) {
     function convertDate($date, $format = 'd-m-Y')
     {
-        if (! $date) {
+        if (!$date) {
             return null;
         }
 
@@ -144,8 +144,8 @@ if (! function_exists('convertDate')) {
     }
 }
 
-if (! function_exists('user')) {
-    function user($key = null): string|int|null|\App\Models\User
+if (!function_exists('user')) {
+    function user($key = null): string | int | null | \App\Models\User
     {
         if ($key) {
             return request()->user()?->{$key};
@@ -155,10 +155,10 @@ if (! function_exists('user')) {
     }
 }
 
-if (! function_exists('setupApplication')) {
-    function setupApplication($key = null): SetupAplication|string|array
+if (!function_exists('setupApplication')) {
+    function setupApplication($key = null): SetupAplication | string | array
     {
-        if (! Cache::has('setupApplication')) {
+        if (!Cache::has('setupApplication')) {
             Cache::forever('setupApplication', SetupAplication::first());
         }
         $setupApplication = Cache::get('setupApplication');
@@ -170,16 +170,16 @@ if (! function_exists('setupApplication')) {
     }
 }
 
-if (! function_exists('numbering')) {
+if (!function_exists('numbering')) {
     function numbering(Model $model, $format, $column = 'nomor', $length = 4)
     {
         $model = $model->select(\Illuminate\Support\Facades\DB::raw("MAX($column) as $column"))->where("$column", 'like', "%{$format}%")->orderByDesc('id')->first();
 
-        return $format.sprintf("%0{$length}s", ((int) substr($model->{$column}, strlen($format), $length)) + 1);
+        return $format . sprintf("%0{$length}s", ((int) substr($model->{$column}, strlen($format), $length)) + 1);
     }
 }
 
-if (! function_exists('removeNumberFormat')) {
+if (!function_exists('removeNumberFormat')) {
     function removeNumberFormat($number)
     {
         $num = explode('.', $number);
@@ -191,7 +191,7 @@ if (! function_exists('removeNumberFormat')) {
             return str_replace(',', '.', implode('', $num));
         } else {
             $num = explode(',', $number);
-            if (! isset($num[1])) {
+            if (!isset($num[1])) {
                 return $number;
             }
             if (strlen($num[1]) < 3) {

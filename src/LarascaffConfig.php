@@ -17,9 +17,9 @@ class LarascaffConfig
 
     protected static ?LarascaffConfig $instance = null;
 
-    protected \Closure|string|View|null $footer = null;
+    protected \Closure | string | View | null $footer = null;
 
-    protected \Closure|string|null $favicon = null;
+    protected \Closure | string | null $favicon = null;
 
     public static function make(): static
     {
@@ -40,7 +40,7 @@ class LarascaffConfig
         return $this->prefix;
     }
 
-    public function footer(\Closure|string|View $footer): static
+    public function footer(\Closure | string | View $footer): static
     {
         $this->footer = is_callable($footer) ? call_user_func($footer) : $footer;
 

@@ -215,13 +215,13 @@ class FileUpload extends Field
 
         // avatar
         if (isset($config['stylePanelLayout']) && $config['stylePanelLayout'] == 'compact circle') {
-            if (! isset($config['imageResizeTargetHeight'])) {
+            if (!isset($config['imageResizeTargetHeight'])) {
                 $config['imageResizeTargetHeight'] = 200;
             }
-            if (! isset($config['imageResizeTargetWidth'])) {
+            if (!isset($config['imageResizeTargetWidth'])) {
                 $config['imageResizeTargetWidth'] = 200;
             }
-            if (! isset($config['imageCropAspectRatio'])) {
+            if (!isset($config['imageCropAspectRatio'])) {
                 $config['imageCropAspectRatio'] = '1:1';
             }
         }

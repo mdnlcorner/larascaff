@@ -13,7 +13,7 @@ trait HasBrand
     /**
      * Path location of your brand logo
      */
-    public function brandLogo(\Closure|string $logo): static
+    public function brandLogo(\Closure | string $logo): static
     {
         $this->logo = $logo;
 
@@ -25,7 +25,7 @@ trait HasBrand
         return $this->logo;
     }
 
-    public function brandName(\Closure|string|\Illuminate\Contracts\View\View $brandName): static
+    public function brandName(\Closure | string | \Illuminate\Contracts\View\View $brandName): static
     {
         $this->brandName = $brandName;
 
@@ -37,7 +37,7 @@ trait HasBrand
         return $this->brandName;
     }
 
-    public function brandHeigh(\Closure|string $height): static
+    public function brandHeigh(\Closure | string $height): static
     {
         $this->brandHeigh = $height;
 
@@ -54,7 +54,7 @@ trait HasBrand
         if ($this->brandName) {
             return $this->brandName;
         }
-        if (! $this->logo) {
+        if (!$this->logo) {
             return fn () => view('larascaff::logo');
         }
 

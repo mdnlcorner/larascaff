@@ -32,8 +32,8 @@ class MakeNotification extends BaseCommand implements PromptsForMissingInput
     {
         return [
             'name' => fn () => text(
-                label: $this->prefix.' name',
-                placeholder: 'The name of '.strtolower($this->prefix),
+                label: $this->prefix . ' name',
+                placeholder: 'The name of ' . strtolower($this->prefix),
             ),
         ];
     }
@@ -59,16 +59,16 @@ class MakeNotification extends BaseCommand implements PromptsForMissingInput
 
     public function makeNotification()
     {
-        $notificationClass = $this->notificationName.$this->prefix;
+        $notificationClass = $this->notificationName . $this->prefix;
 
         $replaces = [
-            '{{ namespace }}' => 'App\\Larascaff\\'.$this->prefix.'s'.(count($this->pathList) ? '\\' : '').implode('\\', $this->pathList),
+            '{{ namespace }}' => 'App\\Larascaff\\' . $this->prefix . 's' . (count($this->pathList) ? '\\' : '') . implode('\\', $this->pathList),
             '{{ class }}' => $notificationClass,
         ];
 
         $stubFile = $this->resolveStubPath('/../../stubs/larascaff.notification.stub');
 
-        $file = $this->laravel->basePath("/app/Larascaff/{$this->prefix}s".($this->path != '' ? '/'.$this->path : '')."/{$notificationClass}.php");
+        $file = $this->laravel->basePath("/app/Larascaff/{$this->prefix}s" . ($this->path != '' ? '/' . $this->path : '') . "/{$notificationClass}.php");
 
         $this->makeDirectory(dirname($file));
         $this->saveStub($stubFile, $replaces, $file, $this->prefix);

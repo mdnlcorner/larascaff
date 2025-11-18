@@ -12,7 +12,7 @@ trait HasModal
 
     protected ?string $modalCancelActionLabel = null;
 
-    protected string|ModalSize $modalSize = ModalSize::Md;
+    protected string | ModalSize $modalSize = ModalSize::Md;
 
     protected ?string $modalIcon = null;
 
@@ -85,7 +85,7 @@ trait HasModal
         return $this;
     }
 
-    public function getModalSize(): string|ModalSize
+    public function getModalSize(): string | ModalSize
     {
         return $this->modalSize;
     }

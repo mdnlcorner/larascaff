@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Storage;
 
 trait HasMedia
 {
-    public function storeMedia(string $path, string|array $tmpFiles, string $field, string $disk = 'public')
+    public function storeMedia(string $path, string | array $tmpFiles, string $field, string $disk = 'public')
     {
-        if (! $tmpFiles) {
+        if (!$tmpFiles) {
             return;
         }
 
@@ -44,7 +44,7 @@ trait HasMedia
         }
     }
 
-    public function updateMedia(string $path, string|array|null $tmpFiles, string $field, string $disk = 'public')
+    public function updateMedia(string $path, string | array | null $tmpFiles, string $field, string $disk = 'public')
     {
         if (is_array($tmpFiles)) {
             $media = [];
@@ -74,18 +74,18 @@ trait HasMedia
             ])->save();
 
             foreach ($existingMedia as $item) {
-                if (! in_array($item, $tmpFiles)) {
-                    $this->deleteMedia(str($path)->finish('/').$item, $disk);
+                if (!in_array($item, $tmpFiles)) {
+                    $this->deleteMedia(str($path)->finish('/') . $item, $disk);
                 }
             }
         } else {
             if (is_null($tmpFiles)) {
                 if (is_array($this->{$field})) {
                     foreach ($this->{$field} as $media) {
-                        $this->deleteMedia(str($path)->finish('/').$media, $disk);
+                        $this->deleteMedia(str($path)->finish('/') . $media, $disk);
                     }
                 } else {
-                    $this->deleteMedia(str($path)->finish('/').$this->{$field}, $disk);
+                    $this->deleteMedia(str($path)->finish('/') . $this->{$field}, $disk);
                 }
 
                 unset($this->oldModelValue);
@@ -106,7 +106,7 @@ trait HasMedia
                     name: $uploadeFile->getFilename()
                 );
 
-                $this->deleteMedia(str($path)->finish('/').($this->oldModelValue ?? $this)->{$field}, $disk);
+                $this->deleteMedia(str($path)->finish('/') . ($this->oldModelValue ?? $this)->{$field}, $disk);
 
                 unset($this->oldModelValue);
 

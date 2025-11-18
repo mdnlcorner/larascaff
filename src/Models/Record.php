@@ -15,7 +15,7 @@ class Record extends Model
 
     public function getRecord($key = null)
     {
-        if (! $this->record) {
+        if (!$this->record) {
             $this->record = new self;
         }
         if ($key) {

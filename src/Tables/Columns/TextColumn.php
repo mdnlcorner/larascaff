@@ -14,7 +14,7 @@ class TextColumn extends Column
         return $this;
     }
 
-    public function color(ColorVariant|Closure|string $color): static
+    public function color(ColorVariant | Closure | string $color): static
     {
         $this->attributes['color'] = $color;
 

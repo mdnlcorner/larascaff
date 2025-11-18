@@ -89,7 +89,7 @@ class BaseUserModule extends Module
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->editFormData(function (array $data, User $record) {
-                        if (! $data['password']) {
+                        if (!$data['password']) {
                             $data['password'] = $record->password;
                         }
 
@@ -115,7 +115,7 @@ class BaseUserModule extends Module
                     })
                     ->modalSize(ModalSize::Lg)
                     ->action(function (Request $request, User $user) {
-                        Gate::authorize('update-permissions '.static::getUrl());
+                        Gate::authorize('update-permissions ' . static::getUrl());
 
                         $user->syncPermissions($request->permissions);
 

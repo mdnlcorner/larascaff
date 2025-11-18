@@ -10,7 +10,7 @@ trait HasForm
 {
     protected array $formData = [];
 
-    protected Closure|bool|null $form = null;
+    protected Closure | bool | null $form = null;
 
     protected bool $hasForm = true;
 
@@ -27,14 +27,14 @@ trait HasForm
     {
         if ($callback) {
             $data = $this->resolveClosureParams($callback);
-            if (! $data) {
+            if (!$data) {
                 throw new \Exception('Closure in editFormData must return array $data');
             }
             $this->formData = $data;
         }
     }
 
-    public function form(Closure|bool|null $form = null): static
+    public function form(Closure | bool | null $form = null): static
     {
         $this->form = $form;
         $this->hasForm = true;
@@ -55,7 +55,7 @@ trait HasForm
         return $this->formData;
     }
 
-    protected function inspectFormBuilder(Collection|array $fields, mixed $relationship = null)
+    protected function inspectFormBuilder(Collection | array $fields, mixed $relationship = null)
     {
         foreach ($fields as $field) {
             if (method_exists($field, 'getValidations')) {
@@ -65,7 +65,7 @@ trait HasForm
             if ($field instanceof Datepicker) {
                 foreach (['-', '/'] as $separator) {
                     if (str_contains($field->getFormat(), $separator)) {
-                        if (! str($field->getFormat())->startsWith('Y')) {
+                        if (!str($field->getFormat())->startsWith('Y')) {
                             request()->merge([$field->getName() => convertDate(request($field->getName()), 'Y-m-d')]);
                             $this->formData[$field->getName()] = request($field->getName());
                         }

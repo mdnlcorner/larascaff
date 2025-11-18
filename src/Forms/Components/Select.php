@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Blade;
 
 class Select extends Field
 {
-    protected array|Closure $options = [];
+    protected array | Closure $options = [];
 
     protected bool $multiple = false;
 
@@ -17,7 +17,7 @@ class Select extends Field
 
     protected int $limit = 20;
 
-    protected string|Model|null $model = null;
+    protected string | Model | null $model = null;
 
     protected ?string $dependValue = null;
 
@@ -155,7 +155,7 @@ class Select extends Field
         return $this->model;
     }
 
-    public function options(array|Closure $options): static
+    public function options(array | Closure $options): static
     {
         $this->options = $options;
 
@@ -179,7 +179,7 @@ class Select extends Field
     protected function setRelationshipValue($component): void
     {
         if ($component->relationship) {
-            if (! $component->columnValue) {
+            if (!$component->columnValue) {
                 $component->columnValue('id');
             }
             if (str_contains($component->relationship, '.')) {
@@ -222,9 +222,11 @@ class Select extends Field
                 if ($item['value'] == $value) {
                     $item['selected'] = true;
                 }
+
                 return $item;
             });
         }
+
         return $options;
     }
 
@@ -293,6 +295,7 @@ class Select extends Field
                         if ($item == getRecord($this->name)) {
                             $options['selected'] = true;
                         }
+
                         return $options;
                     })->values()->toArray();
                 } elseif ($this->options instanceof \Closure) {

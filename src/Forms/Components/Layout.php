@@ -2,4 +2,6 @@
 
 namespace Mulaidarinull\Larascaff\Forms\Components;
 
-class Layout {}
+class Layout
+{
+}

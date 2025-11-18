@@ -88,7 +88,7 @@ class Action
         }
     }
 
-    public function show(Closure|bool $show): static
+    public function show(Closure | bool $show): static
     {
         $this->show = is_bool($show) ? fn () => $show : $show;
 
@@ -103,7 +103,7 @@ class Action
         return $this;
     }
 
-    public function color(string|\Mulaidarinull\Larascaff\Enums\ColorVariant $color): static
+    public function color(string | \Mulaidarinull\Larascaff\Enums\ColorVariant $color): static
     {
         if ($color instanceof BackedEnum) {
             $color = $color->value;
@@ -210,7 +210,7 @@ class Action
             '_action_type' => 'required',
         ]);
 
-        if (! class_exists($request->post('_action_handler'))) {
+        if (!class_exists($request->post('_action_handler'))) {
             return responseError('Class does not exist');
         }
 
@@ -246,7 +246,7 @@ class Action
                  */
                 $form = $this->resolveClosureParams($actions['form']);
 
-                $actions['modalTitle'] = str($actions['label'].' '.$this->getModule()::getInstanceModel()->getTable())->headline()->singular()->toString();
+                $actions['modalTitle'] = str($actions['label'] . ' ' . $this->getModule()::getInstanceModel()->getTable())->headline()->singular()->toString();
 
                 $this->callHook($actions['beforeFormFilled']);
 
@@ -270,7 +270,7 @@ class Action
                         $this->{$key} = $action;
                     }
 
-                    $this->form = ! $actions['form'] ? Arr::get($this->getModule()::getActions(), 'create.form') : $actions['form'];
+                    $this->form = !$actions['form'] ? Arr::get($this->getModule()::getActions(), 'create.form') : $actions['form'];
 
                     return $this->actionHandler($request, getRecord(), $actions['action']);
                 }
@@ -284,7 +284,7 @@ class Action
     protected function actionHandler(Request $request, Model $record, ?Closure $action = null): \Illuminate\Http\JsonResponse
     {
         if ($this->getPermission()) {
-            Gate::authorize($this->getPermission().' '.$this->getModule()::getUrl());
+            Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
         }
 
         $this->inspectFormBuilder($this->getForm()->getComponents());
@@ -304,7 +304,7 @@ class Action
                 $this->oldModelValue = $record->replicate();
             }
 
-            if (! $this->isCustomAction) {
+            if (!$this->isCustomAction) {
                 if ($this->name == 'replicate') {
                     $this->replica = $record->replicate()->fill($this->formData);
                 } else {
@@ -314,7 +314,7 @@ class Action
 
             $this->callHook($this->beforeSave);
 
-            if (! $this->isCustomAction) {
+            if (!$this->isCustomAction) {
                 if ($this->name == 'replicate') {
                     $this->replica->save();
                 } else {
@@ -328,7 +328,7 @@ class Action
 
             setRecord($record);
 
-            if (! $this->isCustomAction) {
+            if (!$this->isCustomAction) {
                 foreach ($this->getMedia() as $input) {
                     $this->uploadMediaHandler(input: $input, model: $record);
                 }
@@ -373,7 +373,7 @@ class Action
 
     protected function resolveClosureParams(Closure $cb)
     {
-        if (! $cb instanceof Closure) {
+        if (!$cb instanceof Closure) {
             throw new \Exception('Param must be callable');
         }
 

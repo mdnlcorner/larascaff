@@ -15,26 +15,26 @@ trait ResetPassword
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $passwordResetForm = null;
+    protected Closure | string | array | null $passwordResetForm = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $passwordResetAction = null;
+    protected Closure | string | array | null $passwordResetAction = null;
 
     protected string $newPasswordUrl = 'reset-password';
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $newPasswordForm = null;
+    protected Closure | string | array | null $newPasswordForm = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $newPasswordAction = null;
+    protected Closure | string | array | null $newPasswordAction = null;
 
-    public function passwordReset(?string $passwordResetUrl = null, Closure|string|array|null $passwordResetForm = null, Closure|string|array|null $passwordResetAction = null, ?string $newPasswordUrl = null, Closure|string|array|null $newPasswordForm = null, Closure|string|array|null $newPasswordAction = null): static
+    public function passwordReset(?string $passwordResetUrl = null, Closure | string | array | null $passwordResetForm = null, Closure | string | array | null $passwordResetAction = null, ?string $newPasswordUrl = null, Closure | string | array | null $newPasswordForm = null, Closure | string | array | null $newPasswordAction = null): static
     {
         $this->hasPasswordReset = true;
 

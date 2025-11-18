@@ -6,5 +6,5 @@ use Mulaidarinull\Larascaff\Enums\ColorVariant;
 
 interface HasColor
 {
-    public function getColor(): string|ColorVariant;
+    public function getColor(): string | ColorVariant;
 }

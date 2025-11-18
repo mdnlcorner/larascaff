@@ -20,27 +20,27 @@ trait HasProfile
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $updatePasswordAction = null;
+    protected Closure | string | array | null $updatePasswordAction = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $updateAvatarAction = null;
+    protected Closure | string | array | null $updateAvatarAction = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $profileForm = null;
+    protected Closure | string | array | null $profileForm = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $profileAction = null;
+    protected Closure | string | array | null $profileAction = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $profileDeleteAction = null;
+    protected Closure | string | array | null $profileDeleteAction = null;
 
     public function getUpdatePasswordUrl(): string
     {
@@ -94,14 +94,14 @@ trait HasProfile
 
     public function profile(
         ?string $url = null,
-        Closure|string|array|null $form = null,
-        Closure|string|array|null $action = null,
+        Closure | string | array | null $form = null,
+        Closure | string | array | null $action = null,
         bool $hasDelete = false,
-        Closure|string|array|null $deleteAction = null,
+        Closure | string | array | null $deleteAction = null,
         ?string $updateAvatarUrl = null,
-        Closure|string|array|null $udpateAvatarAction = null,
+        Closure | string | array | null $udpateAvatarAction = null,
         ?string $updatePasswordUrl = null,
-        Closure|string|array|null $updatePasswordAction = null,
+        Closure | string | array | null $updatePasswordAction = null,
     ): static {
         $this->hasProfile = true;
 

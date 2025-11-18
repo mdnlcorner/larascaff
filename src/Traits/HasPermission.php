@@ -20,7 +20,7 @@ trait HasPermission
     public function callAction($method, $parameters)
     {
         $action = Arr::get($this->abilities, $method);
-        if (! $action) {
+        if (!$action) {
             return $this->{$method}(...array_values($parameters));
         }
         $staticPath = request()->route()->getCompiled()->getStaticPrefix();
@@ -28,7 +28,7 @@ trait HasPermission
         $urlMenu = urlMenu();
         $staticPath = substr($staticPath, 1);
 
-        if (! in_array($staticPath, $urlMenu)) {
+        if (!in_array($staticPath, $urlMenu)) {
             foreach (array_reverse(explode('/', $staticPath)) as $path) {
                 $staticPath = str_replace("/$path", '', $staticPath);
                 if (in_array($staticPath, $urlMenu)) {

@@ -17,7 +17,7 @@ Route::prefix($config->getPrefix())->group(function () use ($config) {
         if ($config->hasPasswordReset()) {
             Route::get($config->getPasswordResetUrl(), $config->getPasswordResetForm())->name('password.request');
             Route::post($config->getPasswordResetUrl(), $config->getPasswordResetAction())->name('password.email');
-            Route::get($config->getNewPasswordUrl().'/{token}', $config->getNewPasswordForm())->name('password.reset');
+            Route::get($config->getNewPasswordUrl() . '/{token}', $config->getNewPasswordForm())->name('password.reset');
             Route::post($config->getNewPasswordUrl(), $config->getNewPasswordAction())->name('password.store');
         }
     });

@@ -51,7 +51,7 @@ class MarkdownEditor extends Field
     {
         $newToolbar = [];
         foreach ($this->toolbar as $toolbar) {
-            if (! in_array($toolbar, $disable)) {
+            if (!in_array($toolbar, $disable)) {
                 $newToolbar[] = $toolbar;
             }
         }

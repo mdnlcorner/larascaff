@@ -33,7 +33,7 @@ abstract class Page extends Controller
     public static function getPageTitle()
     {
         $title = static::$pageTitle;
-        if (! $title) {
+        if (!$title) {
             $segments = explode('/', static::getUrl());
             if (count($segments)) {
                 $title = ucwords(str_replace('-', ' ', array_pop($segments)));
@@ -48,7 +48,7 @@ abstract class Page extends Controller
     public static function getUrl(): string
     {
         $url = static::$url;
-        if (! $url) {
+        if (!$url) {
             $url = str(static::class)->after(static::NAMESPACE)->beforeLast('Page')->explode('\\')
                 ->map(fn ($item) => str($item)->kebab())
                 ->implode('/');
@@ -61,7 +61,7 @@ abstract class Page extends Controller
     public static function getView()
     {
         $view = static::$view;
-        if (! $view) {
+        if (!$view) {
             $view = str(static::class)->after(static::NAMESPACE)->beforeLast('Page')->lower()
                 ->replace('\\', '.')->prepend('pages.')->toString();
         }
@@ -73,7 +73,7 @@ abstract class Page extends Controller
     {
         $parameters = [];
         foreach ((new \ReflectionMethod($this, $method))->getParameters() as $parameter) {
-            if (! class_exists($parameter->getType()->getName())) {
+            if (!class_exists($parameter->getType()->getName())) {
                 throw new \Exception('Parameter must be class');
             }
             $parameters[$parameter->getName()] = resolve($parameter->getType()->getName());
@@ -133,12 +133,12 @@ abstract class Page extends Controller
     public static function registerRoutes()
     {
         $routeName = explode('/', static::getUrl());
-        $implodeRouteName = (implode('.', $routeName)).'.';
+        $implodeRouteName = (implode('.', $routeName)) . '.';
 
         foreach (static::routes() as $route) {
-            $url = static::getUrl().(str_starts_with($route['url'], '/') ? $route['url'] : '/'.$route['url']);
+            $url = static::getUrl() . (str_starts_with($route['url'], '/') ? $route['url'] : '/' . $route['url']);
             $action = is_string($route['action']) ? [static::class, $route['action']] : $route['action'];
-            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName.$route['name'] : null);
+            Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName . $route['name'] : null);
         }
 
         Route::get(static::getUrl(), [static::class, 'index'])->name(implode('.', explode('/', static::getUrl())));
@@ -149,7 +149,7 @@ abstract class Page extends Controller
         return [];
     }
 
-    public static function makeRoute($url, string|callable|array|null $action = null, $method = 'get', $name = null)
+    public static function makeRoute($url, string | callable | array | null $action = null, $method = 'get', $name = null)
     {
         return compact('method', 'action', 'url', 'name');
     }
@@ -157,7 +157,7 @@ abstract class Page extends Controller
     public function pageHandler(Request $request)
     {
         $request->validate(['module' => 'required', 'method' => 'required']);
-        if (! class_exists($request->module)) {
+        if (!class_exists($request->module)) {
             return responseError('Class does not exist');
         }
 

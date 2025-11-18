@@ -15,21 +15,21 @@ trait Login
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $loginForm = null;
+    protected Closure | string | array | null $loginForm = null;
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $loginAction = null;
+    protected Closure | string | array | null $loginAction = null;
 
     protected string $logoutUrl = 'logout';
 
     /**
      * @var Closure | string | array<class-string, string> | null
      */
-    protected Closure|string|array|null $logoutAction = null;
+    protected Closure | string | array | null $logoutAction = null;
 
-    public function login(?string $url = null, Closure|array|string|null $form = null, Closure|array|string|null $action = null): static
+    public function login(?string $url = null, Closure | array | string | null $form = null, Closure | array | string | null $action = null): static
     {
         $this->hasLogin = true;
 
@@ -44,7 +44,7 @@ trait Login
         return $this;
     }
 
-    public function logout(?string $url, Closure|array|string|null $action)
+    public function logout(?string $url, Closure | array | string | null $action)
     {
         $this->logoutUrl = $url ?? $this->logoutUrl;
 

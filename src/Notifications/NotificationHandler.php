@@ -40,7 +40,7 @@ abstract class NotificationHandler extends Notification implements ShouldQueue
 
     public function path(string $path = ''): string
     {
-        return url($this->module::getUrl().$path);
+        return url($this->module::getUrl() . $path);
     }
 
     public function getRecord(): Model
@@ -99,7 +99,7 @@ abstract class NotificationHandler extends Notification implements ShouldQueue
 
     public function resolveMethodParams($method)
     {
-        if (! method_exists($this, $method)) {
+        if (!method_exists($this, $method)) {
             return null;
         }
 
