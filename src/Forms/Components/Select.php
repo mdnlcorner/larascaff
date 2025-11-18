@@ -209,6 +209,25 @@ class Select extends Field
         }
     }
 
+    protected function addSelectedOptionIfNotExist($options, $value)
+    {
+        if (!$options->firstWhere('value', $value)) {
+            $options->prepend([
+                'label' => getRecord()->{$this->relationship}->{$this->columnLabel},
+                'value' => $value,
+                'selected' => 'true',
+            ]);
+        } else {
+            $options = $options->map(function ($item) use ($value) {
+                if ($item['value'] == $value) {
+                    $item['selected'] = true;
+                }
+                return $item;
+            });
+        }
+        return $options;
+    }
+
     protected function setServerSideOptions(): void
     {
         if ($this->model) {
@@ -217,6 +236,7 @@ class Select extends Field
             } else {
                 $model = $this->model->query();
             }
+            $model->limit($this->limit);
 
             if ($this->query) {
                 app()->call($this->query, ['query' => $model, 'dependValue' => $this->dependValue]);
@@ -243,11 +263,8 @@ class Select extends Field
             if ($this->value) {
                 if ($this->relationship) {
                     if (getRecord()->{$this->relationship} instanceof Model) {
-                        $options->prepend([
-                            'label' => getRecord()->{$this->relationship}->{$this->columnLabel},
-                            'value' => getRecord()->{$this->relationship}->{$this->columnValue},
-                            'selected' => 'true',
-                        ]);
+                        $value = getRecord()->{$this->relationship}->{$this->columnValue};
+                        $options = $this->addSelectedOptionIfNotExist($options, $value);
                     } else {
                         foreach (getRecord()->{$this->relationship} as $item) {
                             $options->prepend([
@@ -260,11 +277,7 @@ class Select extends Field
                     $this->model = $this->model;
                 } else {
                     $model = $this->model::query()->where($this->columnValue, $this->value)->first();
-                    $options->prepend([
-                        'label' => $model->{$this->columnLabel},
-                        'value' => $model->{$this->columnValue},
-                        'selected' => 'true',
-                    ]);
+                    $options = $this->addSelectedOptionIfNotExist($options, $model->{$this->columnValue});
                 }
             }
 
@@ -273,10 +286,14 @@ class Select extends Field
             if ($this->searchable) {
                 if (is_array($this->options)) {
                     $this->options = collect($this->options)->map(function ($item, $key) {
-                        return [
+                        $options = [
                             'label' => $key,
                             'value' => $item,
                         ];
+                        if ($item == getRecord($this->name)) {
+                            $options['selected'] = true;
+                        }
+                        return $options;
                     })->values()->toArray();
                 } elseif ($this->options instanceof \Closure) {
                     $options = app()->call($this->options);
@@ -385,7 +402,7 @@ class Select extends Field
         $this->setServerSideOptions();
 
         if (method_exists($this, 'getModule')) {
-            $this->module = $this->getModule().'@'.$this->name;
+            $this->module = $this->getModule() . '@' . $this->name;
         }
 
         return Blade::render(

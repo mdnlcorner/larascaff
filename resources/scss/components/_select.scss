@@ -53,8 +53,8 @@
     @apply rounded-md border-border dark:bg-dark-950;
 }
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
-.choices__item--selectable.is- {
-    @apply bg-white dark:bg-dark-950;
+.choices__item--selectable.is-selected {
+    @apply bg-dark-100 dark:bg-dark-800;
 }
 
 .choices__item--selectable {
