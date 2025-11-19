@@ -27,7 +27,7 @@ Trix.config.blockAttributes.h3 = {
 Trix.config.textAttributes.underline = {
     style: { textDecoration: 'underline' },
     inheritable: true,
-    parser: (element: any) => {
+    parser: (element) => {
         const style = window.getComputedStyle(element);
 
         return style.textDecoration.includes('underline');
@@ -49,10 +49,10 @@ Trix.LineBreakInsertion.prototype.shouldInsertBlockBreak = function () {
     }
 };
 
-export default function initRichEditor(config: any) {
+export default function initRichEditor(config) {
     return {
         init: async function () {
-            this.$el.addEventListener('trix-attachment-add', (e: any) => {
+            this.$el.addEventListener('trix-attachment-add', (e) => {
                 let attachment = e.attachment;
                 if (attachment.file.size > config.maxSize * 1000) {
                     window['showToast']('error', "Image size should't more than " + config.maxSize);
@@ -78,13 +78,13 @@ export default function initRichEditor(config: any) {
                         'X-CSRF-TOKEN': $('meta[name=csrf_token]').attr('content'),
                     },
                     data: formData,
-                    success: function (res: any) {
+                    success: function (res) {
                         attachment.setAttributes({
                             url: window.location.origin + '/storage/' + res.filename,
                             href: window.location.origin + '/storage/' + res.filename,
                         });
                     },
-                    error: (err: any) => {
+                    error: (err) => {
                         window['showToast']('error', err.responseJSON?.message ?? 'Something went wrong');
                         attachment.releaseFile();
                     },

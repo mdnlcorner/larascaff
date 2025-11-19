@@ -12,7 +12,7 @@ initModals();
 searchContent();
 sidebar.init();
 
-const shadowHeader = document.querySelector('.shadow-header') as HTMLDivElement;
+const shadowHeader = document.querySelector('.shadow-header');
 window.addEventListener('scroll', function () {
     if (this.scrollY > 20) {
         shadowHeader.classList.remove('hidden');

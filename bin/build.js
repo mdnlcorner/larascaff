@@ -71,36 +71,24 @@ const defaultOptions = {
         sassPlugin()
     ],
 }
-const components = [
-    'datatable',
-    'chart',
-    'datepicker-range',
-    'accordion',
-    'richeditor',
-    'markdown-editor'
-];
 
-const componentsJs = [
+const components = [
     'select',
+    'chart',
+    'datatable',
     'file-upload',
     'datepicker',
+    'datepicker-range',
+    'richeditor',
+    'markdown-editor',
+    'accordion',
 ];
-
-componentsJs.forEach(component => {
-    compile({
-        ...defaultOptions,
-        entryPoints: [
-            `./resources/js/components/${component}/index.js`,
-        ],
-        outfile: `./dist/components/${component}.js`,
-    })
-})
 
 components.forEach(component => {
     compile({
         ...defaultOptions,
         entryPoints: [
-            `./resources/js/components/${component}/index.ts`,
+            `./resources/js/components/${component}/index.js`,
         ],
         outfile: `./dist/components/${component}.js`,
     })
@@ -129,7 +117,7 @@ compile({
 compile({
     ...defaultOptions,
     entryPoints: [
-        `./resources/js/bootstrap.ts`,
+        `./resources/js/bootstrap.js`,
     ],
     outfile: `./dist/js/bootstrap.js`,
 })

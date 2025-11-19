@@ -1,25 +1,21 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import instances from '../../dom/instances';
-import type { InstanceOptions } from '../../dom/types';
-import { AccordionInterface } from './interface';
-import type { AccordionItem, AccordionOptions } from './types';
 
-const Default: AccordionOptions = {
+const Default = {
     alwaysOpen: false,
     onOpen: () => {},
     onClose: () => {},
     onToggle: () => {},
 };
 
-const DefaultInstanceOptions: InstanceOptions = {
+const DefaultInstanceOptions = {
     id: undefined,
     override: true,
 };
 
-const initAccordion = (config: AccordionOptions) => {
+const initAccordion = (config) => {
     return {
         init: function () {
-            const items = [] as AccordionItem[];
+            const items = [];
 
             this.$refs.accordionWrapper.querySelectorAll('[data-accordion-target]').forEach(($triggerEl) => {
                 if ($triggerEl.closest('[data-accordion]') === this.$refs.accordionWrapper) {
@@ -29,7 +25,7 @@ const initAccordion = (config: AccordionOptions) => {
                         targetEl: document.querySelector($triggerEl.getAttribute('data-accordion-target') ?? ''),
                         iconEl: $triggerEl.querySelector('[data-accordion-icon]'),
                         active: $triggerEl.getAttribute('aria-expanded') === 'true' ? true : false,
-                    } as AccordionItem;
+                    };
                     items.push(item);
                 }
             });
@@ -41,22 +37,22 @@ const initAccordion = (config: AccordionOptions) => {
     };
 };
 
-class Accordion implements AccordionInterface {
-    _instanceId: string;
-    _accordionEl: HTMLElement;
-    _items: AccordionItem[];
-    _options: AccordionOptions;
-    _clickHandler: EventListenerOrEventListenerObject;
-    _initialized: boolean;
+class Accordion {
+    _instanceId;
+    _accordionEl;
+    _items;
+    _options;
+    _clickHandler;
+    _initialized;
 
     constructor(
-        accordionEl: HTMLElement | null = null,
-        items: AccordionItem[] = [],
-        options: AccordionOptions = Default,
-        instanceOptions: InstanceOptions = DefaultInstanceOptions,
+        accordionEl = null,
+        items = [],
+        options = Default,
+        instanceOptions = DefaultInstanceOptions,
     ) {
         this._instanceId = instanceOptions.id ? instanceOptions.id : (accordionEl?.id ?? '');
-        this._accordionEl = accordionEl as HTMLElement;
+        this._accordionEl = accordionEl;
         this._items = items;
         this._options = { ...Default, ...options };
         this._initialized = false;
@@ -107,11 +103,11 @@ class Accordion implements AccordionInterface {
         this.removeInstance();
     }
 
-    getItem(id: string) {
+    getItem(id) {
         return this._items.filter((item) => item.id === id)[0];
     }
 
-    open(id: string) {
+    open(id) {
         const item = this.getItem(id);
 
         // hide other accordions if always open
@@ -145,7 +141,7 @@ class Accordion implements AccordionInterface {
         this._options.onOpen && this._options.onOpen(this, item);
     }
 
-    toggle(id: string) {
+    toggle(id) {
         const item = this.getItem(id);
 
         if (item.active) {
@@ -158,7 +154,7 @@ class Accordion implements AccordionInterface {
         this._options.onToggle && this._options.onToggle(this, item);
     }
 
-    close(id: string) {
+    close(id) {
         const item = this.getItem(id);
 
         item.triggerEl.classList.remove('border-b');
@@ -175,15 +171,15 @@ class Accordion implements AccordionInterface {
         this._options.onClose && this._options.onClose(this, item);
     }
 
-    updateOnOpen(callback: () => void) {
+    updateOnOpen(callback) {
         this._options.onOpen = callback;
     }
 
-    updateOnClose(callback: () => void) {
+    updateOnClose(callback) {
         this._options.onClose = callback;
     }
 
-    updateOnToggle(callback: () => void) {
+    updateOnToggle(callback) {
         this._options.onToggle = callback;
     }
 }

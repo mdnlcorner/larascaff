@@ -22,8 +22,8 @@ $.ajaxSetup({
     },
 });
 
-export function numberFormat(num: any, separator = '.', decimal = ',') {
-    let number: any;
+export function numberFormat(num, separator = '.', decimal = ',') {
+    let number;
     if (decimal == ',') {
         number = num.toString().replace(/[^0-9|^,]/g, '');
     } else {
@@ -39,19 +39,19 @@ export function numberFormat(num: any, separator = '.', decimal = ',') {
 }
 
 export function initGlobalEvent() {
-    document.addEventListener('click', function (this: Document, e) {
-        const target = e.target as HTMLElement;
+    document.addEventListener('click', function (e) {
+        const target = e.target;
         // dropdown handler
-        const dropdown = target.closest('[data-dropdown-toggle]') as HTMLElement;
+        const dropdown = target.closest('[data-dropdown-toggle]');
         if (dropdown) {
             initDropdowns(dropdown);
         }
     });
 }
 
-export function debounce(func: any, timeout = 500) {
-    let timer: any;
-    return (...args: any) => {
+export function debounce(func, timeout = 500) {
+    let timer;
+    return (...args) => {
         clearTimeout(timer);
         timer = setTimeout(() => {
             func.apply(this, args);
@@ -59,7 +59,7 @@ export function debounce(func: any, timeout = 500) {
     };
 }
 
-let modalEl = document.querySelector('#modalAction') as HTMLElement;
+let modalEl = document.querySelector('#modalAction');
 
 export function initActionModal() {
     if (modalEl) {
@@ -115,7 +115,7 @@ export function initActionModal() {
     });
 }
 
-function successActionHandler(req: AjaxAction) {
+function successActionHandler(req) {
     req.onSuccess(function (res) {
         if (window['modalAction'] && res.html) {
             modalEl.innerHTML = res.html;
@@ -140,7 +140,7 @@ function successActionHandler(req: AjaxAction) {
 export function initActionByUrl() {
     const url = new URL(window['location'].href);
     const params = url.searchParams;
-    let resolvedAction: Record<any, any> | null = null;
+    let resolvedAction = null;
 
     if (params.get('action')) {
         const actions = $('[data-actions]').data('actions');
@@ -183,7 +183,7 @@ export function initActionByUrl() {
     }
 }
 
-export function confirmation(cb: (res: SweetAlertResult) => void, configs: SweetAlertOptions = {}) {
+export function confirmation(cb, configs = {}) {
     const color = JSON.parse(document.querySelector('[data-color-variants]')?.innerHTML ?? '{}');
 
     Swal.fire({
@@ -202,11 +202,11 @@ export function confirmation(cb: (res: SweetAlertResult) => void, configs: Sweet
     });
 }
 
-export function reloadDatatable(id: any, url = null) {
+export function reloadDatatable(id, url = null) {
     window['LaravelDataTables'][id]?.ajax.reload(url, false);
 }
 
-export function handleNotification(cb: (res: any) => void) {
+export function handleNotification(cb) {
     const url = new URL(window['location'].href);
     const params = url.searchParams;
     if (params.get('id')) {
@@ -218,8 +218,7 @@ export function handleNotification(cb: (res: any) => void) {
     }
 }
 
-type Tizi = keyof typeof iziToast;
-export function showToast(type: Tizi = 'success', title: string | null, message: string | null, position: IziToastPosition = 'topRight') {
+export function showToast(type = 'success', title, message, position = 'topRight') {
     const config = {
         title,
         message,
@@ -233,20 +232,19 @@ export function showToast(type: Tizi = 'success', title: string | null, message:
     iziToast[type](config);
 }
 
-type TFunction = (res: any) => void;
 class AjaxOption {
-    successCb: null | TFunction = null;
+    successCb = null;
     runDefaultSuccessCb = true;
-    errorCb: null | TFunction = null;
+    errorCb = null;
     runDefaultErrorCb = true;
-    options: JQueryAjaxSettings = {};
+    options = {};
 
-    onSuccess(cb: TFunction, runDefault = true) {
+    onSuccess(cb, runDefault = true) {
         this.successCb = cb;
         this.runDefaultSuccessCb = runDefault;
         return this;
     }
-    onError(cb: TFunction, runDefault = true) {
+    onError(cb, runDefault = true) {
         this.errorCb = cb;
         this.runDefaultErrorCb = runDefault;
         return this;
@@ -256,9 +254,9 @@ class AjaxOption {
 export class AjaxAction extends AjaxOption {
     url = '';
     method = 'get';
-    el: JQuery | null;
-    label: string;
-    constructor(el: string | HTMLElement, options: JQueryAjaxSettings = {}) {
+    el;
+    label;
+    constructor(el, options = {}) {
         super();
         this.options = options;
         if (el instanceof HTMLElement) {
@@ -273,7 +271,7 @@ export class AjaxAction extends AjaxOption {
         }
     }
 
-    setOption(_option: JQueryAjaxSettings) {
+    setOption(_option) {
         this.options = _option;
         return this;
     }
@@ -319,11 +317,11 @@ export class AjaxAction extends AjaxOption {
 }
 
 export class HandleFormSubmit extends AjaxOption {
-    datatableId: string = '';
-    formId: JQuery;
-    button: JQuery<HTMLElement>;
-    buttonLabel: string;
-    formData: Record<string, any> = {};
+    datatableId = '';
+    formId;
+    button;
+    buttonLabel;
+    formData = {};
 
     constructor(formId = '#formAction') {
         super();
@@ -332,19 +330,19 @@ export class HandleFormSubmit extends AjaxOption {
         this.buttonLabel = this.button.html();
     }
 
-    addData(formData: Record<string, any>) {
+    addData(formData) {
         this.formData = formData;
         return this;
     }
 
-    reloadDatatable(id: string) {
+    reloadDatatable(id) {
         this.datatableId = id;
         return this;
     }
 
     init() {
         const _this = this;
-        this.formId.on('submit', function (this: any, e) {
+        this.formId.on('submit', function (e) {
             e.preventDefault();
 
             const formData = new FormData(this);

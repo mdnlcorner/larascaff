@@ -1,4 +1,4 @@
-const btnToggle: NodeListOf<HTMLDivElement> = document.querySelectorAll('[data-theme-mode]');
+const btnToggle = document.querySelectorAll('[data-theme-mode]');
 btnToggle.forEach(function (item) {
     if (item.dataset.themeMode == 'dark' && localStorage.getItem('color-theme') === 'dark') {
         item.classList.add('text-primary');

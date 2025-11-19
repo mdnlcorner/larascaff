@@ -1,12 +1,12 @@
 import SimpleBar from 'simplebar';
 
 const sidebar = {
-    wrapper: document.querySelector('.wrapper') as HTMLDivElement,
-    sidebar: document.querySelector('.sidebar') as HTMLDivElement,
-    sidebarToggle: document.querySelector('.sidebar-toggle') as HTMLDivElement,
-    content: document.querySelector('.sidebar-content') as HTMLDivElement,
-    menuItems: document.querySelectorAll('.sidebar-menu') as NodeListOf<HTMLDivElement>,
-    subMenu: document.querySelectorAll('.sidebar-submenu') as NodeListOf<HTMLDivElement>,
+    wrapper: document.querySelector('.wrapper'),
+    sidebar: document.querySelector('.sidebar'),
+    sidebarToggle: document.querySelector('.sidebar-toggle'),
+    content: document.querySelector('.sidebar-content'),
+    menuItems: document.querySelectorAll('.sidebar-menu'),
+    subMenu: document.querySelectorAll('.sidebar-submenu'),
     timeout: 0,
 
     init() {
@@ -22,10 +22,10 @@ const sidebar = {
     initMenuItems() {
         if (this.menuItems.length) {
             this.menuItems.forEach((menuItem) => {
-                const parent = menuItem.parentElement as HTMLDivElement;
+                const parent = menuItem.parentElement;
 
-                const submenu = parent.querySelector('.sidebar-submenu') as HTMLDivElement;
-                const arrow = menuItem.querySelector('.sidebar-menu-arrow') as HTMLDivElement;
+                const submenu = parent.querySelector('.sidebar-submenu');
+                const arrow = menuItem.querySelector('.sidebar-menu-arrow');
 
                 if (submenu) {
                     const hasSub = submenu.querySelector('.sidebar-menu');
@@ -52,7 +52,7 @@ const sidebar = {
         }
     },
 
-    toggleHeight(element: HTMLDivElement, arrow: HTMLDivElement, height: number, hasSub = false) {
+    toggleHeight(element, arrow, height, hasSub = false) {
         if (this.timeout) {
             clearTimeout(this.timeout);
         }
@@ -68,7 +68,7 @@ const sidebar = {
             }
 
             element.classList.add('open');
-            const multiSub = element.querySelector<HTMLDivElement>('.sidebar-submenu') as HTMLDivElement;
+            const multiSub = element.querySelector < HTMLDivElement > ('.sidebar-submenu');
             if (multiSub) {
                 element.style.height = `${element.scrollHeight}px`;
                 setTimeout(() => {
@@ -92,7 +92,7 @@ const sidebar = {
             }
             this.timeout = setTimeout(() => {
                 element.style.height = '0px';
-                element.querySelectorAll<HTMLDivElement>('.sidebar-submenu').forEach((item) => {
+                element.querySelectorAll < HTMLDivElement > ('.sidebar-submenu').forEach((item) => {
                     item.style.height = '0px';
                 });
             }, 10);
@@ -170,7 +170,7 @@ const sidebar = {
     initScrollBar() {
         if (this.sidebar) {
             const simpleBar = new SimpleBar(this.content);
-            const activeMenu = this.content.querySelector('.sidebar-menu.active') as HTMLDivElement;
+            const activeMenu = this.content.querySelector('.sidebar-menu.active');
             const activeSubmenu = this.content.querySelector('.sidebar-submenu-item.active');
             window.addEventListener('load', () => {
                 if (activeSubmenu) {
@@ -180,7 +180,7 @@ const sidebar = {
             const shadow = document.querySelector('.shadow-sidebar');
 
             simpleBar.getScrollElement()?.addEventListener('scroll', function (e) {
-                const target = e.target as HTMLDivElement;
+                const target = e.target;
                 if (target.scrollTop > 10) {
                     shadow?.classList.remove('hidden');
                 } else {

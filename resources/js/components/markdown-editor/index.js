@@ -2,13 +2,13 @@ import EasyMDE from 'easymde';
 import 'easymde/dist/easymde.min.css';
 import './mde.css';
 
-export default function initMarkdown(config: any) {
+export default function initMarkdown(config) {
     return {
         markdown: null,
 
         init: function () {
             this.markdown = new EasyMDE({
-                element: this.$refs.markdown as HTMLElement,
+                element: this.$refs.markdown,
                 autosave: {
                     enabled: false,
                     uniqueId: 'rand' + Math.random(),
@@ -35,10 +35,10 @@ export default function initMarkdown(config: any) {
                             'X-CSRF-TOKEN': $('meta[name=csrf_token]').attr('content'),
                         },
                         data: formData,
-                        success: function (res: any) {
+                        success: function (res) {
                             onSuccess(window.location.origin + '/storage/' + res.filename);
                         },
-                        error: (err: any) => {
+                        error: (err) => {
                             window['showToast']('error', err.responseJSON?.message ?? 'Something went wrong');
                         },
                     });
@@ -59,7 +59,7 @@ export default function initMarkdown(config: any) {
             });
 
             function renderToolbar() {
-                let toolbars: ('|' | EasyMDE.ToolbarIcon | EasyMDE.ToolbarDropdownIcon)[] = [
+                let toolbars = [
                     {
                         name: 'bold',
                         action: EasyMDE.toggleBold,

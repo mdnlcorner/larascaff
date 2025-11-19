@@ -1,31 +1,6 @@
-import Chart, { ChartTypeRegistry } from 'chart.js/auto';
+import Chart from 'chart.js/auto';
 
-type StatType = {
-    data: [];
-    color: string;
-    widgetType: 'statistic';
-};
-
-type DatasetsType = Array<{
-    fill: string;
-    data: number[];
-    backgroundColor: string;
-    borderColor: string;
-    borderWidth: number;
-    tension?: number;
-    pointBackgroundColor?: string;
-}>;
-
-type ChartType = {
-    labels: Array<string>;
-    color: string;
-    widgetType: 'chart';
-    type: keyof ChartTypeRegistry;
-    datasets: DatasetsType;
-    dataLabel?: boolean;
-};
-
-export default function initChart({ color, ...config }: StatType | ChartType) {
+export default function initChart({ color, ...config }) {
     return {
         init: function () {
             const colorVariants = {};
@@ -94,10 +69,10 @@ export default function initChart({ color, ...config }: StatType | ChartType) {
                     return item;
                 });
 
-                const plugins: Array<any> = [];
-                const pluginsConfig: any = {};
+                const plugins = [];
+                const pluginsConfig = {};
 
-                (window['chartjsPlugins'] ?? []).forEach((item: any) => {
+                (window['chartjsPlugins'] ?? []).forEach(item => {
                     plugins.push(item);
                 });
 

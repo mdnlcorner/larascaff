@@ -1,15 +1,15 @@
 import Modal from './components/modal';
 
 export default function searchContent() {
-    const searchInput = document.querySelector('#searching') as HTMLInputElement;
-    const list: NodeListOf<HTMLAnchorElement> = document.querySelectorAll('#list-search a');
-    let filteredList: HTMLAnchorElement[] = [];
+    const searchInput = document.querySelector('#searching');
+    const list = document.querySelectorAll('#list-search a');
+    let filteredList = [];
 
-    let metaKey: boolean, K: boolean;
-    const modal = new Modal(document.querySelector('#header-search-modal') as HTMLElement);
+    let metaKey, K;
+    const modal = new Modal(document.querySelector('#header-search-modal'));
     let active = -1;
 
-    function keydownEventHandler(e: KeyboardEvent) {
+    function keydownEventHandler(e) {
         // arrow handler
         if (e.key == 'ArrowDown' && active < filteredList.length - 1) {
             active++;
@@ -68,7 +68,7 @@ export default function searchContent() {
     });
 
     searchInput.addEventListener('keyup', function (e) {
-        const val = (e.target as HTMLInputElement)?.value;
+        const val = e.target?.value;
         if (e.key != 'ArrowUp' && e.key != 'ArrowDown') {
             active = -1;
         }
