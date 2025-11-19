@@ -216,7 +216,7 @@ class Action
 
         $this->module($request->post('_action_handler'));
 
-        $actions = [];
+        $actions = collect([]);
         // get actions
         if (method_exists($request->post('_action_handler'), 'getActions')) {
             $actions = call_user_func([$request->post('_action_handler'), 'getActions']);
@@ -226,6 +226,7 @@ class Action
         if (method_exists($request->post('_action_handler'), 'getTableActions')) {
             $actions = $actions->merge(call_user_func([$request->post('_action_handler'), 'getTableActions']));
         }
+
         $actions = Arr::get($actions, $request->post('_action_name'), null);
 
         if (is_null($actions)) {

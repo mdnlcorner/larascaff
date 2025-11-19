@@ -2,7 +2,7 @@ import checkMenuHandler from './checkMenuHandler';
 
 document.querySelector('#modalAction')?.addEventListener('shownModal', function (e) {
     const el = e.target;
-    if ((el.querySelector('form'))?.querySelector('[name=copy_permission]')) {
+    if ((el.querySelector('form'))?.querySelector('[name=search]')) {
         checkMenuHandler();
         $('.search').on('keyup', function () {
             const value = this.value.toLowerCase();
