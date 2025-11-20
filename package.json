@@ -20,8 +20,8 @@
     "build:datepicker-range": "npx tailwindcss -c tailwind.config.js -i dist/components/datepicker-range.css -o dist/components/datepicker-range.css --minify",
     "build:markdown": "npx tailwindcss -c tailwind.config.js -i dist/components/markdown-editor.css -o dist/components/markdown-editor.css --minify",
     "build": "npm-run-all build:*",
-    "format": "prettier --write resources/",
-    "format:check": "prettier --check resources/"
+    "format": "prettier --write \"resources/\" \"src/stubs/resources\"",
+    "format:check": "prettier --check \"resources/\""
   },
   "devDependencies": {
     "@alpinejs/mask": "^3.14.1",

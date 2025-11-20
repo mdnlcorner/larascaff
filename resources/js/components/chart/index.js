@@ -72,7 +72,7 @@ export default function initChart({ color, ...config }) {
                 const plugins = [];
                 const pluginsConfig = {};
 
-                (window['chartjsPlugins'] ?? []).forEach(item => {
+                (window['chartjsPlugins'] ?? []).forEach((item) => {
                     plugins.push(item);
                 });
 

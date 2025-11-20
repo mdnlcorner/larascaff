@@ -1,8 +1,8 @@
-import iziToast, { IziToastPosition } from 'izitoast';
+import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import $ from 'jquery';
 import NProgress from 'nprogress';
-import Swal, { SweetAlertOptions, SweetAlertResult } from 'sweetalert2';
+import Swal from 'sweetalert2';
 import Modal from '../js/components/modal';
 import '../scss/components/_nprogress.scss';
 import '../scss/components/_swall.scss';

@@ -68,7 +68,7 @@ const sidebar = {
             }
 
             element.classList.add('open');
-            const multiSub = element.querySelector < HTMLDivElement > ('.sidebar-submenu');
+            const multiSub = element.querySelector('.sidebar-submenu');
             if (multiSub) {
                 element.style.height = `${element.scrollHeight}px`;
                 setTimeout(() => {
@@ -92,9 +92,11 @@ const sidebar = {
             }
             this.timeout = setTimeout(() => {
                 element.style.height = '0px';
-                element.querySelectorAll < HTMLDivElement > ('.sidebar-submenu').forEach((item) => {
-                    item.style.height = '0px';
-                });
+                element.querySelectorAll <
+                    HTMLDivElement >
+                    '.sidebar-submenu'.forEach((item) => {
+                        item.style.height = '0px';
+                    });
             }, 10);
         }
     },

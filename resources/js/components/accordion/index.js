@@ -45,12 +45,7 @@ class Accordion {
     _clickHandler;
     _initialized;
 
-    constructor(
-        accordionEl = null,
-        items = [],
-        options = Default,
-        instanceOptions = DefaultInstanceOptions,
-    ) {
+    constructor(accordionEl = null, items = [], options = Default, instanceOptions = DefaultInstanceOptions) {
         this._instanceId = instanceOptions.id ? instanceOptions.id : (accordionEl?.id ?? '');
         this._accordionEl = accordionEl;
         this._items = items;

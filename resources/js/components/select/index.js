@@ -148,7 +148,7 @@ const initSelect = (config) => {
                     //
                 });
 
-                this.select.passedElement.element.addEventListener('removeItem', async function() {
+                this.select.passedElement.element.addEventListener('removeItem', async function () {
                     if (typeof $this.select.getValue(true) == 'undefined') {
                         this.innerHTML = `<option></option>`;
                         $this.select.itemList.element.innerHTML = `<div class='choices__placeholder choices__item'>${config.placeholder ?? 'Select an option'}</div>`;
