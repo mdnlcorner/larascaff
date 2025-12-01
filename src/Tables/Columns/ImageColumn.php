@@ -25,6 +25,7 @@ class ImageColumn extends Column
     {
         $static = parent::make($data, $name);
         $static->orderable(false);
+        $static->searchable(false);
 
         return $static;
     }
