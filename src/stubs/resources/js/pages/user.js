@@ -1,23 +1,27 @@
-import checkMenuHandler from './checkMenuHandler';
+import checkMenuHandler from "./checkMenuHandler";
 
-document.querySelector('#modalAction')?.addEventListener('shownModal', function (e) {
-    const el = e.target;
-    if (el.querySelector('form')?.querySelector('[name=search]')) {
+document.addEventListener("shownModal", function (e) {
+    const searchInput = $(this).find("form").find("[name=search]")
+    if (searchInput.length) {
         checkMenuHandler();
-        $('.search').on('keyup', function () {
+        searchInput.on("keyup", function () {
             const value = this.value.toLowerCase();
-            $('#menu_permissions tr')
+            $("#menu_permissions tr")
                 .show()
                 .filter(function (i, item) {
-                    return item.innerText.toLowerCase().indexOf(value) == -1;
+                    return (
+                        item.innerText.toLowerCase().indexOf(value) == -1
+                    );
                 })
                 .hide();
         });
 
-        $('.copy').on('change', function () {
-            new window['AjaxAction'](this.dataset?.url + `/${this.value}/copy-permissions`)
+        $(".copy").on("change", function () {
+            new window["AjaxAction"](
+                this.dataset?.url + `/${this.value}/copy-permissions`,
+            )
                 .onSuccess(function (res) {
-                    $('#menu_permissions').html(res);
+                    $("#menu_permissions").html(res);
                     checkMenuHandler();
                 }, false)
                 .execute();

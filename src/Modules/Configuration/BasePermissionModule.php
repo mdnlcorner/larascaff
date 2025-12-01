@@ -45,7 +45,6 @@ class BasePermissionModule extends Module
                 ->searchable()
                 ->validations(['required'])
                 ->placeholder('Choose Menu')
-                ->serverSide(Menu::class)
                 ->relationship('menu', 'name'),
         ]);
     }

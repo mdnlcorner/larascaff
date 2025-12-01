@@ -99,19 +99,25 @@ class BaseUserModule extends Module
                     ->label('Permission')
                     ->form(function (Forms\Components\Form $form) {
                         return $form->schema([
+                            Forms\Components\TextInput::make('search')
+                                ->label('Search menu')
+                                ->placeholder('Search..'),
                             UserPermissionFormComponent::make()
                                 ->shareData(function (User $user) {
                                     $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
-                                    $users = User::query()->where('id', '!=', $user->id)->get()->map(fn ($user) => ['label' => $user->name, 'value' => $user->id]);
+                                    // $users = User::query()->where('id', '!=', $user->id)->get()->map(fn ($user) => ['label' => $user->name, 'value' => $user->id]);
 
                                     return [
                                         'data' => $user,
-                                        'users' => $users,
+                                        // 'users' => $users,
                                         'menus' => $menus,
                                     ];
                                 }),
                         ])
                             ->columns(1);
+                    })
+                    ->modalTitle(function (User $user) {
+                        return 'Ubah permission User: '. $user->name;
                     })
                     ->modalSize(ModalSize::Lg)
                     ->action(function (Request $request, User $user) {

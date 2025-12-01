@@ -57,19 +57,25 @@ class BaseRoleModule extends Module
                     ->label('Permission')
                     ->form(function (Forms\Components\Form $form) {
                         return $form->schema([
+                            Forms\Components\TextInput::make('search')
+                                ->label('Search menu')
+                                ->placeholder('Search..'),
                             RolePermissionFormComponent::make()
                                 ->shareData(function (Role $role) {
                                     $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
-                                    $roles = Role::query()->where('id', '!=', $role->id)->get()->map(fn ($role) => ['label' => $role->name, 'value' => $role->id]);
+                                    // $roles = Role::query()->where('id', '!=', $role->id)->get()->map(fn ($role) => ['label' => $role->name, 'value' => $role->id]);
 
                                     return [
                                         'data' => $role,
-                                        'roles' => $roles,
+                                        // 'roles' => $roles,
                                         'menus' => $menus,
                                     ];
                                 }),
                         ])
                             ->columns(1);
+                    })
+                    ->modalTitle(function (Role $role) {
+                        return 'Ubah Permission Role: ' . $role->name;
                     })
                     ->modalSize(ModalSize::Lg)
                     ->action(function (Request $request, Role $role) {

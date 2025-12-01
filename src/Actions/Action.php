@@ -227,9 +227,9 @@ class Action
             $actions = $actions->merge(call_user_func([$request->post('_action_handler'), 'getTableActions']));
         }
 
-        $actions = Arr::get($actions, $request->post('_action_name'), null);
+        $action = Arr::get($actions, $request->post('_action_name'), null);
 
-        if (is_null($actions)) {
+        if (is_null($action)) {
             return responseError('Action not found');
         }
 
@@ -245,11 +245,11 @@ class Action
                 /**
                  * @var Form|Info
                  */
-                $form = $this->resolveClosureParams($actions['form']);
+                $form = $this->resolveClosureParams($action['form']);
 
-                $actions['modalTitle'] = str($actions['label'] . ' ' . $this->getModule()::getInstanceModel()->getTable())->headline()->singular()->toString();
+                $action['modalTitle'] = $this->resolveClosureParams($action['modalTitle']) ?? str($action['label'] . ' ' . $this->getModule()::getInstanceModel()->getTable())->headline()->singular()->toString();
 
-                $this->callHook($actions['beforeFormFilled']);
+                $this->callHook($action['beforeFormFilled']);
 
                 return response()->json([
                     'action_handler' => $request->post('_action_handler'),
@@ -258,25 +258,25 @@ class Action
                     'id' => $request->post('_id'),
                     'html' => view('larascaff::form', [
                         'form' => $form,
-                        'actions' => $actions,
+                        'actions' => $action,
                     ])->render(),
                 ]);
 
                 break;
             case 'action':
-                if ($actions['isCustomAction']) {
+                if ($action['isCustomAction']) {
                     $this->fillFormData();
 
-                    foreach ($actions as $key => $action) {
+                    foreach ($action as $key => $action) {
                         $this->{$key} = $action;
                     }
 
-                    $this->form = !$actions['form'] ? Arr::get($this->getModule()::getActions(), 'create.form') : $actions['form'];
+                    $this->form = !$action['form'] ? Arr::get($this->getModule()::getActions(), 'create.form') : $action['form'];
 
-                    return $this->actionHandler($request, getRecord(), $actions['action']);
+                    return $this->actionHandler($request, getRecord(), $action['action']);
                 }
 
-                return $this->resolveClosureParams($actions['action']);
+                return $this->resolveClosureParams($action['action']);
 
                 break;
         }
@@ -372,10 +372,10 @@ class Action
         }
     }
 
-    protected function resolveClosureParams(Closure $cb)
+    protected function resolveClosureParams($cb)
     {
         if (!$cb instanceof Closure) {
-            throw new \Exception('Param must be callable');
+            return $cb;
         }
 
         $parameters = [];

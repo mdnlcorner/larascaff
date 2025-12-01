@@ -107,7 +107,7 @@ class BaseMenuModule extends Module
                 ->relationship('mainMenu', 'name')
                 ->searchable()
                 ->placeholder('Choose Main Menu')
-                ->modifyQuery(fn ($query) => $query->active()),
+                ->query(fn ($query) => $query->active()),
             Forms\Components\Radio::make('active')->options(['Y' => 1, 'N' => 0]),
         ]);
     }

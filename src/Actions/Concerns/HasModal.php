@@ -6,7 +6,7 @@ use Mulaidarinull\Larascaff\Enums\ModalSize;
 
 trait HasModal
 {
-    protected ?string $modalTitle = null;
+    protected \Closure | string | null $modalTitle = null;
 
     protected ?string $modalSubmitActionLabel = null;
 
@@ -42,14 +42,14 @@ trait HasModal
         return $this->modalDescription;
     }
 
-    public function modalTitle(string $title): static
+    public function modalTitle(\Closure | string $title): static
     {
         $this->modalTitle = $title;
 
         return $this;
     }
 
-    public function getModalTitle(): ?string
+    public function getModalTitle(): \Closure | string
     {
         return $this->modalTitle;
     }
