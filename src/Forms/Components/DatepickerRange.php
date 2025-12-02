@@ -27,15 +27,25 @@ class DatepickerRange implements HasDatepicker, IsComponent
 
     protected bool $icon = true;
 
-    protected string $format = 'yyyy-mm-dd';
-
     protected string $formatPhp = 'Y-m-d';
-
-    protected array $config = [];
 
     protected ?string $type = 'daterange';
 
     protected ?array $value = null;
+
+    protected ?array $options = [];
+
+    public function __construct()
+    {
+        $this->options([
+            'format' => 'yyyy-mm-dd',
+            'todayHighlight' => true,
+            'autohide' => true,
+            'todayButton' => true,
+            'clearBtn' => true,
+            'language' => app()->getLocale(),
+        ]);
+    }
 
     public static function make(array $name): static
     {
@@ -44,6 +54,23 @@ class DatepickerRange implements HasDatepicker, IsComponent
         $static->name = $name;
 
         return $static;
+    }
+
+    public function getFormatPicker(): string
+    {
+        return $this->options['format'];
+    }
+
+    public function getFormat(): string
+    {
+        return $this->formatPhp;
+    }
+
+    public function options(array $options = []): static
+    {
+        $this->options = array_merge($this->options, $options);
+
+        return $this;
     }
 
     public function name(array $name): static
@@ -100,9 +127,44 @@ class DatepickerRange implements HasDatepicker, IsComponent
         return $this;
     }
 
+    public function mapDate(): array
+    {
+        return [
+            'Y' => 'yyyy',
+            'y' => 'yy',
+            'n' => 'm',
+            'D' => 'D',
+            'l' => 'DD',
+            'F' => 'MM',
+            'M' => 'M',
+            'm' => 'mm',
+            'd' => 'dd',
+            'j' => 'd',
+        ];
+    }
+
     public function format($format): static
     {
-        $this->format = $format;
+        $this->formatPhp = $format;
+
+        $map = $this->mapDate();
+
+        foreach (['-', '/'] as $separator) {
+            if (str_contains($format, $separator)) {
+                $expFormat = explode($separator, $format);
+                $formatPicker = '';
+                foreach ($expFormat as $i) {
+                    if (!isset($map[$i])) {
+                        throw new \Exception('Invalid date format');
+                    }
+                    $formatPicker .= ($formatPicker ? $separator . $map[$i] : $map[$i]);
+                }
+                $this->options['format'] = $formatPicker;
+            }
+        }
+
+        $this->value[0] = convertDate(getRecord($this->name[0]), $format);
+        $this->value[0] = convertDate(getRecord($this->name[1]), $format);
 
         return $this;
     }
@@ -142,41 +204,34 @@ class DatepickerRange implements HasDatepicker, IsComponent
         return $this->name[1];
     }
 
-    public function config(array $config): static
-    {
-        $this->config = $config;
-
-        return $this;
-    }
-
     public function view(): string
     {
-        // ====== FORMATING VALUE ======
-        $record = getRecord();
-        if ($this->value) {
-            $record = (object) [
-                $this->name[0] => $this->value[0],
-                $this->name[0] => $this->value[1],
-            ];
-        }
+        // // ====== FORMATING VALUE ======
+        // $record = getRecord();
+        // if ($this->value) {
+        //     $record = (object) [
+        //         $this->name[0] => $this->value[0],
+        //         $this->name[0] => $this->value[1],
+        //     ];
+        // }
 
-        $map = ['yyyy' => 'Y', 'yy' => 'y', 'm' => 'n', 'D' => 'D', 'DD' => 'l', 'MM' => 'F', 'M' => 'M', 'mm' => 'm', 'dd' => 'd', 'd' => 'j'];
-        foreach (['-', '/'] as $separator) {
-            if (str_contains($this->format, $separator)) {
-                $expFormat = explode($separator, $this->format);
-                $formatPhp = '';
-                foreach ($expFormat as $i) {
-                    $formatPhp .= ($formatPhp ? $separator . $map[$i] : $map[$i]);
-                }
-                $this->formatPhp = $formatPhp;
-            }
-        }
+        // $map = ['yyyy' => 'Y', 'yy' => 'y', 'm' => 'n', 'D' => 'D', 'DD' => 'l', 'MM' => 'F', 'M' => 'M', 'mm' => 'm', 'dd' => 'd', 'd' => 'j'];
+        // foreach (['-', '/'] as $separator) {
+        //     if (str_contains($this->format, $separator)) {
+        //         $expFormat = explode($separator, $this->format);
+        //         $formatPhp = '';
+        //         foreach ($expFormat as $i) {
+        //             $formatPhp .= ($formatPhp ? $separator . $map[$i] : $map[$i]);
+        //         }
+        //         $this->formatPhp = $formatPhp;
+        //     }
+        // }
 
-        $this->value = $this->value ?? [convertDate($record->{$this->name[0]}, $this->formatPhp), convertDate($record->{$this->name[1]}, $this->formatPhp)];
+        // $this->value = $this->value ?? [convertDate($record->{$this->name[0]}, $this->formatPhp), convertDate($record->{$this->name[1]}, $this->formatPhp)];
 
-        // ====== END FORMATING VALUE ======
+        // // ====== END FORMATING VALUE ======
 
-        $this->config['format'] = $this->format;
+        // $this->config['format'] = $this->format;
 
         return Blade::render(
             <<<'HTML'
@@ -184,7 +239,7 @@ class DatepickerRange implements HasDatepicker, IsComponent
                 :columnSpan="$columnSpan" 
                 :value1="$value[0] ?? null" 
                 :value2="$value[1] ?? null" 
-                :config="$config" 
+                :options="$options" 
                 :icon="$icon" 
                 :name1="$name1 ?? null" 
                 :name2="$name2 ?? null" 
@@ -200,7 +255,7 @@ class DatepickerRange implements HasDatepicker, IsComponent
                 'label' => $this->label,
                 'placeholder' => $this->placeholder,
                 'icon' => $this->icon,
-                'config' => $this->config,
+                'options' => $this->options,
                 'value' => $this->value,
                 'columnSpan' => $this->columnSpan,
                 'attr' => $this->attr,

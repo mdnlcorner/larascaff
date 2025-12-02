@@ -14,7 +14,6 @@
     x-ignore 
     x-load 
     x-load-src="{{ asset('larascaff/components/datepicker.js?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
-    x-load-css="['{{ asset('larascaff/components/datepicker.css?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
     x-data="initDatepicker({
         ...@js($options)
     })"

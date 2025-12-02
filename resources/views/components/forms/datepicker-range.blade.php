@@ -10,7 +10,7 @@
     'value2' => '',
     'placeholder1' => '',
     'placeholder2' => '',
-    'config' => [],
+    'options' => [],
     'columnSpan' => '1',
     'attr' => '',
 ])
@@ -18,9 +18,8 @@
     x-ignore 
     x-load 
     x-load-src="{{ asset('larascaff/components/datepicker-range.js?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}"
-    x-load-css="['{{ asset('larascaff/components/datepicker-range.css?v=' . \Composer\InstalledVersions::getVersion('mulaidarinull/larascaff')) }}']" 
     x-data="initDatepickerRange({
-        ...@js($config)
+        ...@js($options)
     })" 
     @class(['w-full', $columnSpan != '1' ? 'md:col-span-'.$columnSpan : ''])
 >
