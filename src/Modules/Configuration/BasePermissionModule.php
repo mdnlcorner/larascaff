@@ -5,7 +5,6 @@ namespace Mulaidarinull\Larascaff\Modules\Configuration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
 use Mulaidarinull\Larascaff\Forms;
-use Mulaidarinull\Larascaff\Models\Configuration\Menu;
 use Mulaidarinull\Larascaff\Models\Configuration\Permission;
 use Mulaidarinull\Larascaff\Modules\Module;
 use Mulaidarinull\Larascaff\Tables;

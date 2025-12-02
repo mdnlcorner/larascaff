@@ -105,11 +105,9 @@ class BaseUserModule extends Module
                             UserPermissionFormComponent::make()
                                 ->shareData(function (User $user) {
                                     $menus = Menu::with('permissions', 'subMenus.permissions', 'subMenus.subMenus.permissions')->whereNull('main_menu_id')->get();
-                                    // $users = User::query()->where('id', '!=', $user->id)->get()->map(fn ($user) => ['label' => $user->name, 'value' => $user->id]);
 
                                     return [
                                         'data' => $user,
-                                        // 'users' => $users,
                                         'menus' => $menus,
                                     ];
                                 }),
@@ -117,7 +115,7 @@ class BaseUserModule extends Module
                             ->columns(1);
                     })
                     ->modalTitle(function (User $user) {
-                        return 'Ubah permission User: '. $user->name;
+                        return 'Ubah permission User: ' . $user->name;
                     })
                     ->modalSize(ModalSize::Lg)
                     ->action(function (Request $request, User $user) {
