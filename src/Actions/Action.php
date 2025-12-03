@@ -39,7 +39,7 @@ class Action
 
     protected bool $ajax = true;
 
-    protected ?string $path = null;
+    protected Closure | string | null $path = null;
 
     protected ?string $blank = null;
 
@@ -127,9 +127,10 @@ class Action
         return $this;
     }
 
-    public function path(string $path): static
+    public function path(\Closure | string $path): static
     {
-        $this->path = str($path)->start('/')->value();
+        // $this->path = str($path)->start('/')->value();
+        $this->path = $path;
 
         return $this;
     }

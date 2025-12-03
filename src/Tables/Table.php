@@ -180,7 +180,8 @@ class Table extends DataTable
 
         foreach ($actions as $action) {
             $options = current($action->getOptions());
-            $options['url'] = url($this->url . $options['path']);
+            // $options['url'] = url($this->url . $options['path']);
+            $options['url'] = url($this->url);
 
             $confirmation = [];
             if ($options['hasConfirmation']) {
@@ -262,6 +263,25 @@ class Table extends DataTable
         return $this->tableActions;
     }
 
+    protected function resolvePathClosure($cb, $model)
+    {
+        $parameters = [];
+        foreach((new \ReflectionFunction($cb))->getParameters() as $parameter) {
+            $default = match($parameter->getName()) {
+                'record' => [$parameter->getName() => $model],
+                default => []
+            };
+
+            $type = match($parameter->getType()?->getName()) {
+                get_class($model) => [$parameter->getType()->getName() => $model],
+                default => []
+            };
+
+            $parameters = [...$parameters,...$type,  ...$default];
+        }
+        dd($parameters);
+    }
+
     protected function generateTable()
     {
         if (!$this->eloquentTable) {
@@ -270,6 +290,12 @@ class Table extends DataTable
                     $actions = [];
                     foreach ($this->getActions() as $action) {
                         if ($action['show']($model)) {
+                            if ($action['path']) {
+                                if ($action['path'] instanceof Closure) {
+                                    $this->resolvePathClosure($action['path'], $model);
+                                }
+                                dd($action);
+                            }
                             $action['url'] = str_replace('{{id}}', $model->{$model->getRouteKeyName()}, $action['url']);
                             $action['handler']['id'] = $model->{$model->getRouteKeyName()};
                             $action['handler'] = json_encode($action['handler']);
