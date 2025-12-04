@@ -18,7 +18,7 @@ trait HasMenuPermission
     {
         $prefix = getPrefix();
 
-        $menus = explode('/', static::getUrl());
+        $menus = explode('/', static::getPath());
         $subMenus = [];
 
         foreach ($menus as $key => $value) {

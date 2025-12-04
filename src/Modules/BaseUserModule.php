@@ -119,7 +119,7 @@ class BaseUserModule extends Module
                     })
                     ->modalSize(ModalSize::Lg)
                     ->action(function (Request $request, User $user) {
-                        Gate::authorize('update-permissions ' . static::getUrl());
+                        Gate::authorize('update-permissions ' . static::getPath());
 
                         $user->syncPermissions($request->permissions);
 

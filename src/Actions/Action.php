@@ -39,7 +39,7 @@ class Action
 
     protected bool $ajax = true;
 
-    protected Closure | string | null $path = null;
+    protected ?Closure $path = null;
 
     protected ?string $blank = null;
 
@@ -127,9 +127,8 @@ class Action
         return $this;
     }
 
-    public function path(\Closure | string $path): static
+    public function path(Closure $path): static
     {
-        // $this->path = str($path)->start('/')->value();
         $this->path = $path;
 
         return $this;
@@ -138,6 +137,7 @@ class Action
     public function blank(?bool $blank = true): static
     {
         $this->blank = $blank ? '_blank' : null;
+        $this->ajax = false;
 
         return $this;
     }
@@ -286,7 +286,7 @@ class Action
     protected function actionHandler(Request $request, Model $record, ?Closure $action = null): \Illuminate\Http\JsonResponse
     {
         if ($this->getPermission()) {
-            Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getUrl());
+            Gate::authorize($this->getPermission() . ' ' . $this->getModule()::getPath());
         }
 
         $this->inspectFormBuilder($this->getForm()->getComponents());

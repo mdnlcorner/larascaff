@@ -25,7 +25,7 @@ abstract class Module extends Controller
 
     protected static Model | Builder | null $instanceModel = null;
 
-    protected static ?string $url = null;
+    protected static ?string $path = null;
 
     protected static ?string $pageTitle = null;
 
@@ -99,7 +99,7 @@ abstract class Module extends Controller
     {
         $title = static::$pageTitle;
         if (!$title) {
-            $segments = explode('/', static::getUrl());
+            $segments = explode('/', static::getPath());
             if (count($segments)) {
                 $title = ucwords(str_replace('-', ' ', array_pop($segments)));
             } else {
@@ -112,11 +112,11 @@ abstract class Module extends Controller
 
     public static function getActions(bool $validatePermission = false): \Illuminate\Support\Collection
     {
-        $url = static::getUrl();
+        $path = static::getPath();
         $actions = collect([]);
 
-        $resolveAction = function ($action) use ($url) {
-            $action['url'] = url($url . $action['path']);
+        $resolveAction = function ($action) use ($path) {
+            $action['url'] = url($path . is_null($action['path']) ? '' : app()->call($action['path']));
             $action['handler'] = [
                 'actionHandler' => static::class,
                 'actionType' => $action['hasForm'] === true ? 'form' : 'action',
@@ -139,8 +139,8 @@ abstract class Module extends Controller
         }
 
         if ($validatePermission) {
-            $actions->filter(function ($action) use ($url) {
-                return user()->can($action['permission'] . ' ' . $url);
+            $actions->filter(function ($action) use ($path) {
+                return user()->can($action['permission'] . ' ' . $path);
             });
         }
 
@@ -151,7 +151,7 @@ abstract class Module extends Controller
     {
         $this->pageData = [
             'pageTitle' => static::getPageTitle(),
-            'url' => Pluralizer::singular(static::getUrl()),
+            'url' => Pluralizer::singular(static::getPath()),
             'actions' => static::getActions(true),
         ];
 
@@ -175,7 +175,7 @@ abstract class Module extends Controller
 
     protected function initializeTable()
     {
-        static::$datatable = new Table(static::getInstanceModel()->newQuery(), static::getUrl(), static::class);
+        static::$datatable = new Table(static::getInstanceModel()->newQuery(), static::getPath(), static::class);
         $this->pageData['tableActions'] = static::getTableActions();
     }
 
@@ -235,7 +235,7 @@ abstract class Module extends Controller
     public static function getTableActions()
     {
         if (!static::$datatable) {
-            static::$datatable = new Table(static::getInstanceModel()->newQuery(), static::getUrl(), static::class);
+            static::$datatable = new Table(static::getInstanceModel()->newQuery(), static::getPath(), static::class);
         }
 
         return call_user_func_array([static::class, 'table'], [static::$datatable])->getActions();
@@ -253,34 +253,34 @@ abstract class Module extends Controller
         return view('larascaff::form', ['slot' => $view, ...$formConfig]);
     }
 
-    public static function getUrl(): string
+    public static function getPath(): string
     {
-        $url = static::$url;
-        if (!$url) {
-            $url = str(static::class)->after(static::NAMESPACE)->beforeLast('Module')->explode('\\')
+        $path = static::$path;
+        if (!$path) {
+            $path = str(static::class)->after(static::NAMESPACE)->beforeLast('Module')->explode('\\')
                 ->map(fn ($item) => str($item)->kebab())
                 ->implode('/');
-            $url = Pluralizer::plural($url);
+            $path = Pluralizer::plural($path);
         }
 
-        return empty(getPrefix()) ? $url : str(getPrefix())->finish('/')->append($url);
+        return empty(getPrefix()) ? $path : str(getPrefix())->finish('/')->append($path);
     }
 
     public static function registerRoutes()
     {
-        $routeName = explode('/', static::getUrl());
+        $routeName = explode('/', static::getPath());
 
         $implodeRouteName = (implode('.', $routeName)) . '.';
 
         foreach (static::routes() as $route) {
-            $url = static::getUrl() . (str_starts_with($route['url'], '/') ? $route['url'] : '/' . $route['url']);
+            $url = static::getPath() . (str_starts_with($route['url'], '/') ? $route['url'] : '/' . $route['url']);
             $action = is_string($route['action']) ? [static::class, $route['action']] : $route['action'];
             Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName . $route['name'] : null);
         }
 
         $lastRouteName = array_pop($routeName);
         Route::name(implode('.', $routeName) . (count($routeName) ? '.' : ''))->group(function () use ($lastRouteName) {
-            Route::get(static::getUrl(), [static::class, 'index'])->name($lastRouteName . '.index');
+            Route::get(static::getPath(), [static::class, 'index'])->name($lastRouteName . '.index');
         });
     }
 

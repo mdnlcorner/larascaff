@@ -17,7 +17,7 @@ abstract class Page extends Controller
 
     protected static ?string $view = null;
 
-    protected static ?string $url = null;
+    protected static ?string $path = null;
 
     protected static ?string $pageTitle = null;
 
@@ -34,7 +34,7 @@ abstract class Page extends Controller
     {
         $title = static::$pageTitle;
         if (!$title) {
-            $segments = explode('/', static::getUrl());
+            $segments = explode('/', static::getPath());
             if (count($segments)) {
                 $title = ucwords(str_replace('-', ' ', array_pop($segments)));
             } else {
@@ -45,17 +45,17 @@ abstract class Page extends Controller
         return $title;
     }
 
-    public static function getUrl(): string
+    public static function getPath(): string
     {
-        $url = static::$url;
-        if (!$url) {
-            $url = str(static::class)->after(static::NAMESPACE)->beforeLast('Page')->explode('\\')
+        $path = static::$path;
+        if (!$path) {
+            $path = str(static::class)->after(static::NAMESPACE)->beforeLast('Page')->explode('\\')
                 ->map(fn ($item) => str($item)->kebab())
                 ->implode('/');
-            $url = Pluralizer::plural($url);
+            $path = Pluralizer::plural($path);
         }
 
-        return empty(getPrefix()) ? $url : str(getPrefix())->finish('/')->append($url);
+        return empty(getPrefix()) ? $path : str(getPrefix())->finish('/')->append($path);
     }
 
     public static function getView()
@@ -86,7 +86,7 @@ abstract class Page extends Controller
     {
         $this->pageData = [
             'pageTitle' => static::getPageTitle(),
-            'url' => static::getUrl(),
+            'url' => static::getPath(),
         ];
 
         if (method_exists($this, $method = 'viewData')) {
@@ -100,7 +100,7 @@ abstract class Page extends Controller
         }
 
         $resolveTableWidget = function (string $tableWidget, bool $isAjax = false) {
-            $table = new Table($tableWidget::getModel()::query(), static::getUrl(), $tableWidget);
+            $table = new Table($tableWidget::getModel()::query(), static::getPath(), $tableWidget);
             $table->widget(true);
 
             call_user_func_array([$tableWidget, 'table'], [$table]);
@@ -132,16 +132,16 @@ abstract class Page extends Controller
 
     public static function registerRoutes()
     {
-        $routeName = explode('/', static::getUrl());
+        $routeName = explode('/', static::getPath());
         $implodeRouteName = (implode('.', $routeName)) . '.';
 
         foreach (static::routes() as $route) {
-            $url = static::getUrl() . (str_starts_with($route['url'], '/') ? $route['url'] : '/' . $route['url']);
+            $url = static::getPath() . (str_starts_with($route['url'], '/') ? $route['url'] : '/' . $route['url']);
             $action = is_string($route['action']) ? [static::class, $route['action']] : $route['action'];
             Route::{$route['method'] ?? 'get'}($url, $action)->name($route['name'] ? $implodeRouteName . $route['name'] : null);
         }
 
-        Route::get(static::getUrl(), [static::class, 'index'])->name(implode('.', explode('/', static::getUrl())));
+        Route::get(static::getPath(), [static::class, 'index'])->name(implode('.', explode('/', static::getPath())));
     }
 
     public static function routes(): array

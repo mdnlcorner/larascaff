@@ -28,7 +28,9 @@ class BaseMenuModule extends Module
                     Cache::forget('menus');
                     Cache::forget('urlMenu');
                 }),
-            Action::make('sort')->permission('sort')->path('sort')
+            Action::make('sort')->permission('sort')->path(function () {
+                return url(static::getPath() . '/sort');
+            })
                 ->label('Sort Menu')->color(ColorVariant::Info)
                 ->form(false)
                 ->withValidations(false)
