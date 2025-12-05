@@ -268,8 +268,8 @@ class Action
                 if ($action['isCustomAction']) {
                     $this->fillFormData();
 
-                    foreach ($action as $key => $action) {
-                        $this->{$key} = $action;
+                    foreach ($action as $key => $value) {
+                        $this->{$key} = $value;
                     }
 
                     $this->form = !$action['form'] ? Arr::get($this->getModule()::getActions(), 'create.form') : $action['form'];
