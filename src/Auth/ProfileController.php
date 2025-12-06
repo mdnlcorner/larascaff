@@ -12,7 +12,7 @@ use Illuminate\Support\Pluralizer;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 use Mulaidarinull\Larascaff\Auth\Requests\ProfileUpdateRequest;
-use Mulaidarinull\Larascaff\Forms\Components\Uploader;
+use Mulaidarinull\Larascaff\Forms\Components\FileUpload;
 
 final class ProfileController extends Controller
 {
@@ -33,17 +33,18 @@ final class ProfileController extends Controller
         ];
 
         if ($viewData['hasAvatar']) {
-            $viewData['avatarInput'] = Uploader::make('avatar')
+            $viewData['avatarInput'] = FileUpload::make('avatar')
                 ->name(user()->getAvatarField())
-                ->allowImagePreview(true)
+                ->allowImagePreview()
                 ->linkPreview()
                 ->avatar()
                 ->disk(user()->getAvatarDisk())
                 ->path(user()->getAvatarPath())
-                ->imageResizeTargetHeight(100)
-                ->imageResizeTargetWidth(100)
-                ->imageEditor()
-                ->label('');
+                ->imageResizeTargetHeight(200)
+                ->imageResizeTargetWidth(200)
+                ->imageCropAspectRatio('1:1')
+                ->allowImageResize()
+                ->imageEditor();
         }
 
         $view = view('larascaff::pages.profile', $viewData);

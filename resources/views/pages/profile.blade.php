@@ -10,7 +10,7 @@
                         {!! $avatarInput->view() !!}
                     </div>
                     <div class="relative font-semibold underline">{{ user('name') }}</div>
-                    <div class="text-sm text-muted-foreground">{{ user()->roles->pluck('name')->implode(',') }}</div>
+                    <div class="text-sm text-muted-foreground">{{ user()->getRoleNames()->implode(',') }}</div>
                     <x-larascaff::button type="submit">{{ __('larascaff::auth/edit-profile.form.actions.save.label') }}</x-larascaff::button>
                 </div>
             </form>
@@ -27,8 +27,8 @@
                     <div class="text-sm text-muted-foreground">{{ __('larascaff::auth/edit-profile.form.personal_information.subtitle') }}</div>
                 </div>
                 <div class="grid grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-2">
-                    <x-larascaff::forms.input :error="$errors->first('name')" name="name" label="name" :value="old('name', user('name'))" />
-                    <x-larascaff::forms.input :error="$errors->first('email')" name="email" label="Email" :value="old('email', user('email'))"
+                    <x-larascaff::forms.input name="name" label="{{ __('larascaff::auth/edit-profile.form.name.label') }}" :value="old('name', user('name'))" />
+                    <x-larascaff::forms.input name="email" label="{{ __('larascaff::auth/edit-profile.form.email.label') }}" :value="old('email', user('email'))"
                         type="email" />
                 </div>
                 <div class="flex justify-end gap-4 mt-4">

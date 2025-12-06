@@ -40,6 +40,7 @@ class FileUpload extends Field
     public function avatar(): static
     {
         $this->config['stylePanelLayout'] = 'compact circle';
+        $this->label('');
 
         return $this;
     }

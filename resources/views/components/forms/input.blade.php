@@ -58,9 +58,9 @@
             </div>
         @endif
     </div>
-    @if ($errors->first($name) || $error)
+    @if ($error || $errors->first($name))
         <div
             class="mt-1 text-sm text-danger [&.invalid-feedback]:text-sm [&.invalid-feedback]:mt-1 [&.invalid-feedback]:text-danger">
-            {{ $error }}{{ $errors->first($name) }}</div>
+            {{ $error ?? $errors->first($name)}}</div>
     @endif
 </div>

@@ -113,7 +113,7 @@ trait HasProfile
 
         $this->hasDeleteProfile = $hasDelete;
 
-        $this->profileDeleteAction = $deleteAction ?? [ProfileController::class, 'delete'];
+        $this->profileDeleteAction = $deleteAction ?? [ProfileController::class, 'destroy'];
 
         $updateAvatarUrl ? $this->updateAvatarUrl = $updateAvatarUrl : null;
 
