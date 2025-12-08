@@ -1,6 +1,10 @@
 import Modal from './components/modal';
 
 export default function searchContent() {
+    const modalSearchWrapper = document.querySelector('#header-search-modal');
+    if (!modalSearchWrapper) {
+        return;
+    }
     const searchInput = document.querySelector('#searching');
     const list = document.querySelectorAll('#list-search a');
     let filteredList = [];

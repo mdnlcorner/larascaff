@@ -139,7 +139,7 @@ abstract class Module extends Controller
         }
 
         if ($validatePermission) {
-            $actions->filter(function ($action) use ($path) {
+            $actions = $actions->filter(function ($action) use ($path) {
                 return user()->can($action['permission'] . ' ' . $path);
             });
         }
