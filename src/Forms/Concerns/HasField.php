@@ -2,29 +2,38 @@
 
 namespace Mulaidarinull\Larascaff\Forms\Concerns;
 
+use Closure;
+
 trait HasField
 {
-    protected ?string $name = null;
+    protected Closure | string | null $name = null;
 
-    protected ?string $type = null;
+    protected Closure | string | null $type = null;
 
-    protected ?string $label = null;
+    protected Closure | string | null $label = null;
 
-    protected ?string $placeholder = null;
+    protected Closure | string | null $placeholder = null;
 
     protected mixed $value = null;
 
-    protected bool $disabled = false;
+    protected Closure | bool $disabled = false;
 
-    protected bool $readonly = false;
+    protected Closure | bool $readonly = false;
 
     protected ?string $attr = '';
 
-    public function disabled(bool $disabled = true)
+    protected \Closure | bool $show = true;
+
+    public function disabled(Closure | bool $disabled = true)
     {
         $this->disabled = $disabled;
 
         return $this;
+    }
+
+    public function getDisabled(): bool
+    {
+        return $this->resolveClosureParams($this->disabled);
     }
 
     public function attr(string $attr): static
@@ -34,11 +43,16 @@ trait HasField
         return $this;
     }
 
-    public function readonly(bool $readonly = true)
+    public function readonly(Closure | bool $readonly = true)
     {
         $this->readonly = $readonly;
 
         return $this;
+    }
+
+    public function getReadonly(): bool
+    {
+        return $this->resolveClosureParams($this->readonly);
     }
 
     public function value($value)
@@ -48,7 +62,7 @@ trait HasField
         return $this;
     }
 
-    public function type(string $type)
+    public function type(Closure | string $type)
     {
         $this->type = $type;
 
@@ -57,10 +71,10 @@ trait HasField
 
     public function getType()
     {
-        return $this->type;
+        return $this->resolveClosureParams($this->type);
     }
 
-    public function label(string $name)
+    public function label(Closure | string $name)
     {
         $this->label = $name;
 
@@ -69,10 +83,10 @@ trait HasField
 
     public function getLabel(): string
     {
-        return $this->label;
+        return $this->resolveClosureParams($this->label);
     }
 
-    public function placeholder(?string $name)
+    public function placeholder(Closure | string $name)
     {
         $this->placeholder = $name;
 
@@ -81,7 +95,19 @@ trait HasField
 
     public function getPlaceholder(): ?string
     {
-        return $this->placeholder;
+        return $this->resolveClosureParams($this->placeholder);
+    }
+
+    public function show(\Closure | bool $status): static
+    {
+        $this->show = $status;
+
+        return $this;
+    }
+
+    public function getShow(): bool
+    {
+        return $this->resolveClosureParams($this->show);
     }
 
     public function getValue(): mixed

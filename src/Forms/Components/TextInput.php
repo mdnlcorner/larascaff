@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Blade;
 
 class TextInput extends Field
 {
-    protected ?string $type = 'input';
+    protected \Closure | string | null $type = 'text';
 
     protected ?string $mask = null;
 
@@ -85,8 +85,11 @@ class TextInput extends Field
         return $this->numberFormat;
     }
 
-    public function view(): string
+    public function view(): string | null
     {
+        if (!$this->getShow()) {
+            return null;
+        }
         return Blade::render(
             <<<'HTML'
             <x-larascaff::forms.input 
@@ -115,8 +118,8 @@ class TextInput extends Field
                 'type' => $this->getType(),
                 'mask' => $this->mask,
                 'value' => $this->getValue(),
-                'disabled' => $this->disabled,
-                'readonly' => $this->readonly,
+                'disabled' => $this->getDisabled(),
+                'readonly' => $this->getReadonly(),
                 'columnSpan' => $this->columnSpan,
                 'revealable' => $this->revealable,
                 'appendIconBtn' => $this->appendIconBtn,

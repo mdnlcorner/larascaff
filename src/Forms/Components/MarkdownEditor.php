@@ -60,8 +60,12 @@ class MarkdownEditor extends Field
         return $this;
     }
 
-    public function view(): string
+    public function view(): string | null
     {
+        if (!$this->getShow()) {
+            return null;
+        }
+
         if (is_null($this->value)) {
             $this->value = getRecord($this->name);
         }
@@ -82,12 +86,12 @@ class MarkdownEditor extends Field
             />
             HTML,
             [
-                'name' => $this->name,
-                'disabled' => $this->disabled,
-                'label' => $this->label,
-                'placeholder' => $this->placeholder,
+                'name' => $this->getName(),
+                'disabled' => $this->getDisabled(),
+                'label' => $this->getLabel(),
+                'placeholder' => $this->getPlaceholder(),
                 'value' => $this->value,
-                'readonly' => $this->readonly,
+                'readonly' => $this->getReadonly(),
                 'columnSpan' => $this->columnSpan,
                 'toolbar' => $this->toolbar,
                 'imagePath' => $this->imagePath,

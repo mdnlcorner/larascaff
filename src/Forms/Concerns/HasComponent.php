@@ -2,11 +2,13 @@
 
 namespace Mulaidarinull\Larascaff\Forms\Concerns;
 
+use Closure;
+
 trait HasComponent
 {
     protected ?\Illuminate\Support\Collection $components = null;
 
-    protected ?string $name = null;
+    protected Closure | string | null $name = null;
 
     public function getComponents()
     {
@@ -23,7 +25,7 @@ trait HasComponent
         return $static;
     }
 
-    public function name(string $name): static
+    public function name(Closure | string $name): static
     {
         $this->name = $name;
 

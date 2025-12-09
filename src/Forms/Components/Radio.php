@@ -15,8 +15,12 @@ class Radio extends Field
         return $this;
     }
 
-    public function view(): string
+    public function view(): string | null
     {
+        if (!$this->getShow()) {
+            return null;
+        }
+
         return Blade::render(
             <<<'HTML'
             <x-larascaff::forms.radio-group 
@@ -30,11 +34,11 @@ class Radio extends Field
             />
             HTML,
             [
-                'name' => $this->name,
-                'label' => $this->label,
+                'name' => $this->getName(),
+                'label' => $this->getLabel(),
                 'options' => $this->options,
-                'disabled' => $this->disabled,
-                'readonly' => $this->readonly,
+                'disabled' => $this->getDisabled(),
+                'readonly' => $this->getReadonly(),
                 'columnSpan' => $this->columnSpan,
                 'attr' => $this->attr,
             ]

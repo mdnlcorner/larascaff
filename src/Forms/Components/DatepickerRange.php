@@ -3,19 +3,31 @@
 namespace Mulaidarinull\Larascaff\Forms\Components;
 
 use Illuminate\Support\Facades\Blade;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasColumnSpan;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasRelationship;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasValidation;
+use Mulaidarinull\Larascaff\Forms\Concerns;
 use Mulaidarinull\Larascaff\Forms\Contracts\HasDatepicker;
 use Mulaidarinull\Larascaff\Forms\Contracts\IsComponent;
 
 class DatepickerRange implements HasDatepicker, IsComponent
 {
-    use HasColumnSpan;
-    use HasModule;
-    use HasRelationship;
-    use HasValidation;
+    use Concerns\HasColumnSpan;
+    use Concerns\HasModule;
+    use Concerns\HasRelationship;
+    use Concerns\HasValidation;
+    use Concerns\ResolveClosureParam;
+
+    protected \Closure | bool $show = true;
+
+    public function show(\Closure | bool $status): static
+    {
+        $this->show = $status;
+
+        return $this;
+    }
+
+    public function getShow(): bool
+    {
+        return $this->resolveClosureParams($this->show);
+    }
 
     protected ?array $name = null;
 
@@ -29,7 +41,7 @@ class DatepickerRange implements HasDatepicker, IsComponent
 
     protected string $formatPhp = 'Y-m-d';
 
-    protected ?string $type = 'daterange';
+    protected \Closure | string | null $type = 'daterange';
 
     protected ?array $value = null;
 
@@ -204,34 +216,11 @@ class DatepickerRange implements HasDatepicker, IsComponent
         return $this->name[1];
     }
 
-    public function view(): string
+    public function view(): string | null
     {
-        // // ====== FORMATING VALUE ======
-        // $record = getRecord();
-        // if ($this->value) {
-        //     $record = (object) [
-        //         $this->name[0] => $this->value[0],
-        //         $this->name[0] => $this->value[1],
-        //     ];
-        // }
-
-        // $map = ['yyyy' => 'Y', 'yy' => 'y', 'm' => 'n', 'D' => 'D', 'DD' => 'l', 'MM' => 'F', 'M' => 'M', 'mm' => 'm', 'dd' => 'd', 'd' => 'j'];
-        // foreach (['-', '/'] as $separator) {
-        //     if (str_contains($this->format, $separator)) {
-        //         $expFormat = explode($separator, $this->format);
-        //         $formatPhp = '';
-        //         foreach ($expFormat as $i) {
-        //             $formatPhp .= ($formatPhp ? $separator . $map[$i] : $map[$i]);
-        //         }
-        //         $this->formatPhp = $formatPhp;
-        //     }
-        // }
-
-        // $this->value = $this->value ?? [convertDate($record->{$this->name[0]}, $this->formatPhp), convertDate($record->{$this->name[1]}, $this->formatPhp)];
-
-        // // ====== END FORMATING VALUE ======
-
-        // $this->config['format'] = $this->format;
+        if (!$this->getShow()) {
+            return null;
+        }
 
         return Blade::render(
             <<<'HTML'
@@ -252,7 +241,7 @@ class DatepickerRange implements HasDatepicker, IsComponent
             [
                 'name1' => $this->name[0],
                 'name2' => $this->name[1],
-                'label' => $this->label,
+                'label' => $this->getLabel(),
                 'placeholder' => $this->placeholder,
                 'icon' => $this->icon,
                 'options' => $this->options,

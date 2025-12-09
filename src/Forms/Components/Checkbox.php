@@ -8,8 +8,12 @@ class Checkbox extends Field
 {
     protected ?bool $checked = null;
 
-    public function view(): string
+    public function view(): string | null
     {
+        if (!$this->getShow()) {
+            return null;
+        }
+
         return Blade::render(
             <<<'HTML'
             <x-larascaff::forms.checkbox 
@@ -24,12 +28,12 @@ class Checkbox extends Field
             />
             HTML,
             [
-                'name' => $this->name,
-                'label' => $this->label,
+                'name' => $this->getName(),
+                'label' => $this->getLabel(),
                 'value' => $this->value,
                 'checked' => is_null($this->checked) ? (getRecord($this->name) ? true : false) : $this->checked,
-                'disabled' => $this->disabled,
-                'readonly' => $this->readonly,
+                'disabled' => $this->getDisabled(),
+                'readonly' => $this->getReadonly(),
                 'columnSpan' => $this->columnSpan,
                 'attr' => $this->attr,
             ]

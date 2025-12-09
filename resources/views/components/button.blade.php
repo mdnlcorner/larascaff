@@ -1,6 +1,8 @@
-@props(['variant' => 'primary', 'size' => 'md', 'type' => 'submit'])
+@props(['variant' => 'primary', 'size' => 'md', 'type' => 'submit', 'loading' => null, 'loading_label' => 'Loading...'])
 
-<button type="{{ $type }}"  {{ $attributes->twMerge([
+<button @if ($loading)
+    onclick="setTimeout(() => this.disabled = true, 0); this.innerHTML = '{{ $loading_label }}';"
+@endif type="{{ $type }}"  {{ $attributes->twMerge([
 'inline-flex items-center font-semibold focus:outline-none justify-center gap-2 text-white transition-colors border rounded-lg disabled:cursor-not-allowed disabled:opacity-60',
 $variant == 'primary' ? 'focus:bg-primary-600 dark:bg-primary bg-primary dark:hover:bg-primary-600 hover:bg-primary-600 dark:focus:text-primary-200 ' : null,
 $variant == 'success' ? 'focus:bg-success-600 dark:bg-success bg-success dark:hover:bg-success-600 hover:bg-success-600 dark:focus:text-success-200'  : null,

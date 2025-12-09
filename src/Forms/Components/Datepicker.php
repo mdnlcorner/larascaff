@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Forms\Components;
 
+use Closure;
 use Illuminate\Support\Facades\Blade;
 use Mulaidarinull\Larascaff\Forms\Contracts\HasDatepicker;
 use Mulaidarinull\Larascaff\Forms\Contracts\IsComponent;
@@ -10,14 +11,16 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
 {
     protected bool $icon = true;
 
-    protected ?string $type = 'date';
-
     protected string $formatPhp = 'Y-m-d';
 
     protected array $options = [];
 
+    protected Closure | bool $readonly = true;
+
     public function __construct()
     {
+        $this->type('date');
+
         $this->options([
             'format' => 'yyyy-mm-dd',
             'todayHighlight' => true,
@@ -175,8 +178,12 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
         return $this;
     }
 
-    public function view(): string
+    public function view(): string | null
     {
+        if (!$this->getShow()) {
+            return null;
+        }
+
         return Blade::render(
             <<<'HTML'
             <x-larascaff::forms.datepicker 
@@ -188,17 +195,21 @@ class Datepicker extends Field implements HasDatepicker, IsComponent
                 :label="$label" 
                 :placeholder="$placeholder"
                 :attr="$attr"
+                :disabled="$disabled"
+                :readonly="$readonly"
             />
             HTML,
             [
-                'name' => $this->name,
-                'label' => $this->label,
-                'placeholder' => $this->placeholder,
+                'name' => $this->getName(),
+                'label' => $this->getLabel(),
+                'placeholder' => $this->getPlaceholder(),
                 'icon' => $this->icon,
                 'options' => $this->options,
                 'value' => $this->value,
                 'columnSpan' => $this->columnSpan,
                 'attr' => $this->attr,
+                'disabled' => $this->getDisabled(),
+                'readonly' => $this->getReadonly(),
             ]
         );
     }

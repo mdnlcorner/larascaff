@@ -62,8 +62,11 @@ class RichEditor extends Field
         return $this;
     }
 
-    public function view(): string
+    public function view(): string | null
     {
+        if (!$this->getShow()) {
+            return null;
+        }
         if (is_null($this->value)) {
             $this->value = getRecord($this->name);
         }
@@ -84,10 +87,10 @@ class RichEditor extends Field
             />
             HTML,
             [
-                'name' => $this->name,
-                'disabled' => $this->disabled,
-                'label' => $this->label,
-                'placeholder' => $this->placeholder,
+                'name' => $this->getName(),
+                'disabled' => $this->getDisabled(),
+                'label' => $this->getLabel(),
+                'placeholder' => $this->getPlaceholder(),
                 'value' => $this->value,
                 'readonly' => $this->readonly,
                 'columnSpan' => $this->columnSpan,

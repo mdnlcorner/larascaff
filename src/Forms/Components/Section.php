@@ -12,6 +12,7 @@ class Section extends Layout
     use Concerns\HasComponent;
     use Concerns\HasModule;
     use Concerns\HasRelationship;
+    use Concerns\ResolveClosureParam;
 
     protected ?string $description = null;
 

@@ -2,20 +2,17 @@
 
 namespace Mulaidarinull\Larascaff\Forms\Components;
 
-use Mulaidarinull\Larascaff\Forms\Concerns\HasColumnSpan;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasField;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasModule;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasRelationship;
-use Mulaidarinull\Larascaff\Forms\Concerns\HasValidation;
+use Mulaidarinull\Larascaff\Forms\Concerns;
 use Mulaidarinull\Larascaff\Forms\Contracts\HasField as ContractsHasField;
 
 class Field implements ContractsHasField
 {
-    use HasColumnSpan;
-    use HasField;
-    use HasModule;
-    use HasRelationship;
-    use HasValidation;
+    use Concerns\HasColumnSpan;
+    use Concerns\HasField;
+    use Concerns\HasModule;
+    use Concerns\HasRelationship;
+    use Concerns\HasValidation;
+    use Concerns\ResolveClosureParam;
 
     public static function make(string $name): static
     {
@@ -37,6 +34,6 @@ class Field implements ContractsHasField
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->resolveClosureParams($this->name);
     }
 }

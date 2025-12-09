@@ -230,8 +230,12 @@ class FileUpload extends Field
         return $config;
     }
 
-    public function view(): string
+    public function view(): string | null
     {
+        if (!$this->getShow()) {
+            return null;
+        }
+
         return Blade::render(
             <<<'HTML'
             <x-larascaff::forms.file-upload 
@@ -248,8 +252,8 @@ class FileUpload extends Field
             />
             HTML,
             [
-                'name' => $this->name,
-                'label' => $this->label,
+                'name' => $this->getName(),
+                'label' => $this->getLabel(),
                 'value' => $this->value,
                 'multiple' => $this->multiple,
                 'accept' => $this->accept,

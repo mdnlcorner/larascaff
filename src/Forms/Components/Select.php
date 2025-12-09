@@ -398,8 +398,11 @@ class Select extends Field
         }
     }
 
-    public function view(): string
+    public function view(): string | null
     {
+        if (!$this->getShow()) {
+            return null;
+        }
         $this->setRelationshipValue($this);
 
         $this->setServerSideOptions();
@@ -433,10 +436,10 @@ class Select extends Field
             HTML,
             [
                 'module' => $this->module,
-                'name' => $this->name,
-                'label' => $this->label,
+                'name' => $this->getName(),
+                'label' => $this->getLabel(),
                 'options' => is_array($this->options) ? $this->options : app()->call($this->options, []),
-                'placeholder' => $this->placeholder,
+                'placeholder' => $this->getPlaceholder(),
                 'multiple' => $this->multiple,
                 'searchable' => $this->searchable,
                 'model' => $this->model,

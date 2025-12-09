@@ -15,8 +15,12 @@ class Textarea extends Field
         return $this;
     }
 
-    public function view(): string
+    public function view(): string | null
     {
+        if (!$this->getShow()) {
+            return null;
+        }
+
         return Blade::render(
             <<<'HTML'
             <x-larascaff::forms.textarea 
@@ -32,13 +36,13 @@ class Textarea extends Field
             />
             HTML,
             [
-                'name' => $this->name,
-                'label' => $this->label,
+                'name' => $this->getName(),
+                'label' => $this->getLabel(),
                 'value' => $this->getValue(),
-                'placeholder' => $this->placeholder,
+                'placeholder' => $this->getPlaceholder(),
                 'columnSpan' => $this->columnSpan,
-                'disabled' => $this->disabled,
-                'readonly' => $this->readonly,
+                'disabled' => $this->getDisabled(),
+                'readonly' => $this->getReadonly(),
                 'rows' => $this->rows,
                 'attr' => $this->attr,
             ]
