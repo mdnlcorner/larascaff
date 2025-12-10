@@ -22,7 +22,7 @@ trait HasField
 
     protected ?string $attr = '';
 
-    protected \Closure | bool $show = true;
+    protected Closure | bool $show = true;
 
     public function disabled(Closure | bool $disabled = true)
     {
@@ -98,7 +98,7 @@ trait HasField
         return $this->resolveClosureParams($this->placeholder);
     }
 
-    public function show(\Closure | bool $status): static
+    public function show(Closure | bool $status): static
     {
         $this->show = $status;
 

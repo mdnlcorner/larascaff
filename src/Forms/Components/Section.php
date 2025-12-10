@@ -2,6 +2,7 @@
 
 namespace Mulaidarinull\Larascaff\Forms\Components;
 
+use Closure;
 use Illuminate\Support\Facades\Blade;
 use Mulaidarinull\Larascaff\Forms\Concerns;
 
@@ -16,9 +17,23 @@ class Section extends Layout
 
     protected ?string $description = null;
 
+    protected Closure | bool $show = true;
+
     public function __construct()
     {
         $this->columnSpan = 'full';
+    }
+
+    public function show(Closure | bool $status): static
+    {
+        $this->show = $status;
+
+        return $this;
+    }
+
+    public function getShow(): bool
+    {
+        return $this->resolveClosureParams($this->show);
     }
 
     public function description(string $description)
@@ -28,8 +43,12 @@ class Section extends Layout
         return $this;
     }
 
-    public function view()
+    public function view(): string | null
     {
+        if (!$this->getShow()) {
+            return null;
+        }
+        
         $slot = '';
         $relationship = $this->getRelationship();
         if ($relationship) {
