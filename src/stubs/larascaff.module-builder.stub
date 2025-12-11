@@ -26,9 +26,6 @@ final class {{ class }} extends Module
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            ->query(function (\Illuminate\Database\Eloquent\Builder $query) {
-                //
-            })
             ->columns([
                 {{ tableColumns }}
             ]);
