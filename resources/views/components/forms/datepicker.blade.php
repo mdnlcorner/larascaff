@@ -31,7 +31,7 @@
         @endif
         <input x-ref="input" {{ $attr }} data-input-name="{{ $name }}" name="{{ $name }}" type="input" id="{{ $id }}" value="{{ $value ?? getRecord($name) }}"
             {{ $attributes->twMerge([
-                'disabled:cursor-not-allowed [&.is-invalid]:border-danger [&.is-invalid]:focus-visible:ring-danger/60 border-border w-full bg-transparent border rounded-md focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-primary focus-visible:ring-offset-white placeholder:text-muted-foreground dark:focus-visible:ring-offset-dark-900 focus-visible:ring-offset-2',
+                'disabled:cursor-not-allowed [&.is-invalid]:border-danger [&.is-invalid]:focus-visible:ring-danger/60 border-border w-full bg-transparent border rounded-md focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-primary focus-visible:ring-offset-white placeholder:text-muted-foreground dark:focus-visible:ring-offset-dark-900 focus-visible:ring-offset-2 disabled:dark:bg-dark-800 disabled:bg-dark-100',
                 $icon ? 'ps-10' : null,
                 // size
                 $size == 'sm' ? 'py-1.5 px-2.5 text-xs' : null,
